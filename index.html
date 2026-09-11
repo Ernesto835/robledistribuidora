@@ -510,6 +510,118 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
 .act-btn.del { color: var(--danger); }
 .act-btn.del:hover { background: var(--danger-soft); border-color: var(--danger); }
 
+
+/* ---------- WORKSPACE SWITCHER (CASO EL ROBLE VS MODO LIMPIO) ---------- */
+.ws-switcher {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+  align-items: center;
+}
+.ws-tab {
+  background: none;
+  border: none;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  padding: 5px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .16s ease;
+  white-space: nowrap;
+}
+.ws-tab:hover {
+  color: var(--ink);
+  background: rgba(0, 0, 0, 0.04);
+}
+.ws-tab.active {
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+.ws-banner {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 13px 18px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: var(--shadow);
+}
+.ws-banner.limpio {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.ws-banner-badge {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--surface);
+  padding: 3px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  margin-right: 8px;
+  display: inline-block;
+  letter-spacing: .03em;
+}
+.sidebar-ws-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sidebar-ws-lbl {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 600;
+  color: var(--ink-faint);
+  letter-spacing: .04em;
+}
+.sidebar-ws-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.sidebar-ws-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s ease;
+}
+.sidebar-ws-btn:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.sidebar-ws-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
+}
+
 /* Modal Overlay & Window */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 10000;
@@ -609,10 +721,19 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
-      <div class="mark">R</div>
-      <div class="name">El Roble</div>
-      <div class="tag">Ciclo contable completo</div>
+      <div class="mark" id="brand-mark">R</div>
+      <div class="name" id="brand-name">El Roble</div>
+      <div class="tag" id="brand-tag">Ciclo contable completo</div>
     </div>
+
+    <div class="sidebar-ws-box">
+      <div class="sidebar-ws-lbl">Entorno activo:</div>
+      <div class="sidebar-ws-buttons">
+        <button type="button" class="sidebar-ws-btn active" data-ws="roble" title="Caso completo de El Roble">🏢 El Roble</button>
+        <button type="button" class="sidebar-ws-btn" data-ws="limpio" title="Ejercicio en blanco para agregar asientos">✨ Limpio</button>
+      </div>
+    </div>
+
     <nav class="steps" id="steps"></nav>
     <div class="sidebar-foot">
       Distribuidora El Roble S.A.<br>
@@ -625,9 +746,22 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
 
   <main>
     <div class="topline">
-      <div class="co">Proyecto de contabilidad &middot; <b>Distribuidora Comercial El Roble S.A.</b></div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <div class="period">01 – 31 ENE 2026</div>
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <div class="co" id="topline-co">Proyecto de contabilidad &middot; <b id="topline-co-name">Distribuidora Comercial El Roble S.A.</b></div>
+        <div class="ws-indicator" id="topline-ws-indicator" style="font-size:11.5px; color:var(--ink-faint);">
+          Entorno: <span id="topline-ws-label" style="font-weight:600; color:var(--accent);">🏢 Caso El Roble (Resuelto)</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div class="ws-switcher" id="ws-switcher" role="radiogroup" aria-label="Espacio de trabajo">
+          <button type="button" class="ws-tab active" data-ws="roble" title="Caso de estudio completo con 16 asientos y estados resueltos">
+            <span>🏢 Caso El Roble</span>
+          </button>
+          <button type="button" class="ws-tab" data-ws="limpio" title="Lienzo limpio en blanco para ingresar nuevos asientos en vivo">
+            <span>✨ Modo Limpio (En Blanco)</span>
+          </button>
+        </div>
+        <div class="period" id="topline-period">01 – 31 ENE 2026</div>
         <button type="button" class="btn" id="btn-export-pdf" title="Abre el diálogo de impresión; elige 'Guardar como PDF'">Exportar a PDF</button>
       </div>
     </div>
@@ -762,25 +896,102 @@ const SEED_ENTRIES = [
 /*SEED_END*/
 
 /* =========================================================
-   ESTADO ACTIVO — carga desde el slot de datos embebido,
-   con la semilla como respaldo.
+   SISTEMA DE MULTI-ENTORNO (CASO EL ROBLE vs MODO LIMPIO)
+   Permite alternar entre el caso resuelto y un lienzo limpio en blanco
+   para agregar asientos en vivo frente a la docente.
    ========================================================= */
-let ACCOUNTS, ENTRIES;
-(function loadInitialState(){
-  try{
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : null;
-    if(parsed && Array.isArray(parsed.accounts) && Array.isArray(parsed.entries) && parsed.accounts.length){
-      ACCOUNTS = parsed.accounts; ENTRIES = parsed.entries;
-    } else { throw new Error('empty'); }
-  }catch(e){
-    ACCOUNTS = JSON.parse(JSON.stringify(SEED_ACCOUNTS));
-    ENTRIES = JSON.parse(JSON.stringify(SEED_ENTRIES));
+const WS_ACTIVE_KEY = 'elRoble.activeWorkspace.v2';
+const WS_ROBLE_KEY = 'elRoble.workspace.roble.v2';
+const WS_LIMPIO_KEY = 'elRoble.workspace.limpio.v2';
+
+let currentWorkspace = 'roble';
+try {
+  const savedWs = localStorage.getItem(WS_ACTIVE_KEY);
+  if(savedWs === 'limpio' || savedWs === 'roble') currentWorkspace = savedWs;
+} catch(e){}
+
+let ACCOUNTS = [], ENTRIES = [];
+
+function getWorkspaceStorageKey(ws){
+  return ws === 'limpio' ? WS_LIMPIO_KEY : WS_ROBLE_KEY;
+}
+
+function loadWorkspaceData(ws){
+  currentWorkspace = ws;
+  try { localStorage.setItem(WS_ACTIVE_KEY, ws); } catch(e){}
+
+  const key = getWorkspaceStorageKey(ws);
+  let loaded = false;
+  try {
+    let raw = localStorage.getItem(key);
+    // Migración retrocompatible para Caso El Roble
+    if(!raw && ws === 'roble'){
+      raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    }
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed.accounts) && Array.isArray(parsed.entries)){
+        ACCOUNTS = parsed.accounts;
+        ENTRIES = parsed.entries;
+        loaded = true;
+      }
+    }
+  } catch(e){}
+
+  if(!loaded){
+    if(ws === 'limpio'){
+      // En modo limpio: Catálogo contable base disponible, pero CERO asientos
+      ACCOUNTS = JSON.parse(JSON.stringify(SEED_ACCOUNTS));
+      ENTRIES = [];
+    } else {
+      ACCOUNTS = JSON.parse(JSON.stringify(SEED_ACCOUNTS));
+      ENTRIES = JSON.parse(JSON.stringify(SEED_ENTRIES));
+    }
   }
-})();
+  rebuildIndex();
+}
+
 let ACC = {};
 function rebuildIndex(){ ACC = Object.fromEntries(ACCOUNTS.map(a=>[a.c,a])); }
-rebuildIndex();
+
+// Inicializar el workspace actual
+loadWorkspaceData(currentWorkspace);
+
+function updateWorkspaceUI(){
+  const isLimpio = (currentWorkspace === 'limpio');
+  // Actualizar botones superiores
+  document.querySelectorAll('[data-ws]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.ws === currentWorkspace);
+  });
+  // Actualizar textos e indicadores
+  const coName = document.getElementById('topline-co-name');
+  if(coName) coName.textContent = isLimpio ? 'Ejercicio en Blanco (Modo Limpio)' : 'Distribuidora Comercial El Roble S.A.';
+  const wsLabel = document.getElementById('topline-ws-label');
+  if(wsLabel){
+    wsLabel.innerHTML = isLimpio
+      ? '<span style="color:var(--accent);">✨ Modo Limpio (0 Asientos — Listo para ingresar)</span>'
+      : '<span style="color:var(--accent);">🏢 Caso El Roble (Resuelto — 16 Asientos)</span>';
+  }
+  const brandMark = document.getElementById('brand-mark');
+  if(brandMark) brandMark.textContent = isLimpio ? '✨' : 'R';
+  const brandName = document.getElementById('brand-name');
+  if(brandName) brandName.textContent = isLimpio ? 'Modo Limpio' : 'El Roble';
+  const brandTag = document.getElementById('brand-tag');
+  if(brandTag) brandTag.textContent = isLimpio ? 'Lienzo en blanco en vivo' : 'Ciclo contable completo';
+}
+
+function switchWorkspace(targetWs){
+  if(!['roble','limpio'].includes(targetWs)) return;
+  if(targetWs === currentWorkspace) return;
+  // Guardar workspace actual
+  persist();
+  // Cargar target workspace
+  loadWorkspaceData(targetWs);
+  // Re-renderizar paneles y sincronizar UI
+  rerenderAllPanels();
+  updateWorkspaceUI();
+  showToast(targetWs === 'limpio' ? 'Modo Limpio activado (Lienzo en blanco listo)' : 'Caso "El Roble" restaurado (Completo)', 'info');
+}
 
 const FASE_LABEL = {apertura:'Asiento de apertura', operacion:'Operaciones del periodo', ajuste:'Asientos de ajuste', cierre:'Asientos de cierre'};
 const BASE=['apertura','operacion'], ADJ=['apertura','operacion','ajuste'], ALL=['apertura','operacion','ajuste','cierre'];
@@ -899,10 +1110,32 @@ function renderDatosPanel(){
     </td>
   </tr>`).join('');
 
+  const isLimpio = (currentWorkspace === 'limpio');
+  const bannerHtml = isLimpio ? `
+    <div class="ws-banner limpio">
+      <div>
+        <span class="ws-banner-badge">✨ MODO LIMPIO ACTIVO</span>
+        <b>Lienzo en blanco listo para la evaluación:</b> Agrega los asientos que tu profesora te dicte en el formulario de abajo. El diario, mayor, balances y estados financieros se calcularán al instante para este ejercicio.
+        <div style="font-size:12px; color:var(--ink-soft); margin-top:4px;">💡 El caso resuelto de <b>Distribuidora El Roble</b> sigue intacto y puedes regresar a él en cualquier momento.</div>
+      </div>
+      <button type="button" class="btn" data-switch-ws="roble" style="padding:6px 12px; font-size:12px; white-space:nowrap;">Volver a El Roble 🏢</button>
+    </div>
+  ` : `
+    <div class="ws-banner">
+      <div>
+        <span class="ws-banner-badge">🏢 CASO EL ROBLE</span>
+        Estás visualizando el caso de estudio resuelto (16 asientos contables de enero 2026). Si tu profesora te pide agregar un ejercicio nuevo desde cero sin alterar este trabajo, activa el <b>Modo Limpio</b>.
+      </div>
+      <button type="button" class="btn primary" data-switch-ws="limpio" style="padding:6px 12px; font-size:12px; white-space:nowrap;">Abrir Modo Limpio ✨</button>
+    </div>
+  `;
+
   return `
   <div class="eyebrow">Paso 02 &middot; Tus datos</div>
-  <h2 class="title">Mis Datos</h2>
-  <p class="lede">Agrega cuentas y asientos propios; el diario, el mayor, los balances y los estados financieros se recalculan automáticamente. Los cambios se guardan solos en esta página.</p>
+  <h2 class="title">Mis Datos — ${isLimpio ? 'Modo Limpio (Lienzo en Blanco)' : 'Caso Distribuidora El Roble'}</h2>
+  <p class="lede">Agrega cuentas y asientos propios; el diario, el mayor, los balances y los estados financieros se recalculan automáticamente en tiempo real.</p>
+
+  ${bannerHtml}
 
   <div class="card">
     <h3>Nuevo asiento contable</h3>
@@ -959,8 +1192,14 @@ function renderDatosPanel(){
       <button type="button" class="btn" data-action="export">Descargar copia (JSON)</button>
       <button type="button" class="btn" data-action="import-trigger">Cargar copia (JSON)</button>
       <input type="file" id="import-file" class="file-input" accept="application/json">
-      <button type="button" class="btn" data-action="reset-seed">Restaurar ejemplo "El Roble"</button>
-      <button type="button" class="btn danger" data-action="clear-all">Borrar todos los datos</button>
+      ${currentWorkspace === 'limpio' ? `
+        <button type="button" class="btn danger" data-action="clear-limpio">🗑️ Vaciar asientos de este ejercicio en blanco</button>
+        <button type="button" class="btn primary" data-switch-ws="roble">🏢 Volver al Caso El Roble (Completo)</button>
+      ` : `
+        <button type="button" class="btn" data-action="reset-seed">Restaurar ejemplo "El Roble"</button>
+        <button type="button" class="btn primary" data-switch-ws="limpio">✨ Ir a Modo Limpio (En Blanco)</button>
+        <button type="button" class="btn danger" data-action="clear-all">Borrar todos los datos</button>
+      `}
     </div>
   </div>`;
 }
@@ -1429,8 +1668,14 @@ function initPersistence(){
 }
 function persist(){
   try{
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({accounts:ACCOUNTS, entries:ENTRIES}));
-    setSyncPill('ok','Guardado en este navegador');
+    const key = getWorkspaceStorageKey(currentWorkspace);
+    localStorage.setItem(key, JSON.stringify({accounts:ACCOUNTS, entries:ENTRIES}));
+    if(currentWorkspace === 'roble'){
+      // mantener clave de compatibilidad
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({accounts:ACCOUNTS, entries:ENTRIES}));
+    }
+    const label = currentWorkspace === 'limpio' ? 'Modo Limpio guardado' : 'Caso El Roble guardado';
+    setSyncPill('ok', label);
   }catch(err){
     setSyncPill('off','No se pudo guardar (usa "Descargar copia")');
   }
@@ -2362,6 +2607,7 @@ function afterMutation(){
 
 buildShell();
 rerenderAllPanels();
+updateWorkspaceUI();
 selectPanel(activePanelId);
 initPersistence();
 
@@ -2974,6 +3220,39 @@ document.addEventListener('click', e => {
     e.preventDefault();
     e.stopPropagation();
     showDeleteCuentaModal(delCuentaBtn.dataset.delCuenta);
+    return;
+  }
+
+  // 0. Cambio de Espacio de Trabajo (Workspace Switcher)
+  const wsBtn = e.target.closest('[data-ws]');
+  if(wsBtn){
+    e.preventDefault();
+    switchWorkspace(wsBtn.dataset.ws);
+    return;
+  }
+  const switchWsBtn = e.target.closest('[data-switch-ws]');
+  if(switchWsBtn){
+    e.preventDefault();
+    switchWorkspace(switchWsBtn.dataset.switchWs);
+    return;
+  }
+
+  // 0.1 Vaciar asientos del Modo Limpio
+  if(e.target.closest('[data-action="clear-limpio"]')){
+    e.preventDefault();
+    showModalConfirm({
+      title: '¿Vaciar asientos del Modo Limpio?',
+      message: 'Esta acción eliminará todos los asientos registrados en el <b>Modo Limpio</b> para dejar el lienzo en blanco nuevamente.',
+      details: 'El <b>Caso El Roble</b> y sus 16 asientos están seguros y NO se verán afectados.',
+      confirmText: 'Sí, vaciar asientos',
+      cancelText: 'Cancelar',
+      type: 'danger',
+      onConfirm: () => {
+        ENTRIES = [];
+        afterMutation();
+        showToast('Asientos del Modo Limpio vaciados. Lienzo en blanco listo.', 'warn');
+      }
+    });
     return;
   }
 
