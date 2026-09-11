@@ -357,11 +357,19 @@ body.print-landscape {
   body.print-landscape {
     page: landscape-sheet !important;
   }
-  /* Elementos de la interfaz a ocultar en la impresión */
+  /* Elementos de la interfaz, modales y controles a ocultar 100% en la impresión / PDF */
   .sidebar, .btn-row, #form-asiento, #form-cuenta, .mini-del, .asiento .del, .topline, .intro,
-  .modal-overlay, .panel-actions-bar, .file-input, .act-btn, #toast-container, .ws-banner, #ws-switcher,
-  .subnav-tabs, .calc-box, button.btn {
+  .modal-overlay, .modal-window, .modal-header, .modal-body, .modal-footer,
+  .panel-actions-bar, .file-input, .act-btn, #toast-container, .ws-banner, #ws-switcher,
+  .subnav-tabs, .calc-box, button, input, select, textarea,
+  .row-actions, .misdatos-quicknav, #sec-respaldo-datos, [data-action], .no-print, [data-no-print] {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
   }
   .app { display: block !important; }
   main { padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
@@ -1518,7 +1526,7 @@ function renderDatosPanel(){
   <p class="lede">Agrega cuentas y asientos propios; el diario, el mayor, los balances y los estados financieros se recalculan automáticamente en tiempo real.</p>
 
   <!-- Barra de Acceso Rápido y Salto Directo -->
-  <div class="misdatos-quicknav" id="misdatos-quicknav">
+  <div class="misdatos-quicknav no-print" id="misdatos-quicknav">
     <div style="font-size:12px; font-weight:700; color:var(--ink-soft); display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:.04em;">
       ⚡ Acceso rápido:
     </div>
@@ -1703,7 +1711,7 @@ function renderDatosPanel(){
     </table></div>
   </div>
 
-  <div class="card" id="sec-respaldo-datos">
+  <div class="card no-print" id="sec-respaldo-datos">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
       <h3 style="margin:0;">Respaldo de datos</h3>
       <button type="button" class="btn" data-jump="misdatos-quicknav" title="Volver al menú rápido superior" style="font-size:11.5px; padding:5px 9px;">↑ Menú rápido</button>
@@ -1736,21 +1744,14 @@ function renderInicial(){
   const td=e.lines.reduce((s,l)=>s+l.d,0), th=e.lines.reduce((s,l)=>s+l.h,0);
   return `
   <div class="eyebrow">Paso 03</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Estado de Situación Inicial</h2>
-    <div class="panel-actions-bar">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente el Estado de Situación Inicial a PDF" style="font-size:12.5px;">
-        📄 Exportar solo este Balance Inicial a PDF
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Estado de Situación Inicial</h2>
   <p class="lede">Saldos con los que Distribuidora El Roble S.A. abre su contabilidad. Este mismo estado se registra como el asiento de apertura del Libro Diario.</p>
   <div class="tblwrap"><table>
     <thead><tr><th>Código</th><th>Cuenta</th><th class="num">Debe</th><th class="num">Haber</th></tr></thead>
     <tbody>${rows}<tr class="total"><td></td><td>Totales</td><td class="num">${fmt(td)}</td><td class="num">${fmt(th)}</td></tr></tbody>
   </table></div>
   <div class="note"><b>Partida doble verificada:</b> Debe = Haber = ${fmt(td)}.</div>
-  <div style="margin-top:14px;">
+  <div class="no-print" style="margin-top:14px;">
     <button type="button" class="act-btn edit" data-edit-entry="${e.id}" style="padding:7px 16px; font-size:13px;">✏️ Editar Asiento de Situación Inicial</button>
   </div>`;
 }
@@ -1787,26 +1788,7 @@ function renderDiario(fasesToShow, allowActions = true){
 function renderDiarioPanel(){
   return `
   <div class="eyebrow">Paso 04</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Libro Diario</h2>
-    <div class="panel-actions-bar" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente el Libro Diario a PDF" style="font-size:12.5px;">
-        📄 Exportar Diario a PDF
-      </button>
-      <button type="button" class="btn" data-action="export-diario-excel" title="Descargar todos los asientos en formato oficial Excel (.xls) con membrete institucional y firmas" style="font-size:12.5px; background:#1D6F42; color:#ffffff; border-color:#1D6F42; font-weight:600;">
-        📊 Descargar en Excel (.xls)
-      </button>
-      <button type="button" class="btn" data-action="open-import-diario-modal" title="Importar asientos contables desde archivo Excel (CSV) o JSON con previsualización y validación" style="font-size:12.5px;">
-        📥 Importar Asientos (Excel / JSON)
-      </button>
-      <button type="button" class="btn" data-action="export-diario-csv" title="Descargar todos los asientos del Libro Diario en formato CSV para hojas de cálculo" style="font-size:12.5px;">
-        📋 Exportar CSV
-      </button>
-      <button type="button" class="btn" data-action="export-diario-json" title="Descargar únicamente los asientos contables en formato JSON" style="font-size:12.5px;">
-        💾 Exportar JSON
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Libro Diario</h2>
   <p class="lede">Registro cronológico de todos los asientos: apertura y las operaciones del periodo. Puedes editar o eliminar cualquier asiento directamente aquí o desde "Mis Datos".</p>
   ${renderDiario(BASE, true)}`;
 }
@@ -1840,14 +1822,7 @@ function renderBalance(fases, nota){
 function renderBalancePanel(){
   return `
   <div class="eyebrow">Paso 05</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Balance de Comprobación</h2>
-    <div class="panel-actions-bar">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este Balance de Comprobación a PDF" style="font-size:12.5px;">
-        📄 Exportar solo este Balance a PDF
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Balance de Comprobación</h2>
   <p class="lede">Balance de sumas y saldos elaborado con los movimientos del periodo, antes de registrar los ajustes de fin de mes.</p>
   ${renderBalance(BASE,'sin ajustar')}`;
 }
@@ -1920,14 +1895,7 @@ function renderMayorPanel(){
   }).join('');
   return `
   <div class="eyebrow">Paso 07</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Libro Mayor — Cuentas T</h2>
-    <div class="panel-actions-bar">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente el Libro Mayor a PDF" style="font-size:12.5px;">
-        📄 Exportar solo este Libro Mayor a PDF
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Libro Mayor — Cuentas T</h2>
   <p class="lede">Cada cuenta del catálogo con movimiento, en formato de "Cuenta T", incluyendo apertura, operaciones y ajustes ya incorporados.</p>
   <div class="mayor-grid">${cards || '<div class="note">Todavía no hay movimientos.</div>'}</div>`;
 }
@@ -1938,14 +1906,7 @@ function renderMayorPanel(){
 function renderBalanceAjustadoPanel(){
   return `
   <div class="eyebrow">Paso 08</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Balance de Comprobación Ajustado</h2>
-    <div class="panel-actions-bar">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este Balance Ajustado a PDF" style="font-size:12.5px;">
-        📄 Exportar solo este Balance Ajustado a PDF
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Balance de Comprobación Ajustado</h2>
   <p class="lede">El mismo balance de sumas y saldos, incorporando los asientos de ajuste. Es la base directa para elaborar los estados financieros.</p>
   ${renderBalance(ADJ,'ajustado')}`;
 }
@@ -1977,14 +1938,7 @@ function renderHojaPanel(){
   </tr>`).join('');
   return `
   <div class="eyebrow">Paso 09</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Hoja de Trabajo (10 columnas)</h2>
-    <div class="panel-actions-bar">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente la Hoja de Trabajo a PDF" style="font-size:12.5px;">
-        📄 Exportar solo esta Hoja de Trabajo a PDF
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Hoja de Trabajo (10 columnas)</h2>
   <p class="lede">Puente entre el balance ajustado y los estados financieros: separa cada cuenta hacia el Estado de Resultados o el Estado de Situación Financiera y comprueba que la utilidad coincide en ambos.</p>
   <div class="tblwrap"><table style="min-width:880px;">
     <thead><tr>
@@ -2043,14 +1997,7 @@ function renderEstadosPanel(){
 
   return `
   <div class="eyebrow">Paso 10</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Estados Financieros — Balance General y Resultados</h2>
-    <div class="panel-actions-bar">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este Balance General y Resultados a PDF" style="font-size:12.5px;">
-        📄 Exportar solo este Balance General a PDF
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Estados Financieros — Balance General y Estado de Resultados</h2>
   <p class="lede">Resultado final del ciclo contable: el Estado de Resultados mide el desempeño económico y el Balance General (Balance Financiero) muestra la posición patrimonial de la empresa.</p>
   <div class="two-col">
     <div class="statement">
@@ -2451,14 +2398,7 @@ function renderExamenPanel(){
 
   return `
   <div class="eyebrow">Paso 12 &middot; Diagnóstico Financiero</div>
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Indicadores y Ratios Financieros</h2>
-    <div class="panel-actions-bar">
-      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este informe de Indicadores Financieros a PDF" style="font-size:12.5px;">
-        📄 Exportar solo estos Indicadores a PDF
-      </button>
-    </div>
-  </div>
+  <h2 class="title">Indicadores y Ratios Financieros</h2>
   <p class="lede">Diagnóstico y análisis financiero integral de <b>Distribuidora Comercial El Roble S.A.</b> (2024 vs 2025). Incluye los 8 indicadores clave de liquidez, solvencia, rentabilidad y rotación, análisis horizontal y estados financieros.</p>
 
   <!-- Banner Universitario -->
@@ -3347,6 +3287,14 @@ function exportCurrentSectionToPdf(opts = {}){
   const withSignatures = opts.withSignatures !== false;
   const withHeader = opts.withHeader !== false;
 
+  const overlay = getModalOverlay();
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.style.display = 'none';
+  }
+  const win = getModalWindow();
+  if(win) win.innerHTML = '';
+
   document.body.classList.remove('print-all');
   if(orient === 'landscape'){
     document.body.classList.add('print-landscape');
@@ -3367,14 +3315,23 @@ function exportCurrentSectionToPdf(opts = {}){
       document.body.classList.remove('print-landscape');
       if(hdr) hdr.style.display = '';
       if(ftr) ftr.style.display = '';
+      if(overlay) overlay.style.display = '';
     }, { once: true });
-  }, 120);
+  }, 140);
 }
 
 function exportAllSectionsToPdf(opts = {}){
   const orient = opts.orientation || 'portrait';
   const withSignatures = opts.withSignatures !== false;
   const withHeader = opts.withHeader !== false;
+
+  const overlay = getModalOverlay();
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.style.display = 'none';
+  }
+  const win = getModalWindow();
+  if(win) win.innerHTML = '';
 
   document.body.classList.add('print-all');
   if(orient === 'landscape'){
@@ -3397,8 +3354,9 @@ function exportAllSectionsToPdf(opts = {}){
       document.body.classList.remove('print-landscape');
       if(hdr) hdr.style.display = '';
       if(ftr) ftr.style.display = '';
+      if(overlay) overlay.style.display = '';
     }, { once: true });
-  }, 120);
+  }, 140);
 }
 
 function showExportPdfModal(){
@@ -3588,14 +3546,14 @@ function showExportPdfModal(){
   const btnCurr = document.getElementById('modal-btn-print-current');
   if(btnCurr) btnCurr.onclick = () => {
     const opts = getExportOptions();
-    closeModal();
+    closeModal(true);
     exportCurrentSectionToPdf(opts);
   };
 
   const btnAll = document.getElementById('modal-btn-print-all');
   if(btnAll) btnAll.onclick = () => {
     const opts = getExportOptions();
-    closeModal();
+    closeModal(true);
     exportAllSectionsToPdf(opts);
   };
 
@@ -4843,6 +4801,7 @@ function openModal(htmlContent, isWide){
   const overlay = getModalOverlay();
   const win = getModalWindow();
   if(!overlay || !win) return;
+  overlay.style.display = '';
   win.className = 'modal-window' + (isWide ? ' wide' : '');
   win.innerHTML = htmlContent;
   overlay.classList.add('active');
@@ -4854,18 +4813,23 @@ function openModal(htmlContent, isWide){
   }, 50);
 }
 
-function closeModal(){
+function closeModal(immediate = false){
   const overlay = getModalOverlay();
   const win = getModalWindow();
   if(!overlay || !win) return;
   overlay.classList.remove('active');
   overlay.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
-  setTimeout(() => {
-    if(!overlay.classList.contains('active')){
-      win.innerHTML = '';
-    }
-  }, 220);
+  if(immediate){
+    overlay.style.display = 'none';
+    win.innerHTML = '';
+  } else {
+    setTimeout(() => {
+      if(!overlay.classList.contains('active')){
+        win.innerHTML = '';
+      }
+    }, 220);
+  }
 }
 
 function showToast(message, type='success'){
