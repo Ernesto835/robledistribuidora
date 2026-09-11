@@ -145,7 +145,7 @@ p.lede{color:var(--ink-soft); max-width:62ch; margin:10px 0 28px; font-size:14.5
 .kpi-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:22px 0 8px;}
 .kpi{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow);}
 .kpi .lbl{font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em;}
-.kpi .val{font-family:"IBM Plex Mono",monospace; font-size:21px; font-weight:600; margin-top:6px; color:var(--accent); font-variant-numeric:tabular-nums;}
+.kpi .val{font-family:"IBM Plex Mono",monospace; font-size:clamp(16px, 2.2vw, 21px); font-weight:600; margin-top:6px; color:var(--accent); font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .kpi .val.gold{color:var(--gold);}
 
 .card{background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:22px 24px; margin-bottom:20px;}
@@ -176,7 +176,7 @@ tr.group-row td{background:var(--surface-2); font-weight:600; color:var(--accent
 .asiento .ahead .del{background:none;border:1px solid var(--border); color:var(--danger); border-radius:6px; padding:3px 9px; font-size:11.5px; cursor:pointer;}
 .asiento .ahead .del:hover{background:var(--danger-soft);}
 .asiento .lines{padding:6px 18px;}
-.aline{display:grid; grid-template-columns:70px 1fr 100px 100px; gap:8px; padding:6px 0; font-size:13.5px; align-items:baseline;}
+.aline{display:grid; grid-template-columns:70px 1fr minmax(110px, 140px) minmax(110px, 140px); gap:8px; padding:6px 0; font-size:13.5px; align-items:baseline;}
 .aline .code{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-faint);}
 .aline .nombre.h{padding-left:26px; color:var(--ink-soft);}
 .aline .d, .aline .h{font-family:"IBM Plex Mono",monospace; text-align:right; font-variant-numeric:tabular-nums;}
@@ -191,7 +191,7 @@ tr.group-row td{background:var(--surface-2); font-weight:600; color:var(--accent
 .faseband:first-child{margin-top:4px;}
 
 /* ---------- T accounts ---------- */
-.mayor-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px;}
+.mayor-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:18px;}
 .tacct{background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); overflow:hidden;}
 .tacct .thead{padding:12px 16px; border-bottom:1px solid var(--border-strong); background:var(--surface-2);}
 .tacct .thead .code{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint);}
@@ -201,16 +201,16 @@ tr.group-row td{background:var(--surface-2); font-weight:600; color:var(--accent
 .tacct .side{padding:10px 12px;}
 .tacct .collbl{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); margin-bottom:6px;}
 .tacct .row{display:flex; justify-content:space-between; gap:6px; padding:3px 0; font-size:12.5px;}
-.tacct .row .ref{color:var(--ink-faint); font-family:"IBM Plex Mono",monospace; font-size:11px;}
-.tacct .row .amt{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;}
+.tacct .row .ref{color:var(--ink-faint); font-family:"IBM Plex Mono",monospace; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:65px;}
+.tacct .row .amt{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap; font-size:12px;}
 .tacct .side.debe .amt{color:var(--ink);}
 .tacct .side.haber .amt{color:var(--haber);}
 .tacct .foot{ display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--border-strong); font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600; background:var(--surface-2); }
-.tacct .foot > div{padding:8px 12px; text-align:right;}
+.tacct .foot > div{padding:8px 12px; text-align:right; font-family:"IBM Plex Mono",monospace; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .tacct .foot .d{color:var(--ink);}
 .tacct .foot .h{color:var(--haber); border-left:1px solid var(--border-strong);}
 .tacct .saldo{padding:8px 12px; font-size:11.5px; color:var(--ink-soft); border-top:1px solid var(--border); text-align:right;}
-.tacct .saldo b{color:var(--accent); font-family:"IBM Plex Mono",monospace;}
+.tacct .saldo b{color:var(--accent); font-family:"IBM Plex Mono",monospace; white-space:nowrap;}
 
 /* ---------- Adjustment explanation cards ---------- */
 .ajuste-card{display:grid; grid-template-columns:1.1fr .9fr; gap:0; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); margin-bottom:16px; overflow:hidden;}
@@ -1048,8 +1048,8 @@ function updateWorkspaceUI(){
   const wsLabel = document.getElementById('topline-ws-label');
   if(wsLabel){
     wsLabel.innerHTML = isLimpio
-      ? '<span style="color:var(--accent);">✨ Modo Limpio (0 Asientos — Listo para ingresar)</span>'
-      : '<span style="color:var(--accent);">🏢 Caso El Roble (Resuelto — 16 Asientos)</span>';
+      ? `<span style="color:var(--accent);">✨ Modo Limpio (${ENTRIES.length} Asientos — Listo para ingresar)</span>`
+      : `<span style="color:var(--accent);">🏢 Caso El Roble (Resuelto — ${ENTRIES.length} Asientos)</span>`;
   }
   const brandMark = document.getElementById('brand-mark');
   if(brandMark) brandMark.textContent = isLimpio ? '✨' : 'R';
@@ -1077,18 +1077,24 @@ const BASE=['apertura','operacion'], ADJ=['apertura','operacion','ajuste'], ALL=
 const GRUPOS = ['Activo Corriente','Activo No Corriente','Pasivo Corriente','Pasivo No Corriente','Patrimonio','Ingresos','Gastos','Cuenta Puente'];
 
 function fmt(n){
-  const sign = n<0?'-':'';
-  n=Math.abs(n)+1e-9;
-  const parts = n.toFixed(2).split('.');
-  parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return sign+'$'+parts[0]+'.'+parts[1];
+  if(n === null || n === undefined || typeof n === 'undefined') return '$0.00';
+  const num = Number(n);
+  if(isNaN(num) || !isFinite(num)) return '$0.00';
+  const sign = num < 0 ? '-' : '';
+  const abs = Math.abs(num) + 1e-9;
+  const parts = abs.toFixed(2).split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return sign + '$' + parts[0] + '.' + (parts[1] || '00');
 }
 function sums(code, fases){
-  let d=0,h=0;
+  let dCents = 0, hCents = 0;
   ENTRIES.filter(e=>fases.includes(e.fase)).forEach(e=>{
-    e.lines.filter(l=>l.c===code).forEach(l=>{d+=l.d||0; h+=l.h||0;});
+    e.lines.filter(l=>l.c===code).forEach(l=>{
+      dCents += Math.round((Number(l.d) || 0) * 100);
+      hCents += Math.round((Number(l.h) || 0) * 100);
+    });
   });
-  return {d,h};
+  return { d: dCents / 100, h: hCents / 100 };
 }
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function grupoEst(g){ return g==='Ingresos'||g==='Gastos' ? 'ER' : (g==='Cuenta Puente' ? 'X' : 'BG'); }
@@ -1155,12 +1161,13 @@ function accountOptions(selected){
   return ACCOUNTS.map(a=>`<option value="${a.c}" ${a.c===selected?'selected':''}>${a.c} — ${escHtml(a.n)}</option>`).join('');
 }
 function renderDatosPanel(){
-  const N_LINES = 10;
+  const N_LINES = 6;
   const lineRows = Array.from({length:N_LINES}).map((_,i)=>`
-    <div class="line-row">
-      <select data-role="c" data-i="${i}"><option value="">—</option>${accountOptions()}</select>
-      <input type="number" step="0.01" min="0" placeholder="0.00" data-role="d" data-i="${i}">
-      <input type="number" step="0.01" min="0" placeholder="0.00" data-role="h" data-i="${i}">
+    <div class="line-row" style="grid-template-columns:2.5fr 1.2fr 1.2fr 34px;">
+      <select data-role="c" data-i="${i}"><option value="">— Seleccionar cuenta —</option>${accountOptions()}</select>
+      <input type="number" step="0.01" min="0" max="999999999999.99" placeholder="0.00" data-role="d" data-i="${i}">
+      <input type="number" step="0.01" min="0" max="999999999999.99" placeholder="0.00" data-role="h" data-i="${i}">
+      <button type="button" class="mini-del" data-form-del-line title="Quitar línea" style="font-size:16px;">✕</button>
     </div>`).join('');
 
   const entryRows = ENTRIES.slice().reverse().map(e=>{
@@ -1230,9 +1237,15 @@ function renderDatosPanel(){
         </select></label>
       </div>
       <label class="field" style="margin-top:12px;">Glosa / explicación<textarea name="glosa" rows="2" required placeholder="Ej: Pago de arriendo del mes de febrero"></textarea></label>
-      <div class="lines-editor" id="lines-editor">
-        <div class="lines-head"><span>Cuenta</span><span>Debe</span><span>Haber</span></div>
-        ${lineRows}
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; margin-bottom:6px;">
+        <span style="font-size:12px; text-transform:uppercase; font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--ink-soft);">Detalle de Cuentas (Debe y Haber)</span>
+        <button type="button" class="btn" id="btn-add-line-form" style="padding:4px 10px; font-size:12px;">+ Agregar línea</button>
+      </div>
+      <div class="lines-editor" id="lines-editor" style="max-height:360px; overflow-y:auto;">
+        <div class="lines-head" style="grid-template-columns:2.5fr 1.2fr 1.2fr 34px;"><span>Cuenta</span><span>Debe</span><span>Haber</span><span></span></div>
+        <div id="lines-editor-list">
+          ${lineRows}
+        </div>
       </div>
       <div class="asiento-check" id="asiento-check">Debe $0.00 · Haber $0.00</div>
       <div class="btn-row">
@@ -2749,23 +2762,61 @@ if(btnExportPdf) btnExportPdf.addEventListener('click', ()=>window.print());
 function readAsientoLines(form){
   const lines=[];
   form.querySelectorAll('.line-row').forEach(row=>{
-    const c=row.querySelector('[data-role="c"]').value;
-    const d=parseFloat(row.querySelector('[data-role="d"]').value)||0;
-    const h=parseFloat(row.querySelector('[data-role="h"]').value)||0;
-    if(c && (d>0.0001 || h>0.0001)) lines.push({c,d,h});
+    const c=row.querySelector('[data-role="c"]')?.value || '';
+    let d=parseFloat(row.querySelector('[data-role="d"]')?.value) || 0;
+    let h=parseFloat(row.querySelector('[data-role="h"]')?.value) || 0;
+    // Protección contra números negativos y redondeo a centavos exactos
+    d = Math.max(0, Math.round(d * 100) / 100);
+    h = Math.max(0, Math.round(h * 100) / 100);
+    // Límite de seguridad para montos astronómicos (hasta 1 billón)
+    if(d > 999999999999.99) d = 999999999999.99;
+    if(h > 999999999999.99) h = 999999999999.99;
+    if(c && (d > 0.0001 || h > 0.0001)) lines.push({c, d, h});
   });
   return lines;
 }
 function updateAsientoCheck(form){
   const lines=readAsientoLines(form);
-  const sd=lines.reduce((s,l)=>s+l.d,0), sh=lines.reduce((s,l)=>s+l.h,0);
+  let sdCents = 0, shCents = 0;
+  lines.forEach(l => {
+    sdCents += Math.round(l.d * 100);
+    shCents += Math.round(l.h * 100);
+  });
+  const sd = sdCents / 100;
+  const sh = shCents / 100;
+  const diffCents = Math.abs(sdCents - shCents);
+  const diff = diffCents / 100;
+
+  // Verificar si hay alguna línea con monto pero sin cuenta elegida
+  let missingAccount = false;
+  form.querySelectorAll('.line-row').forEach(row=>{
+    const c=row.querySelector('[data-role="c"]')?.value || '';
+    const d=parseFloat(row.querySelector('[data-role="d"]')?.value) || 0;
+    const h=parseFloat(row.querySelector('[data-role="h"]')?.value) || 0;
+    if(!c && (d > 0.0001 || h > 0.0001)) missingAccount = true;
+  });
+
   const el=document.getElementById('asiento-check');
   const btn=document.getElementById('btn-guardar-asiento');
   if(!el) return;
-  const balanced = lines.length>=2 && Math.abs(sd-sh)<0.01 && sd>0;
-  el.className='asiento-check '+(balanced?'ok':'bad');
-  el.textContent = `Debe ${fmt(sd)} · Haber ${fmt(sh)}` + (balanced?' ✓ cuadra':' — falta cuadrar (mínimo 2 líneas)');
-  if(btn) btn.disabled=!balanced;
+
+  const balanced = lines.length >= 2 && diffCents === 0 && sdCents > 0 && !missingAccount;
+  el.className='asiento-check ' + (balanced ? 'ok' : 'bad');
+
+  if(balanced){
+    el.innerHTML = `<span>Debe <b>${fmt(sd)}</b> &middot; Haber <b>${fmt(sh)}</b></span> <span style="font-weight:700; color:var(--accent);">&check; &iexcl;Partida doble cuadrada perfectamente!</span>`;
+  } else if(missingAccount){
+    el.innerHTML = `<span>Debe ${fmt(sd)} &middot; Haber ${fmt(sh)}</span> <span style="color:var(--danger); font-weight:600;">&iexcl;Falta seleccionar cuenta en una de las l&iacute;neas con monto!</span>`;
+  } else if(lines.length < 2){
+    el.innerHTML = `<span>Debe ${fmt(sd)} &middot; Haber ${fmt(sh)}</span> <span>&mdash; Se requieren m&iacute;nimo 2 cuentas para la partida doble.</span>`;
+  } else {
+    const hint = sdCents > shCents 
+      ? `Faltan <b>${fmt(diff)}</b> en el Haber` 
+      : `Faltan <b>${fmt(diff)}</b> en el Debe`;
+    el.innerHTML = `<span>Debe <b>${fmt(sd)}</b> &middot; Haber <b>${fmt(sh)}</b></span> <span style="color:var(--danger);">&mdash; Descuadre: <b>${fmt(diff)}</b> (${hint})</span>`;
+  }
+
+  if(btn) btn.disabled = !balanced;
 }
 
 contentEl.addEventListener('input', e=>{
@@ -2778,8 +2829,48 @@ contentEl.addEventListener('input', e=>{
       r.style.display = (!q || text.includes(q)) ? '' : 'none';
     });
   }
+
+  // Auto-limpieza si se escribe en Debe y había valor en Haber (y viceversa) en la misma línea
+  if(e.target.dataset.role === 'd' && parseFloat(e.target.value) > 0){
+    const hInp = e.target.closest('.line-row')?.querySelector('[data-role="h"]');
+    if(hInp && hInp.value) hInp.value = '';
+  } else if(e.target.dataset.role === 'h' && parseFloat(e.target.value) > 0){
+    const dInp = e.target.closest('.line-row')?.querySelector('[data-role="d"]');
+    if(dInp && dInp.value) dInp.value = '';
+  }
+
   const form=e.target.closest('#form-asiento');
   if(form) updateAsientoCheck(form);
+});
+
+// Eventos de clic para agregar o quitar líneas en el formulario principal
+contentEl.addEventListener('click', e => {
+  if(e.target.closest('#btn-add-line-form')){
+    e.preventDefault();
+    const list = document.getElementById('lines-editor-list');
+    if(!list) return;
+    const row = document.createElement('div');
+    row.className = 'line-row';
+    row.style.gridTemplateColumns = '2.5fr 1.2fr 1.2fr 34px';
+    row.innerHTML = `
+      <select data-role="c"><option value="">— Seleccionar cuenta —</option>${accountOptions()}</select>
+      <input type="number" step="0.01" min="0" max="999999999999.99" placeholder="0.00" data-role="d">
+      <input type="number" step="0.01" min="0" max="999999999999.99" placeholder="0.00" data-role="h">
+      <button type="button" class="mini-del" data-form-del-line title="Quitar línea">✕</button>
+    `;
+    list.appendChild(row);
+    const form = document.getElementById('form-asiento');
+    if(form) updateAsientoCheck(form);
+    return;
+  }
+  if(e.target.closest('[data-form-del-line]')){
+    e.preventDefault();
+    const row = e.target.closest('.line-row');
+    const form = e.target.closest('#form-asiento');
+    if(row) row.remove();
+    if(form) updateAsientoCheck(form);
+    return;
+  }
 });
 
 contentEl.addEventListener('submit', e=>{
