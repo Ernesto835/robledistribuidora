@@ -335,7 +335,7 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
 @media (prefers-reduced-motion: reduce){ .intro{display:none;} }
 
 /* ---------- Impresión / Exportar a PDF ---------- */
-.print-only-header, .print-only-footer { display: none; }
+.print-only-header, .print-only-footer, .print-only-catalogo { display: none; }
 @page {
   size: A4 portrait;
   margin: 10mm 12mm 14mm 12mm;
@@ -402,6 +402,18 @@ body.print-landscape {
     display: block !important;
     page-break-after: auto !important;
     page-break-before: auto !important;
+  }
+
+  /* Impresión exclusiva del Catálogo de Cuentas desde Mis Cuentas / Mis Datos */
+  body.print-catalogo-only #panel-datos > *:not(.print-only-catalogo) {
+    display: none !important;
+  }
+  body.print-catalogo-only .print-only-catalogo {
+    display: block !important;
+    page-break-inside: auto !important;
+  }
+  body.print-catalogo-only #panel-datos {
+    display: block !important;
   }
 
   /* Modo informe completo: Exporta todos los apartados correlativamente */
@@ -1465,6 +1477,59 @@ function accountOptions(selected){
     return `<option value="${a.c}" ${a.c===selected?'selected':''}>${prefix}${a.c} — ${escHtml(a.n)}</option>`;
   }).join('');
 }
+
+/* Generador de la vista oficial del Catálogo de Cuentas para exportación/impresión a PDF */
+function generateCatalogoPrintHtml(){
+  let rowsHtml = '';
+  ACCOUNTS.forEach((a, idx) => {
+    const isSub = a.c.length > 4;
+    const parentCode = isSub ? a.c.slice(0, 4) : '—';
+    const estLabel = a.est === 'BG' ? 'Balance General' : (a.est === 'ER' ? 'Estado de Resultados' : 'Cuenta Puente / Orden');
+    
+    rowsHtml += `
+      <tr>
+        <td class="code" style="text-align:center; font-weight:700; width:80px;">${a.c}</td>
+        <td style="text-align:left; ${isSub ? 'padding-left:22px; font-weight:500;' : 'font-weight:700;'}">
+          ${isSub ? '<span style="color:#555; margin-right:4px;">↳</span>' : ''}${escHtml(a.n)}
+        </td>
+        <td style="text-align:center; width:140px;">${escHtml(a.g)}</td>
+        <td style="text-align:center; width:135px;">${estLabel}</td>
+        <td style="text-align:center; width:125px;">${isSub ? 'Subcuenta (Detalle)' : 'Cuenta Principal'}</td>
+        <td class="code" style="text-align:center; width:80px;">${parentCode}</td>
+      </tr>
+    `;
+  });
+
+  return `
+    <div class="print-catalogo-container">
+      <div style="margin-bottom:12px; font-size:9pt; color:#2D4D3D; background:#F2F7F4; border:1px solid #D0DCD5; border-radius:4px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center;">
+        <div><b>Plan Contable Oficial Vigente (NIIF para PYMES)</b> &bull; Distribuidora Comercial El Roble S.A.</div>
+        <div>Total Registrado: <b>${ACCOUNTS.length} Cuentas y Subcuentas</b></div>
+      </div>
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="width:80px;">Código</th>
+            <th style="text-align:left;">Nombre / Denominación de la Cuenta</th>
+            <th style="width:140px;">Clasificación</th>
+            <th style="width:135px;">Estado Financiero</th>
+            <th style="width:125px;">Nivel Jerárquico</th>
+            <th style="width:80px;">Cód. Padre</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+          <tr class="tot-row">
+            <td colspan="6" style="text-align:center; font-weight:bold; padding:8px; font-size:9.5pt;">
+              TOTAL CONSOLIDADO: ${ACCOUNTS.length} CUENTAS Y SUBCUENTAS EN EL PLAN CONTABLE INSTITUCIONAL
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 function renderDatosPanel(){
   const N_LINES = 6;
   const lineRows = Array.from({length:N_LINES}).map((_,i)=>`
@@ -1521,6 +1586,11 @@ function renderDatosPanel(){
   }).join('');
 
   return `
+  <!-- Vista oficial del Catálogo de Cuentas exclusiva para impresión / PDF -->
+  <div class="print-only-catalogo" id="print-only-catalogo">
+    ${generateCatalogoPrintHtml()}
+  </div>
+
   <div class="eyebrow">Paso 02 &middot; Tus datos</div>
   <h2 class="title">Mis Datos — Registro de Cuentas y Asientos</h2>
   <p class="lede">Agrega cuentas y asientos propios; el diario, el mayor, los balances y los estados financieros se recalculan automáticamente en tiempo real.</p>
@@ -3144,6 +3214,7 @@ function selectPanel(id){
   activePanelId=id;
   document.querySelectorAll('.steps .step').forEach(b=>b.classList.toggle('active', b.dataset.id===id));
   document.querySelectorAll('section.panel').forEach(s=>s.classList.toggle('active', s.id==='panel-'+id));
+  document.body.classList.toggle('print-catalogo-only', id === 'datos');
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -3276,6 +3347,8 @@ function updatePrintHeader(customTitle){
   if(!titleEl) return;
   if(customTitle){
     titleEl.textContent = customTitle;
+  } else if(activePanelId === 'datos'){
+    titleEl.textContent = 'PLAN OFICIAL DE CUENTAS — CATÁLOGO CONTABLE CODIFICADO';
   } else {
     const p = PANELS.find(x => x.id === activePanelId);
     titleEl.textContent = p ? `SECCIÓN: ${p.label.toUpperCase()}` : 'DOCUMENTO CONTABLE OFICIAL';
@@ -3283,6 +3356,7 @@ function updatePrintHeader(customTitle){
 }
 
 function exportCurrentSectionToPdf(opts = {}){
+  const isDatos = activePanelId === 'datos';
   const orient = opts.orientation || ((activePanelId === 'hoja' || activePanelId === 'balance') ? 'landscape' : 'portrait');
   const withSignatures = opts.withSignatures !== false;
   const withHeader = opts.withHeader !== false;
@@ -3302,6 +3376,14 @@ function exportCurrentSectionToPdf(opts = {}){
     document.body.classList.remove('print-landscape');
   }
 
+  if(isDatos){
+    const catEl = document.getElementById('print-only-catalogo');
+    if(catEl) catEl.innerHTML = generateCatalogoPrintHtml();
+    document.body.classList.add('print-catalogo-only');
+  } else {
+    document.body.classList.remove('print-catalogo-only');
+  }
+
   const hdr = document.getElementById('print-only-header');
   if(hdr) hdr.style.display = withHeader ? 'block' : 'none';
 
@@ -3313,6 +3395,7 @@ function exportCurrentSectionToPdf(opts = {}){
     window.print();
     window.addEventListener('afterprint', () => {
       document.body.classList.remove('print-landscape');
+      document.body.classList.remove('print-catalogo-only');
       if(hdr) hdr.style.display = '';
       if(ftr) ftr.style.display = '';
       if(overlay) overlay.style.display = '';
@@ -3334,6 +3417,7 @@ function exportAllSectionsToPdf(opts = {}){
   if(win) win.innerHTML = '';
 
   document.body.classList.add('print-all');
+  document.body.classList.remove('print-catalogo-only');
   if(orient === 'landscape'){
     document.body.classList.add('print-landscape');
   } else {
@@ -3352,6 +3436,7 @@ function exportAllSectionsToPdf(opts = {}){
     window.addEventListener('afterprint', () => {
       document.body.classList.remove('print-all');
       document.body.classList.remove('print-landscape');
+      document.body.classList.remove('print-catalogo-only');
       if(hdr) hdr.style.display = '';
       if(ftr) ftr.style.display = '';
       if(overlay) overlay.style.display = '';
@@ -3361,6 +3446,7 @@ function exportAllSectionsToPdf(opts = {}){
 
 function showExportPdfModal(){
   const curr = PANELS.find(p => p.id === activePanelId) || { id: 'diario', label: 'Libro Diario' };
+  const isDatos = curr.id === 'datos' || curr.id === 'catalogo';
   let currentOrient = (curr.id === 'hoja' || curr.id === 'balance') ? 'landscape' : 'portrait';
 
   const html = `
@@ -3368,7 +3454,7 @@ function showExportPdfModal(){
       <div class="modal-header-icon info">📥</div>
       <div>
         <div class="modal-title">Exportar Reporte Contable</div>
-        <div class="modal-subtitle">Apartado activo: <b style="color:var(--accent);">${escHtml(curr.label)}</b></div>
+        <div class="modal-subtitle">Apartado activo: <b style="color:var(--accent);">${isDatos ? 'Catálogo de Cuentas (Plan Contable)' : escHtml(curr.label)}</b></div>
       </div>
       <button type="button" class="modal-close-btn" data-modal-close aria-label="Cerrar">&times;</button>
     </div>
@@ -3431,8 +3517,8 @@ function showExportPdfModal(){
             <button type="button" class="btn primary" id="modal-btn-print-current" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
               <span style="font-size:18px;">📄</span>
               <div style="flex:1;">
-                <div style="font-weight:700; font-size:13px; color:var(--surface);">Exportar este apartado a PDF</div>
-                <div style="font-size:11px; opacity:0.9; color:var(--surface);">Solo ${escHtml(curr.label)}</div>
+                <div style="font-weight:700; font-size:13px; color:var(--surface);">${isDatos ? 'Exportar Catálogo de Cuentas a PDF' : 'Exportar este apartado a PDF'}</div>
+                <div style="font-size:11px; opacity:0.9; color:var(--surface);">${isDatos ? 'Plan oficial con todas las cuentas codificadas' : 'Solo ' + escHtml(curr.label)}</div>
               </div>
             </button>
             <button type="button" class="btn" id="modal-btn-print-all" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
@@ -3470,15 +3556,15 @@ function showExportPdfModal(){
             <button type="button" class="btn" id="modal-btn-excel-current" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
               <span style="font-size:18px;">📊</span>
               <div style="flex:1;">
-                <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar este apartado en Excel (.xls)</div>
-                <div style="font-size:11px; color:var(--ink-soft);">Tablas de «${escHtml(curr.label)}» con diseño corporativo</div>
+                <div style="font-weight:700; font-size:13px; color:var(--ink);">${isDatos ? 'Descargar Catálogo de Cuentas en Excel (.xls)' : 'Descargar este apartado en Excel (.xls)'}</div>
+                <div style="font-size:11px; color:var(--ink-soft);">${isDatos ? 'Plan oficial (' + ACCOUNTS.length + ' cuentas) con formato ejecutivo y firmas' : 'Tablas de «' + escHtml(curr.label) + '» con diseño corporativo'}</div>
               </div>
             </button>
             <button type="button" class="btn" id="modal-btn-catalogo-excel" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
               <span style="font-size:18px;">🌿</span>
               <div style="flex:1;">
                 <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar Catálogo de Cuentas (.xls)</div>
-                <div style="font-size:11px; color:var(--ink-soft);">94 cuentas y subcuentas del plan contable UTEQ</div>
+                <div style="font-size:11px; color:var(--ink-soft);">${ACCOUNTS.length} cuentas y subcuentas del plan contable UTEQ</div>
               </div>
             </button>
             <button type="button" class="btn" id="modal-btn-diario-csv" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
@@ -3894,7 +3980,7 @@ function exportCurrentSectionToExcel(opts = {}){
     exportDiarioExcel(opts);
     return;
   }
-  if(curr.id === 'catalogo'){
+  if(curr.id === 'datos' || curr.id === 'catalogo'){
     exportCatalogoExcel(opts);
     return;
   }
@@ -4413,11 +4499,18 @@ function importDiarioJSON(file){
 // Sincronizar encabezado de impresión con la sección activa en caso de Ctrl+P directo
 window.addEventListener('beforeprint', () => {
   if(!document.body.classList.contains('print-all')){
+    const isDatos = activePanelId === 'datos';
+    document.body.classList.toggle('print-catalogo-only', isDatos);
+    if(isDatos){
+      const catEl = document.getElementById('print-only-catalogo');
+      if(catEl) catEl.innerHTML = generateCatalogoPrintHtml();
+    }
     updatePrintHeader();
   }
 });
 window.addEventListener('afterprint', () => {
   document.body.classList.remove('print-all');
+  document.body.classList.toggle('print-catalogo-only', activePanelId === 'datos');
 });
 
 const btnExportPdf = document.getElementById('btn-export-pdf');
