@@ -4,9 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Distribuidora El Roble — Ciclo Contable</title>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('elRoble.theme') || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-:root{
+:root, :root[data-theme="light"]{
   --bg:#EEF1EC;
   --surface:#FFFFFF;
   --surface-2:#F4F6F2;
@@ -22,25 +32,6 @@
   --danger:#B23B2E;
   --danger-soft:#F3E1DD;
   --shadow: 0 1px 2px rgba(24,36,32,0.06), 0 6px 20px rgba(24,36,32,0.05);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#10160E;
-    --surface:#171F1A;
-    --surface-2:#1C251F;
-    --ink:#E7ECE7;
-    --ink-soft:#A9B6AE;
-    --ink-faint:#7C8A82;
-    --accent:#5FC493;
-    --accent-soft:#1D3229;
-    --gold:#D9B15C;
-    --haber:#CB8F79;
-    --border:#2A3530;
-    --border-strong:#3B4941;
-    --danger:#E08573;
-    --danger-soft:#33201C;
-    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
-  }
 }
 :root[data-theme="dark"]{
   --bg:#10160E;
@@ -286,9 +277,6 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
   --viz-ink-soft:  var(--ink-soft);
   --viz-grid:      var(--border);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) .viz-root{ --series-1:#199e70; --series-2:#d95926; }
-}
 :root[data-theme="dark"] .viz-root{ --series-1:#199e70; --series-2:#d95926; }
 .chart-card{background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:22px 24px; margin-bottom:20px;}
 .chart-card h3{font-size:15px; font-weight:600; font-family:"IBM Plex Sans",sans-serif; margin-bottom:2px;}
@@ -472,9 +460,7 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
 .ratio-badge.good { background: var(--accent-soft); color: var(--accent); }
 .ratio-badge.warn { background: var(--danger-soft); color: var(--danger); }
 .ratio-badge.neutral { background: #FBF3DC; color: var(--gold); }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) .ratio-badge.neutral { background: #2E2614; color: var(--gold); }
-}
+:root[data-theme="dark"] .ratio-badge.neutral { background: #2E2614; color: var(--gold); }
 
 .formula-box {
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
@@ -702,9 +688,7 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
 .modal-icon-badge.warning { background: #FBF3DC; color: var(--gold); }
 .modal-icon-badge.info { background: var(--accent-soft); color: var(--accent); }
 .modal-icon-badge.edit { background: var(--accent-soft); color: var(--accent); }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) .modal-icon-badge.warning { background: #2E2614; color: var(--gold); }
-}
+:root[data-theme="dark"] .modal-icon-badge.warning { background: #2E2614; color: var(--gold); }
 
 .modal-title { font-family: "Fraunces", Georgia, serif; font-size: 18px; font-weight: 600; margin: 0; color: var(--ink); }
 .modal-close-btn {
@@ -785,6 +769,12 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
       Sistema de inventario permanente<br>
       Elaborado por: Ernesto Gregory Luna Mora
       <div class="sync-pill off" id="sync-pill"><span class="dot"></span><span id="sync-label">Comprobando guardado…</span></div>
+      <div style="margin-top:10px;">
+        <button type="button" class="btn" id="sidebar-theme-toggle" title="Cambiar a Modo Claro / Modo Oscuro" style="width:100%; font-size:12px; padding:6px 10px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+          <span id="sidebar-theme-icon">☀️</span>
+          <span id="sidebar-theme-label">Modo Claro</span>
+        </button>
+      </div>
     </div>
   </aside>
 
@@ -806,6 +796,10 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
           </button>
         </div>
         <div class="period" id="topline-period">01 – 31 ENE 2026</div>
+        <button type="button" class="btn" id="btn-theme-toggle" title="Cambiar entre Modo Claro y Modo Oscuro" style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; padding:8px 12px; cursor:pointer;">
+          <span id="theme-toggle-icon">☀️</span>
+          <span id="theme-toggle-label">Modo Claro</span>
+        </button>
         <button type="button" class="btn primary" id="btn-export-pdf" title="Exportar a PDF (elige solo el apartado actual o el ciclo completo)">📄 Exportar a PDF</button>
       </div>
     </div>
@@ -3011,6 +3005,57 @@ rerenderAllPanels();
 updateWorkspaceUI();
 selectPanel(activePanelId);
 initPersistence();
+initTheme();
+
+/* =========================================================
+   SISTEMA DE MODO CLARO Y MODO OSCURO (THEME SWITCHER)
+   ========================================================= */
+const THEME_KEY = 'elRoble.theme';
+
+function getCurrentTheme(){
+  return document.documentElement.getAttribute('data-theme') || 'light';
+}
+
+function applyTheme(theme, notify = false){
+  const nextTheme = (theme === 'dark') ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', nextTheme);
+  try{
+    localStorage.setItem(THEME_KEY, nextTheme);
+  }catch(e){}
+
+  const isLight = (nextTheme === 'light');
+  const topIcon = document.getElementById('theme-toggle-icon');
+  const topLabel = document.getElementById('theme-toggle-label');
+  const topBtn = document.getElementById('btn-theme-toggle');
+  if(topIcon) topIcon.textContent = isLight ? '☀️' : '🌙';
+  if(topLabel) topLabel.textContent = isLight ? 'Modo Claro' : 'Modo Oscuro';
+  if(topBtn) topBtn.title = isLight ? 'Modo Claro activo (Clic para Modo Oscuro)' : 'Modo Oscuro activo (Clic para Modo Claro)';
+
+  const sideIcon = document.getElementById('sidebar-theme-icon');
+  const sideLabel = document.getElementById('sidebar-theme-label');
+  const sideBtn = document.getElementById('sidebar-theme-toggle');
+  if(sideIcon) sideIcon.textContent = isLight ? '☀️' : '🌙';
+  if(sideLabel) sideLabel.textContent = isLight ? 'Modo Claro' : 'Modo Oscuro';
+  if(sideBtn) sideBtn.title = isLight ? 'Modo Claro activo (Clic para Modo Oscuro)' : 'Modo Oscuro activo (Clic para Modo Claro)';
+
+  if(notify){
+    showToast(isLight ? '☀️ Modo Claro activado (Papel formal)' : '🌙 Modo Oscuro activado', 'info');
+  }
+}
+
+function toggleTheme(){
+  const curr = getCurrentTheme();
+  const next = (curr === 'dark') ? 'light' : 'dark';
+  applyTheme(next, true);
+}
+
+function initTheme(){
+  let theme = 'light';
+  try{
+    theme = localStorage.getItem(THEME_KEY) || 'light';
+  }catch(e){}
+  applyTheme(theme, false);
+}
 
 /* =========================================================
    SISTEMA DE EXPORTACIÓN A PDF Y DESCARGA POR APARTADO
@@ -4063,6 +4108,13 @@ document.addEventListener('click', e => {
   const overlay = document.getElementById('modal-overlay');
   if(e.target === overlay || e.target.closest('[data-modal-close]')){
     closeModal();
+    return;
+  }
+
+  // 0. Cambio de Tema (Modo Claro / Modo Oscuro)
+  if(e.target.closest('#btn-theme-toggle') || e.target.closest('#sidebar-theme-toggle')){
+    e.preventDefault();
+    toggleTheme();
     return;
   }
   // 1. Acciones de Asientos: Editar
