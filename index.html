@@ -1515,7 +1515,7 @@ function renderHojaPanel(){
       <th>Cuenta</th><th></th>
       <th colspan="2" style="text-align:center;">Ajustes</th>
       <th colspan="2" style="text-align:center;">Estado Resultados</th>
-      <th colspan="2" style="text-align:center;">Situación Financiera</th>
+      <th colspan="2" style="text-align:center;">Situación Financiera (Balance General)</th>
     </tr></thead>
     <tbody>${body}
       <tr class="total"><td></td><td>Subtotales</td><td></td><td></td>
@@ -1584,7 +1584,7 @@ function renderEstadosPanel(){
       <div class="sline grand"><span>Utilidad Neta del Ejercicio</span><span class="amt">${fmt(utilNeta)}</span></div>
     </div>
     <div class="statement">
-      <h3>Estado de Situación Financiera</h3>
+      <h3>Estado de Situación Financiera (Balance General)</h3>
       <div class="sub">A la fecha de corte</div>
       <div class="sline section-lbl">Activo corriente</div>
       ${activoCorriente.map(a=>`<div class="sline indent"><span>${escHtml(a.n)}</span><span class="amt">${fmt(b(a.c)+activoCorrienteContra.filter(x=>relatedTo(x,a)).reduce((s,x)=>s+b(x.c),0))}</span></div>`).join('')}
@@ -2608,7 +2608,7 @@ const PANELS = [
   {id:'mayor', label:'Libro Mayor · Cuentas T', render:renderMayorPanel},
   {id:'balanceAj', label:'Balance Ajustado', render:renderBalanceAjustadoPanel},
   {id:'hoja', label:'Hoja de Trabajo', render:renderHojaPanel},
-  {id:'estados', label:'Estados Financieros', render:renderEstadosPanel},
+  {id:'estados', label:'Estados Financieros (ER y Balance)', render:renderEstadosPanel},
   {id:'graficos', label:'Gráficos', render:renderGraficosPanel},
   {id:'examen', label:'Indicadores Financieros', render:renderExamenPanel, highlight:true},
   {id:'cierre', label:'Cierre Contable', render:renderCierrePanel},
