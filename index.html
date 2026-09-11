@@ -1400,32 +1400,10 @@ function renderDatosPanel(){
     </tr>`;
   }).join('');
 
-  const isLimpio = (currentWorkspace === 'limpio');
-  const bannerHtml = isLimpio ? `
-    <div class="ws-banner limpio">
-      <div>
-        <span class="ws-banner-badge">✨ MODO LIMPIO ACTIVO</span>
-        <b>Entorno de trabajo en blanco:</b> Registra transacciones comerciales libres en el formulario inferior. El libro diario, mayorización en Cuentas 'T', balances y estados financieros se procesarán automáticamente en tiempo real.
-        <div style="font-size:12px; color:var(--ink-soft); margin-top:4px;">💡 El ejercicio principal de <b>Distribuidora El Roble</b> permanece guardado y puedes alternar entre ambos entornos cuando desees.</div>
-      </div>
-      <button type="button" class="btn" data-switch-ws="roble" style="padding:6px 12px; font-size:12px; white-space:nowrap;">Volver a El Roble 🏢</button>
-    </div>
-  ` : `
-    <div class="ws-banner">
-      <div>
-        <span class="ws-banner-badge">🏢 CASO EL ROBLE</span>
-        Estás visualizando el ejercicio contable completo de Distribuidora Comercial El Roble S.A. (24 asientos contables de enero 2026). Para registrar un ejercicio nuevo desde cero sin alterar estos datos, utiliza el <b>Modo Limpio</b>.
-      </div>
-      <button type="button" class="btn primary" data-switch-ws="limpio" style="padding:6px 12px; font-size:12px; white-space:nowrap;">Abrir Modo Limpio ✨</button>
-    </div>
-  `;
-
   return `
   <div class="eyebrow">Paso 02 &middot; Tus datos</div>
-  <h2 class="title">Mis Datos — ${isLimpio ? 'Modo Limpio (Nuevo Ejercicio)' : 'Caso Distribuidora El Roble'}</h2>
+  <h2 class="title">Mis Datos — Registro de Cuentas y Asientos</h2>
   <p class="lede">Agrega cuentas y asientos propios; el diario, el mayor, los balances y los estados financieros se recalculan automáticamente en tiempo real.</p>
-
-  ${bannerHtml}
 
   <!-- Barra de Acceso Rápido y Salto Directo -->
   <div class="misdatos-quicknav" id="misdatos-quicknav">
