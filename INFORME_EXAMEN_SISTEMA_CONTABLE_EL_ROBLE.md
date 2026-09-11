@@ -46,8 +46,8 @@ Se diseñó, desarrolló y desplegó en producción el aplicativo **«Distribuid
 8. **Análisis Horizontal** con cálculo comparativo de **Variación Absoluta ($)** y **Variación Porcentual (%)** entre períodos fiscales.
 9. **Diagnóstico Computarizado de Ratios Financieros** (Liquidez Corriente 2.40, Prueba Ácida 1.63, Endeudamiento 29.58%, Capital de Trabajo $27,150.00, etc.).
 10. **Regularización y Asientos de Cierre** formalizados (C1, C2 y C3) a través de la cuenta transitoria *Resumen de Rentas y Gastos*.
-11. **Modo Limpio (Lienzo en Blanco)**: Entorno complementario con 0 asientos para permitir a la docente ingresar cualquier transacción en vivo y verificar la reactividad del sistema.
-12. **Exportación Selectiva a PDF por Apartado**: Permite al evaluador o usuario exportar únicamente la sección activa o el informe integral, además de descargas en CSV y JSON.
+11. **Modo Limpio (Nuevo Ejercicio)**: Entorno complementario con 0 asientos para ingresar transacciones contables independientes en tiempo real y verificar la reactividad del sistema.
+12. **Exportación Unificada a PDF y Excel**: Permite al usuario exportar el apartado activo o el informe integral en formatos PDF oficial y hojas de cálculo Excel (.xls / .csv), además de descargas en JSON.
 13. **Selector Dual de Modo Claro y Modo Oscuro**: Interfaz ergonómica con paleta de papel formal contable (`#EEF1EC`) y persistencia local para defensas presenciales.
 
 ---

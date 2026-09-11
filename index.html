@@ -880,7 +880,7 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
           <button type="button" class="ws-tab active" data-ws="roble" title="Ejercicio contable completo con 24 asientos y estados financieros resueltos">
             <span>🏢 Caso El Roble</span>
           </button>
-          <button type="button" class="ws-tab" data-ws="limpio" title="Lienzo en blanco para registrar nuevos ejercicios contables">
+          <button type="button" class="ws-tab" data-ws="limpio" title="Entorno en blanco para registrar nuevos ejercicios contables">
             <span>✨ Modo Limpio (En Blanco)</span>
           </button>
         </div>
@@ -1145,7 +1145,7 @@ const SEED_ENTRIES = [
 
 /* =========================================================
    SISTEMA DE MULTI-ENTORNO (CASO EL ROBLE vs MODO LIMPIO)
-   Permite alternar entre el ejercicio principal y un lienzo en blanco
+   Permite alternar entre el ejercicio principal y un entorno en blanco
    para registrar ejercicios contables independientes.
    ========================================================= */
 const WS_ACTIVE_KEY = 'elRoble.activeWorkspace.v2';
@@ -1241,7 +1241,7 @@ function updateWorkspaceUI(){
   const brandName = document.getElementById('brand-name');
   if(brandName) brandName.textContent = isLimpio ? 'Modo Limpio' : 'El Roble';
   const brandTag = document.getElementById('brand-tag');
-  if(brandTag) brandTag.textContent = isLimpio ? 'Lienzo en blanco en vivo' : 'Ciclo contable completo';
+  if(brandTag) brandTag.textContent = isLimpio ? 'Nuevo Ejercicio Contable' : 'Ciclo contable completo';
 }
 
 function switchWorkspace(targetWs){
@@ -1254,7 +1254,7 @@ function switchWorkspace(targetWs){
   // Re-renderizar paneles y sincronizar UI
   rerenderAllPanels();
   updateWorkspaceUI();
-  showToast(targetWs === 'limpio' ? 'Modo Limpio activado (Lienzo en blanco listo)' : 'Caso "El Roble" restaurado (Completo)', 'info');
+  showToast(targetWs === 'limpio' ? 'Modo Limpio activado (Ejercicio en blanco listo)' : 'Caso "El Roble" restaurado (Completo)', 'info');
 }
 
 const FASE_LABEL = {apertura:'Asiento de apertura', operacion:'Operaciones del periodo', ajuste:'Asientos de ajuste', cierre:'Asientos de cierre'};
@@ -1405,7 +1405,7 @@ function renderDatosPanel(){
     <div class="ws-banner limpio">
       <div>
         <span class="ws-banner-badge">✨ MODO LIMPIO ACTIVO</span>
-        <b>Lienzo en blanco para nuevo ejercicio contable:</b> Registra transacciones comerciales libres en el formulario inferior. El libro diario, mayorización en Cuentas 'T', balances y estados financieros se procesarán automáticamente en tiempo real.
+        <b>Entorno de trabajo en blanco:</b> Registra transacciones comerciales libres en el formulario inferior. El libro diario, mayorización en Cuentas 'T', balances y estados financieros se procesarán automáticamente en tiempo real.
         <div style="font-size:12px; color:var(--ink-soft); margin-top:4px;">💡 El ejercicio principal de <b>Distribuidora El Roble</b> permanece guardado y puedes alternar entre ambos entornos cuando desees.</div>
       </div>
       <button type="button" class="btn" data-switch-ws="roble" style="padding:6px 12px; font-size:12px; white-space:nowrap;">Volver a El Roble 🏢</button>
@@ -1422,7 +1422,7 @@ function renderDatosPanel(){
 
   return `
   <div class="eyebrow">Paso 02 &middot; Tus datos</div>
-  <h2 class="title">Mis Datos — ${isLimpio ? 'Modo Limpio (Lienzo en Blanco)' : 'Caso Distribuidora El Roble'}</h2>
+  <h2 class="title">Mis Datos — ${isLimpio ? 'Modo Limpio (Nuevo Ejercicio)' : 'Caso Distribuidora El Roble'}</h2>
   <p class="lede">Agrega cuentas y asientos propios; el diario, el mayor, los balances y los estados financieros se recalculan automáticamente en tiempo real.</p>
 
   ${bannerHtml}
@@ -4515,15 +4515,15 @@ document.addEventListener('click', e => {
     e.preventDefault();
     showModalConfirm({
       title: '¿Vaciar asientos del Modo Limpio?',
-      message: 'Esta acción eliminará todos los asientos registrados en el <b>Modo Limpio</b> para dejar el lienzo en blanco nuevamente.',
-      details: 'El <b>Caso El Roble</b> y sus 16 asientos están seguros y NO se verán afectados.',
+      message: 'Esta acción eliminará todos los asientos registrados en el <b>Modo Limpio</b> para reiniciar el ejercicio en blanco.',
+      details: 'El <b>Caso El Roble</b> y sus 24 asientos están seguros y NO se verán afectados.',
       confirmText: 'Sí, vaciar asientos',
       cancelText: 'Cancelar',
       type: 'danger',
       onConfirm: () => {
         ENTRIES = [];
         afterMutation();
-        showToast('Asientos del Modo Limpio vaciados. Lienzo en blanco listo.', 'warn');
+        showToast('Asientos del Modo Limpio vaciados. Ejercicio en blanco listo.', 'warn');
       }
     });
     return;
