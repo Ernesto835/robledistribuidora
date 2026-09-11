@@ -577,6 +577,42 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
   font-weight: 600;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
+/* ---------- THEME SWITCHER (MODO CLARO / MODO OSCURO) ---------- */
+.theme-switcher {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+  align-items: center;
+}
+.theme-tab {
+  background: none;
+  border: none;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .16s ease;
+  white-space: nowrap;
+}
+.theme-tab:hover {
+  color: var(--ink);
+  background: rgba(128, 128, 128, 0.12);
+}
+.theme-tab.active {
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
 .ws-banner {
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
@@ -769,11 +805,16 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
       Sistema de inventario permanente<br>
       Elaborado por: Ernesto Gregory Luna Mora
       <div class="sync-pill off" id="sync-pill"><span class="dot"></span><span id="sync-label">Comprobando guardado…</span></div>
-      <div style="margin-top:10px;">
-        <button type="button" class="btn" id="sidebar-theme-toggle" title="Cambiar a Modo Claro / Modo Oscuro" style="width:100%; font-size:12px; padding:6px 10px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
-          <span id="sidebar-theme-icon">☀️</span>
-          <span id="sidebar-theme-label">Modo Claro</span>
-        </button>
+      <div style="margin-top:12px;">
+        <div style="font-size:11px; color:var(--ink-faint); margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; font-weight:600;">Tema visual:</div>
+        <div class="theme-switcher" style="width:100%; display:flex;" role="radiogroup" aria-label="Tema visual">
+          <button type="button" class="theme-tab active" data-theme-tab="light" style="flex:1; justify-content:center;" title="Activar Modo Claro (Papel formal)">
+            <span>☀️ Claro</span>
+          </button>
+          <button type="button" class="theme-tab" data-theme-tab="dark" style="flex:1; justify-content:center;" title="Activar Modo Oscuro">
+            <span>🌙 Oscuro</span>
+          </button>
+        </div>
       </div>
     </div>
   </aside>
@@ -796,10 +837,14 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
           </button>
         </div>
         <div class="period" id="topline-period">01 – 31 ENE 2026</div>
-        <button type="button" class="btn" id="btn-theme-toggle" title="Cambiar entre Modo Claro y Modo Oscuro" style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; padding:8px 12px; cursor:pointer;">
-          <span id="theme-toggle-icon">☀️</span>
-          <span id="theme-toggle-label">Modo Claro</span>
-        </button>
+        <div class="theme-switcher" id="theme-switcher" role="radiogroup" aria-label="Tema visual">
+          <button type="button" class="theme-tab active" data-theme-tab="light" title="Activar Modo Claro (Papel formal)">
+            <span>☀️ Claro</span>
+          </button>
+          <button type="button" class="theme-tab" data-theme-tab="dark" title="Activar Modo Oscuro">
+            <span>🌙 Oscuro</span>
+          </button>
+        </div>
         <button type="button" class="btn primary" id="btn-export-pdf" title="Exportar a PDF (elige solo el apartado actual o el ciclo completo)">📄 Exportar a PDF</button>
       </div>
     </div>
@@ -3024,19 +3069,24 @@ function applyTheme(theme, notify = false){
   }catch(e){}
 
   const isLight = (nextTheme === 'light');
+
+  // Actualizar todas las pestañas de tema en Header y Sidebar
+  document.querySelectorAll('[data-theme-tab]').forEach(tab => {
+    const isThis = (tab.dataset.themeTab === nextTheme);
+    tab.classList.toggle('active', isThis);
+    tab.setAttribute('aria-selected', isThis ? 'true' : 'false');
+  });
+
+  // Retrocompatibilidad con botones toggle simples
   const topIcon = document.getElementById('theme-toggle-icon');
   const topLabel = document.getElementById('theme-toggle-label');
-  const topBtn = document.getElementById('btn-theme-toggle');
   if(topIcon) topIcon.textContent = isLight ? '☀️' : '🌙';
   if(topLabel) topLabel.textContent = isLight ? 'Modo Claro' : 'Modo Oscuro';
-  if(topBtn) topBtn.title = isLight ? 'Modo Claro activo (Clic para Modo Oscuro)' : 'Modo Oscuro activo (Clic para Modo Claro)';
 
   const sideIcon = document.getElementById('sidebar-theme-icon');
   const sideLabel = document.getElementById('sidebar-theme-label');
-  const sideBtn = document.getElementById('sidebar-theme-toggle');
   if(sideIcon) sideIcon.textContent = isLight ? '☀️' : '🌙';
   if(sideLabel) sideLabel.textContent = isLight ? 'Modo Claro' : 'Modo Oscuro';
-  if(sideBtn) sideBtn.title = isLight ? 'Modo Claro activo (Clic para Modo Oscuro)' : 'Modo Oscuro activo (Clic para Modo Claro)';
 
   if(notify){
     showToast(isLight ? '☀️ Modo Claro activado (Papel formal)' : '🌙 Modo Oscuro activado', 'info');
@@ -4112,6 +4162,12 @@ document.addEventListener('click', e => {
   }
 
   // 0. Cambio de Tema (Modo Claro / Modo Oscuro)
+  const themeTabBtn = e.target.closest('[data-theme-tab]');
+  if(themeTabBtn){
+    e.preventDefault();
+    applyTheme(themeTabBtn.dataset.themeTab, true);
+    return;
+  }
   if(e.target.closest('#btn-theme-toggle') || e.target.closest('#sidebar-theme-toggle')){
     e.preventDefault();
     toggleTheme();
