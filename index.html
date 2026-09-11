@@ -1287,28 +1287,24 @@ function renderPresentacion(){
       <span class="chip">Hoja de Trabajo</span>
       <span class="chip">Estados Financieros</span>
       <span class="chip">Asientos de Cierre</span>
-      <span class="chip" style="background:var(--gold); color:#fff; font-weight:600;">★ Examen: Indicadores Financieros</span>
+      <span class="chip">Indicadores y Ratios Financieros</span>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card" style="border-left:4px solid var(--gold); background:linear-gradient(135deg, var(--surface), var(--surface-2));">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-        <div>
-          <span class="examen-badge" style="margin-left:0; margin-bottom:6px;">★ Puntos Adicionales para el Examen</span>
-          <h3 style="margin-top:4px; font-family:'Fraunces',serif; font-size:18px;">Evaluación Parcial: Ratios e Indicadores Financieros</h3>
-          <p style="font-size:13px; color:var(--ink-soft); margin:4px 0 0; max-width:65ch;">Caso <b>Distribuidora Comercial El Roble S.A.</b>: los 8 indicadores requeridos para 2024 y 2025, fórmulas paso a paso, análisis comparativo de variaciones, respuestas a las 3 preguntas de análisis y calculadora interactiva.</p>
+  <div class="card" style="background:var(--surface); border:1px solid var(--border-strong);">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+      <div>
+        <h3 style="margin:0 0 4px 0; font-size:16px;">Distribuidora Comercial El Roble S.A.</h3>
+        <div style="font-size:13px; color:var(--ink-soft); line-height:1.5;">
+          <b>RUC:</b> 1291748261001 &bull; <b>Ubicación:</b> Quevedo, Los Ríos, Ecuador &bull; <b>Período:</b> Enero 2026<br>
+          Sistema de inventario permanente &bull; Tarifa de IVA general al 15% &bull; Moneda: Dólares (USD)
         </div>
-        <button type="button" class="btn primary" id="btn-goto-examen" style="white-space:nowrap; padding:10px 18px;">Ir al Módulo de Examen →</button>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn primary" onclick="selectPanel('datos')" style="font-size:13px; padding:9px 16px; cursor:pointer;">Ir a Mis Datos →</button>
+        <button type="button" class="btn" onclick="selectPanel('diario')" style="font-size:13px; padding:9px 16px; cursor:pointer;">Ver Libro Diario</button>
       </div>
     </div>
-
-    <h3>Catálogo de cuentas utilizado</h3>
-    <div class="hint">Se administra desde "Mis Datos → Nueva cuenta".</div>
-    <div class="tblwrap"><table>
-      <thead><tr><th>Código</th><th>Cuenta</th><th>Clasificación</th></tr></thead>
-      <tbody>${ACCOUNTS.map(a=>`<tr><td class="code">${a.c}</td><td>${escHtml(a.n)}</td><td>${a.g}</td></tr>`).join('')}</tbody>
-    </table></div>
   </div>`;
 }
 
@@ -2331,16 +2327,16 @@ function renderExamenPanel(){
   const rotProm25 = d.costoVentas[2025] / invPromedio;
 
   return `
-  <div class="eyebrow">Paso 12 &middot; Indicadores Financieros &middot; Caso Examen UTEQ</div>
+  <div class="eyebrow">Paso 12 &middot; Diagnóstico Financiero</div>
   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-    <h2 class="title" style="margin:0;">Indicadores Financieros — Examen Parcial</h2>
+    <h2 class="title" style="margin:0;">Indicadores y Ratios Financieros</h2>
     <div class="panel-actions-bar">
       <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este informe de Indicadores Financieros a PDF" style="font-size:12.5px;">
         📄 Exportar solo estos Indicadores a PDF
       </button>
     </div>
   </div>
-  <p class="lede">Resolución completa del examen con base en el caso de <b>Distribuidora Comercial El Roble S.A.</b> (2024 vs 2025). Incluye los 8 indicadores requeridos, fórmulas detalladas, análisis comparativo entre ambos períodos, respuestas a las preguntas de análisis, estados financieros completos y calculadora interactiva.</p>
+  <p class="lede">Diagnóstico y análisis financiero integral de <b>Distribuidora Comercial El Roble S.A.</b> (2024 vs 2025). Incluye los 8 indicadores clave de liquidez, solvencia, rentabilidad y rotación, análisis horizontal y estados financieros.</p>
 
   <!-- Banner Universitario -->
   <div class="uni-banner">
@@ -2350,7 +2346,7 @@ function renderExamenPanel(){
       <div class="uni-meta">
         <b>Asignatura:</b> Fundamentos de Contabilidad y Finanzas &middot; <b>Curso:</b> 4to Software "B"<br>
         <b>Docente:</b> Ing. Jessica Moncayo Lomas &middot; <b>Estudiante:</b> Ernesto Gregory Luna Mora<br>
-        <b>Caso Práctico:</b> Distribuidora Comercial El Roble S.A. &middot; <b>Evaluación:</b> Análisis e Indicadores Financieros
+        <b>Empresa:</b> Distribuidora Comercial El Roble S.A. &middot; <b>Módulo:</b> Análisis Financiero y Ratios
       </div>
     </div>
   </div>
@@ -3050,7 +3046,7 @@ const PANELS = [
   {id:'hoja', label:'Hoja de Trabajo', render:renderHojaPanel},
   {id:'estados', label:'Balance General (Financiero)', render:renderEstadosPanel},
   {id:'graficos', label:'Gráficos', render:renderGraficosPanel},
-  {id:'examen', label:'Indicadores Financieros', render:renderExamenPanel, highlight:true},
+  {id:'examen', label:'Indicadores Financieros', render:renderExamenPanel},
   {id:'cierre', label:'Cierre Contable', render:renderCierrePanel},
 ];
 
@@ -3062,9 +3058,9 @@ function buildShell(){
   contentEl.innerHTML='';
   PANELS.forEach((p,i)=>{
     const btn=document.createElement('button');
-    btn.className='step'+(p.datos?' datos':'')+(p.highlight?' step-highlight':'');
+    btn.className='step'+(p.datos?' datos':'');
     btn.dataset.id=p.id;
-    btn.innerHTML=`<span class="n">${String(i+1).padStart(2,'0')}</span><span>${p.label}</span>${p.highlight?'<span class="examen-badge">Examen</span>':''}`;
+    btn.innerHTML=`<span class="n">${String(i+1).padStart(2,'0')}</span><span>${p.label}</span>`;
     btn.addEventListener('click',()=>selectPanel(p.id));
     stepsEl.appendChild(btn);
 
@@ -4376,14 +4372,7 @@ document.addEventListener('click', e => {
     return;
   }
 
-  // 7. Botón "Ir al Módulo de Examen" desde Presentación
-  if(e.target.closest('#btn-goto-examen')){
-    e.preventDefault();
-    selectPanel('examen');
-    return;
-  }
-
-  // 8. Subnavegación del Módulo de Examen
+  // 8. Subnavegación del Módulo de Indicadores
   const subnavBtn = e.target.closest('[data-subtab]');
   if(subnavBtn){
     e.preventDefault();
