@@ -1905,10 +1905,10 @@ function renderExamenPanel(){
   <!-- Subnavegación del Módulo -->
   <div class="subnav-tabs">
     <button type="button" class="subnav-btn ${activeExamenSubtab==='all'?'active':''}" data-subtab="all">📋 Ver Todo el Informe</button>
-    <button type="button" class="subnav-btn ${activeExamenSubtab==='ratios'?'active':''}" data-subtab="ratios">📊 1. Los 8 Indicadores (Detallado)</button>
-    <button type="button" class="subnav-btn ${activeExamenSubtab==='tabla'?'active':''}" data-subtab="tabla">📑 2. Tabla Comparativa Maestra</button>
-    <button type="button" class="subnav-btn ${activeExamenSubtab==='preguntas'?'active':''}" data-subtab="preguntas">✍️ 3. Preguntas de Análisis Resueltas</button>
-    <button type="button" class="subnav-btn ${activeExamenSubtab==='estados'?'active':''}" data-subtab="estados">📈 4. Estados Financieros 2024-2025</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='estados'?'active':''}" data-subtab="estados">📈 1. Variación Absoluta ($) y Porcentual (%)</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='ratios'?'active':''}" data-subtab="ratios">📊 2. Los 8 Indicadores (Detallado)</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='tabla'?'active':''}" data-subtab="tabla">📑 3. Tabla Comparativa Maestra</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='preguntas'?'active':''}" data-subtab="preguntas">✍️ 4. Preguntas de Análisis Resueltas</button>
     <button type="button" class="subnav-btn ${activeExamenSubtab==='calc'?'active':''}" data-subtab="calc">🧮 5. Calculadora de Ratios en Vivo</button>
   </div>
 
@@ -1924,10 +1924,144 @@ function renderExamenPanel(){
     <div class="kpi"><div class="lbl">Rotación Inv. (50%)</div><div class="val gold">${rot50_25.toFixed(2)}x</div><div style="font-size:11px;color:var(--gold);">2024: ${rot50_24.toFixed(2)}x (${dias50_25.toFixed(1)} días)</div></div>
   </div>
 
-  <!-- SECCIÓN 1: LOS 8 INDICADORES DETALLADOS -->
+  <!-- SECCIÓN 1: ESTADOS FINANCIEROS CON ANÁLISIS HORIZONTAL (VARIACIÓN ABSOLUTA Y PORCENTUAL) -->
+  <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='estados'?'':'is-hidden'}" id="sec-estados">
+    <div class="card">
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">1. Estados Financieros Comparativos: Variación Absoluta ($) y Variación Porcentual (%)</h3>
+      <p class="hint"><b>Análisis Horizontal Previo a los Ratios:</b> Base oficial de datos del examen para Distribuidora Industrial Andina S.A. (2024 vs 2025). Muestra el cálculo de <b>Variación Absoluta ($ = 2025 - 2024)</b> y <b>Variación Porcentual (% = [(2025 - 2024) / 2024] &times; 100)</b> cuenta por cuenta, base para la determinación de los ratios financieros posteriores.</p>
+
+      <div class="two-col">
+        <!-- Estado de Resultados -->
+        <div>
+          <h4 style="font-family:'Fraunces',serif; font-size:16px; margin-bottom:8px;">Estado de Resultados Comparativo</h4>
+          <div class="tblwrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th class="num">2024 ($)</th>
+                  <th class="num">2025 ($)</th>
+                  <th class="num">Absoluta ($)</th>
+                  <th class="num">Porcentual (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Ventas</b></td>
+                  <td class="num">${fmt(d.ventas[2024])}</td>
+                  <td class="num">${fmt(d.ventas[2025])}</td>
+                  <td class="num">+50,000.00</td>
+                  <td class="num" style="color:var(--accent);">+20.00%</td>
+                </tr>
+                <tr>
+                  <td class="indent">(–) Costo de ventas</td>
+                  <td class="num">${fmt(d.costoVentas[2024])}</td>
+                  <td class="num">${fmt(d.costoVentas[2025])}</td>
+                  <td class="num">+50,000.00</td>
+                  <td class="num" style="color:var(--danger);">+31.25%</td>
+                </tr>
+                <tr class="total">
+                  <td>UTILIDAD BRUTA</td>
+                  <td class="num">${fmt(d.utilidadBruta[2024])}</td>
+                  <td class="num">${fmt(d.utilidadBruta[2025])}</td>
+                  <td class="num">0.00</td>
+                  <td class="num">0.00%</td>
+                </tr>
+                <tr class="group-row"><td colspan="5">GASTOS OPERATIVOS</td></tr>
+                ${d.gastosDetalle.map(g=>{
+                  const abs = g.v25 - g.v24;
+                  const pct = (abs/g.v24)*100;
+                  return `<tr>
+                    <td class="indent">${g.n}</td>
+                    <td class="num">${fmt(g.v24)}</td>
+                    <td class="num">${fmt(g.v25)}</td>
+                    <td class="num">+${fmt(abs).replace('$','')}</td>
+                    <td class="num">+${pct.toFixed(2)}%</td>
+                  </tr>`;
+                }).join('')}
+                <tr class="total">
+                  <td>TOTAL GASTOS OPERATIVOS</td>
+                  <td class="num">${fmt(d.gastosOperativos[2024])}</td>
+                  <td class="num">${fmt(d.gastosOperativos[2025])}</td>
+                  <td class="num">+12,000.00</td>
+                  <td class="num" style="color:var(--danger);">+21.05%</td>
+                </tr>
+                <tr class="total" style="background:var(--accent-soft);">
+                  <td><b>UTILIDAD NETA DEL EJERCICIO</b></td>
+                  <td class="num"><b>${fmt(d.utilidadNeta[2024])}</b></td>
+                  <td class="num"><b style="color:var(--danger);">${fmt(d.utilidadNeta[2025])}</b></td>
+                  <td class="num" style="color:var(--danger);">-12,000.00</td>
+                  <td class="num" style="color:var(--danger); font-weight:700;">-36.36%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Estado de Situación Financiera -->
+        <div>
+          <h4 style="font-family:'Fraunces',serif; font-size:16px; margin-bottom:8px;">Estado de Situación Financiera Comparativo</h4>
+          <div class="tblwrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rubro / Cuenta</th>
+                  <th class="num">2024 ($)</th>
+                  <th class="num">2025 ($)</th>
+                  <th class="num">Absoluta ($)</th>
+                  <th class="num">Porcentual (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="5">ACTIVO CORRIENTE</td></tr>
+                <tr><td>Caja</td><td class="num">6,000.00</td><td class="num">9,000.00</td><td class="num">+3,000.00</td><td class="num" style="color:var(--accent);font-weight:600;">+50.00%</td></tr>
+                <tr><td>Bancos</td><td class="num">15,000.00</td><td class="num">20,000.00</td><td class="num">+5,000.00</td><td class="num">+33.33%</td></tr>
+                <tr><td>Clientes</td><td class="num">30,000.00</td><td class="num">38,000.00</td><td class="num">+8,000.00</td><td class="num">+26.67%</td></tr>
+                <tr><td>Documentos por cobrar</td><td class="num">12,000.00</td><td class="num">15,000.00</td><td class="num">+3,000.00</td><td class="num">+25.00%</td></tr>
+                <tr><td>Inventarios</td><td class="num">40,000.00</td><td class="num">50,000.00</td><td class="num">+10,000.00</td><td class="num">+25.00%</td></tr>
+                <tr class="total"><td>TOTAL ACTIVO CORRIENTE</td><td class="num">103,000.00</td><td class="num">132,000.00</td><td class="num">+29,000.00</td><td class="num">+28.16%</td></tr>
+
+                <tr class="group-row"><td colspan="5">ACTIVO NO CORRIENTE</td></tr>
+                <tr><td>Terrenos</td><td class="num">60,000.00</td><td class="num">60,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Edificios</td><td class="num">120,000.00</td><td class="num">120,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Equipos de computación</td><td class="num">35,000.00</td><td class="num">40,000.00</td><td class="num">+5,000.00</td><td class="num">+14.29%</td></tr>
+                <tr><td>Vehículos</td><td class="num">30,000.00</td><td class="num">30,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr class="total"><td>TOTAL ACTIVO NO CORRIENTE</td><td class="num">245,000.00</td><td class="num">250,000.00</td><td class="num">+5,000.00</td><td class="num">+2.04%</td></tr>
+                <tr class="total" style="background:var(--surface-2);"><td><b>TOTAL ACTIVO</b></td><td class="num"><b>348,000.00</b></td><td class="num"><b>382,000.00</b></td><td class="num"><b>+34,000.00</b></td><td class="num"><b>+9.77%</b></td></tr>
+
+                <tr class="group-row"><td colspan="5">PASIVO CORRIENTE</td></tr>
+                <tr><td>Proveedores</td><td class="num">28,000.00</td><td class="num">35,000.00</td><td class="num">+7,000.00</td><td class="num">+25.00%</td></tr>
+                <tr><td>Cuentas por pagar</td><td class="num">15,000.00</td><td class="num">18,000.00</td><td class="num">+3,000.00</td><td class="num">+20.00%</td></tr>
+                <tr><td>Documentos por pagar</td><td class="num">10,000.00</td><td class="num">12,000.00</td><td class="num">+2,000.00</td><td class="num">+20.00%</td></tr>
+                <tr><td>Préstamo bancario corto plazo</td><td class="num">18,000.00</td><td class="num">22,000.00</td><td class="num">+4,000.00</td><td class="num">+22.22%</td></tr>
+                <tr class="total"><td>TOTAL PASIVO CORRIENTE</td><td class="num">71,000.00</td><td class="num">87,000.00</td><td class="num">+16,000.00</td><td class="num">+22.54%</td></tr>
+
+                <tr class="group-row"><td colspan="5">PASIVO NO CORRIENTE</td></tr>
+                <tr><td>Préstamo bancario largo plazo</td><td class="num">70,000.00</td><td class="num">70,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Otros pasivos</td><td class="num">29,000.00</td><td class="num">49,000.00</td><td class="num" style="color:var(--danger); font-weight:600;">+20,000.00</td><td class="num" style="color:var(--danger); font-weight:600;">+68.97%</td></tr>
+                <tr class="total"><td>TOTAL PASIVO NO CORRIENTE</td><td class="num">99,000.00</td><td class="num">119,000.00</td><td class="num">+20,000.00</td><td class="num">+20.20%</td></tr>
+                <tr class="total"><td>TOTAL PASIVO</td><td class="num">170,000.00</td><td class="num">206,000.00</td><td class="num">+36,000.00</td><td class="num">+21.18%</td></tr>
+
+                <tr class="group-row"><td colspan="5">PATRIMONIO</td></tr>
+                <tr><td>Capital social</td><td class="num">120,000.00</td><td class="num">120,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Reservas</td><td class="num">15,000.00</td><td class="num">20,000.00</td><td class="num">+5,000.00</td><td class="num">+33.33%</td></tr>
+                <tr><td>Resultados acumulados</td><td class="num">10,000.00</td><td class="num">15,000.00</td><td class="num">+5,000.00</td><td class="num">+50.00%</td></tr>
+                <tr><td>Utilidad del ejercicio</td><td class="num">33,000.00</td><td class="num">21,000.00</td><td class="num">-12,000.00</td><td class="num">-36.36%</td></tr>
+                <tr class="total"><td>TOTAL PATRIMONIO</td><td class="num">178,000.00</td><td class="num">176,000.00</td><td class="num">-2,000.00</td><td class="num">-1.12%</td></tr>
+                <tr class="total" style="background:var(--accent-soft);"><td><b>TOTAL PASIVO + PATRIMONIO</b></td><td class="num"><b>348,000.00</b></td><td class="num"><b>382,000.00</b></td><td class="num"><b>+34,000.00</b></td><td class="num"><b>+9.77%</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SECCIÓN 2: LOS 8 INDICADORES DETALLADOS -->
   <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='ratios'?'':'is-hidden'}" id="sec-ratios">
     <div class="card" style="margin-top:20px;">
-      <h3 style="font-size:18px; font-family:'Fraunces',serif;">1. Los 8 Indicadores Financieros Requeridos</h3>
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">2. Los 8 Indicadores Financieros Requeridos</h3>
       <p class="hint">Cálculo paso a paso con fórmulas matemáticas, sustitución de valores 2024 y 2025, variación y análisis comparativo de resultados.</p>
 
       <div class="ratio-grid">
@@ -2197,10 +2331,10 @@ function renderExamenPanel(){
     </div>
   </div>
 
-  <!-- SECCIÓN 2: TABLA COMPARATIVA MAESTRA -->
+  <!-- SECCIÓN 3: TABLA COMPARATIVA MAESTRA -->
   <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='tabla'?'':'is-hidden'}" id="sec-tabla">
     <div class="card">
-      <h3 style="font-size:18px; font-family:'Fraunces',serif;">2. Tabla Comparativa Maestra de Indicadores Financieros</h3>
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">3. Tabla Comparativa Maestra de Indicadores Financieros</h3>
       <p class="hint">Cuadro sinóptico oficial con fórmulas aplicadas, valores para ambos períodos, variaciones y diagnóstico resumido.</p>
       <div class="tblwrap">
         <table>
@@ -2313,10 +2447,10 @@ function renderExamenPanel(){
     </div>
   </div>
 
-  <!-- SECCIÓN 3: PREGUNTAS DE ANÁLISIS DEL EXAMEN -->
+  <!-- SECCIÓN 4: PREGUNTAS DE ANÁLISIS DEL EXAMEN -->
   <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='preguntas'?'':'is-hidden'}" id="sec-preguntas">
     <div class="card">
-      <h3 style="font-size:18px; font-family:'Fraunces',serif;">3. Respuestas Oficiales a las Preguntas de Análisis del Examen</h3>
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">4. Respuestas Oficiales a las Preguntas de Análisis del Examen</h3>
       <p class="hint">Respuestas rigurosamente fundamentadas con datos cuantitativos del análisis horizontal y cualitativos para defender en el examen.</p>
 
       <!-- Pregunta 1 -->
@@ -2384,139 +2518,6 @@ function renderExamenPanel(){
           </ul>
           <div class="key-takeaway">
             <b>Conclusión clave para responder:</b> Las Ventas crecieron <b>+20.00%</b> mientras que los Gastos Operativos crecieron <b>+21.05%</b> (y el Costo de Ventas <b>+31.25%</b>). Esto indica una <b>grave ineficiencia operativa</b>, falta de control en costos variables y gastos fijos, lo cual destruyó el beneficio del crecimiento comercial y provocó la caída del -36.36% en la utilidad neta.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECCIÓN 4: ESTADOS FINANCIEROS DEL EXAMEN -->
-  <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='estados'?'':'is-hidden'}" id="sec-estados">
-    <div class="card">
-      <h3 style="font-size:18px; font-family:'Fraunces',serif;">4. Estados Financieros Comparativos con Análisis Horizontal</h3>
-      <p class="hint">Base oficial de datos del examen para Distribuidora Industrial Andina S.A. con cálculo de Variación Absoluta ($) y Variación Porcentual (%).</p>
-
-      <div class="two-col">
-        <!-- Estado de Resultados -->
-        <div>
-          <h4 style="font-family:'Fraunces',serif; font-size:16px; margin-bottom:8px;">Estado de Resultados Comparativo</h4>
-          <div class="tblwrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Concepto</th>
-                  <th class="num">2024 ($)</th>
-                  <th class="num">2025 ($)</th>
-                  <th class="num">Absoluta ($)</th>
-                  <th class="num">Porcentual (%)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><b>Ventas</b></td>
-                  <td class="num">${fmt(d.ventas[2024])}</td>
-                  <td class="num">${fmt(d.ventas[2025])}</td>
-                  <td class="num">+50,000.00</td>
-                  <td class="num" style="color:var(--accent);">+20.00%</td>
-                </tr>
-                <tr>
-                  <td class="indent">(–) Costo de ventas</td>
-                  <td class="num">${fmt(d.costoVentas[2024])}</td>
-                  <td class="num">${fmt(d.costoVentas[2025])}</td>
-                  <td class="num">+50,000.00</td>
-                  <td class="num" style="color:var(--danger);">+31.25%</td>
-                </tr>
-                <tr class="total">
-                  <td>UTILIDAD BRUTA</td>
-                  <td class="num">${fmt(d.utilidadBruta[2024])}</td>
-                  <td class="num">${fmt(d.utilidadBruta[2025])}</td>
-                  <td class="num">0.00</td>
-                  <td class="num">0.00%</td>
-                </tr>
-                <tr class="group-row"><td colspan="5">GASTOS OPERATIVOS</td></tr>
-                ${d.gastosDetalle.map(g=>{
-                  const abs = g.v25 - g.v24;
-                  const pct = (abs/g.v24)*100;
-                  return `<tr>
-                    <td class="indent">${g.n}</td>
-                    <td class="num">${fmt(g.v24)}</td>
-                    <td class="num">${fmt(g.v25)}</td>
-                    <td class="num">+${fmt(abs).replace('$','')}</td>
-                    <td class="num">+${pct.toFixed(2)}%</td>
-                  </tr>`;
-                }).join('')}
-                <tr class="total">
-                  <td>TOTAL GASTOS OPERATIVOS</td>
-                  <td class="num">${fmt(d.gastosOperativos[2024])}</td>
-                  <td class="num">${fmt(d.gastosOperativos[2025])}</td>
-                  <td class="num">+12,000.00</td>
-                  <td class="num" style="color:var(--danger);">+21.05%</td>
-                </tr>
-                <tr class="total" style="background:var(--accent-soft);">
-                  <td><b>UTILIDAD NETA DEL EJERCICIO</b></td>
-                  <td class="num"><b>${fmt(d.utilidadNeta[2024])}</b></td>
-                  <td class="num"><b style="color:var(--danger);">${fmt(d.utilidadNeta[2025])}</b></td>
-                  <td class="num" style="color:var(--danger);">-12,000.00</td>
-                  <td class="num" style="color:var(--danger); font-weight:700;">-36.36%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Estado de Situación Financiera -->
-        <div>
-          <h4 style="font-family:'Fraunces',serif; font-size:16px; margin-bottom:8px;">Estado de Situación Financiera Comparativo</h4>
-          <div class="tblwrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Rubro / Cuenta</th>
-                  <th class="num">2024 ($)</th>
-                  <th class="num">2025 ($)</th>
-                  <th class="num">Absoluta ($)</th>
-                  <th class="num">Porcentual (%)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="group-row"><td colspan="5">ACTIVO CORRIENTE</td></tr>
-                <tr><td>Caja</td><td class="num">6,000.00</td><td class="num">9,000.00</td><td class="num">+3,000.00</td><td class="num" style="color:var(--accent);font-weight:600;">+50.00%</td></tr>
-                <tr><td>Bancos</td><td class="num">15,000.00</td><td class="num">20,000.00</td><td class="num">+5,000.00</td><td class="num">+33.33%</td></tr>
-                <tr><td>Clientes</td><td class="num">30,000.00</td><td class="num">38,000.00</td><td class="num">+8,000.00</td><td class="num">+26.67%</td></tr>
-                <tr><td>Documentos por cobrar</td><td class="num">12,000.00</td><td class="num">15,000.00</td><td class="num">+3,000.00</td><td class="num">+25.00%</td></tr>
-                <tr><td>Inventarios</td><td class="num">40,000.00</td><td class="num">50,000.00</td><td class="num">+10,000.00</td><td class="num">+25.00%</td></tr>
-                <tr class="total"><td>TOTAL ACTIVO CORRIENTE</td><td class="num">103,000.00</td><td class="num">132,000.00</td><td class="num">+29,000.00</td><td class="num">+28.16%</td></tr>
-
-                <tr class="group-row"><td colspan="5">ACTIVO NO CORRIENTE</td></tr>
-                <tr><td>Terrenos</td><td class="num">60,000.00</td><td class="num">60,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
-                <tr><td>Edificios</td><td class="num">120,000.00</td><td class="num">120,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
-                <tr><td>Equipos de computación</td><td class="num">35,000.00</td><td class="num">40,000.00</td><td class="num">+5,000.00</td><td class="num">+14.29%</td></tr>
-                <tr><td>Vehículos</td><td class="num">30,000.00</td><td class="num">30,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
-                <tr class="total"><td>TOTAL ACTIVO NO CORRIENTE</td><td class="num">245,000.00</td><td class="num">250,000.00</td><td class="num">+5,000.00</td><td class="num">+2.04%</td></tr>
-                <tr class="total" style="background:var(--surface-2);"><td><b>TOTAL ACTIVO</b></td><td class="num"><b>348,000.00</b></td><td class="num"><b>382,000.00</b></td><td class="num"><b>+34,000.00</b></td><td class="num"><b>+9.77%</b></td></tr>
-
-                <tr class="group-row"><td colspan="5">PASIVO CORRIENTE</td></tr>
-                <tr><td>Proveedores</td><td class="num">28,000.00</td><td class="num">35,000.00</td><td class="num">+7,000.00</td><td class="num">+25.00%</td></tr>
-                <tr><td>Cuentas por pagar</td><td class="num">15,000.00</td><td class="num">18,000.00</td><td class="num">+3,000.00</td><td class="num">+20.00%</td></tr>
-                <tr><td>Documentos por pagar</td><td class="num">10,000.00</td><td class="num">12,000.00</td><td class="num">+2,000.00</td><td class="num">+20.00%</td></tr>
-                <tr><td>Préstamo bancario corto plazo</td><td class="num">18,000.00</td><td class="num">22,000.00</td><td class="num">+4,000.00</td><td class="num">+22.22%</td></tr>
-                <tr class="total"><td>TOTAL PASIVO CORRIENTE</td><td class="num">71,000.00</td><td class="num">87,000.00</td><td class="num">+16,000.00</td><td class="num">+22.54%</td></tr>
-
-                <tr class="group-row"><td colspan="5">PASIVO NO CORRIENTE</td></tr>
-                <tr><td>Préstamo bancario largo plazo</td><td class="num">70,000.00</td><td class="num">70,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
-                <tr><td>Otros pasivos</td><td class="num">29,000.00</td><td class="num">49,000.00</td><td class="num" style="color:var(--danger); font-weight:600;">+20,000.00</td><td class="num" style="color:var(--danger); font-weight:600;">+68.97%</td></tr>
-                <tr class="total"><td>TOTAL PASIVO NO CORRIENTE</td><td class="num">99,000.00</td><td class="num">119,000.00</td><td class="num">+20,000.00</td><td class="num">+20.20%</td></tr>
-                <tr class="total"><td>TOTAL PASIVO</td><td class="num">170,000.00</td><td class="num">206,000.00</td><td class="num">+36,000.00</td><td class="num">+21.18%</td></tr>
-
-                <tr class="group-row"><td colspan="5">PATRIMONIO</td></tr>
-                <tr><td>Capital social</td><td class="num">120,000.00</td><td class="num">120,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
-                <tr><td>Reservas</td><td class="num">15,000.00</td><td class="num">20,000.00</td><td class="num">+5,000.00</td><td class="num">+33.33%</td></tr>
-                <tr><td>Resultados acumulados</td><td class="num">10,000.00</td><td class="num">15,000.00</td><td class="num">+5,000.00</td><td class="num">+50.00%</td></tr>
-                <tr><td>Utilidad del ejercicio</td><td class="num">33,000.00</td><td class="num">21,000.00</td><td class="num">-12,000.00</td><td class="num">-36.36%</td></tr>
-                <tr class="total"><td>TOTAL PATRIMONIO</td><td class="num">178,000.00</td><td class="num">176,000.00</td><td class="num">-2,000.00</td><td class="num">-1.12%</td></tr>
-                <tr class="total" style="background:var(--accent-soft);"><td><b>TOTAL PASIVO + PATRIMONIO</b></td><td class="num"><b>348,000.00</b></td><td class="num"><b>382,000.00</b></td><td class="num"><b>+34,000.00</b></td><td class="num"><b>+9.77%</b></td></tr>
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
