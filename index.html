@@ -784,33 +784,112 @@ const LOCAL_STORAGE_KEY = 'elRoble.cicloContable.v1';
    ========================================================= */
 /*SEED_START*/
 const SEED_ACCOUNTS = [
+  /* =========================================================
+     PLAN DE CUENTAS ACTUALIZADO (OFICIAL UTEQ - 82 CUENTAS)
+     ========================================================= */
+  // 1. ACTIVO (1)
+  // 1.1 Activo Corriente (11)
   {c:'1101', n:'Caja', g:'Activo Corriente', est:'BG'},
+  {c:'1102', n:'Caja Chica', g:'Activo Corriente', est:'BG'},
   {c:'1103', n:'Bancos', g:'Activo Corriente', est:'BG'},
-  {c:'1105', n:'Inventario de Mercadería', g:'Activo Corriente', est:'BG'},
+  {c:'1104', n:'Fondo Fijo', g:'Activo Corriente', est:'BG'},
+  {c:'1105', n:'Inventarios', g:'Activo Corriente', est:'BG'},
+  {c:'1106', n:'Documentos por Cobrar a Corto Plazo', g:'Activo Corriente', est:'BG'},
   {c:'1107', n:'Cuentas por Cobrar Clientes', g:'Activo Corriente', est:'BG'},
+  {c:'1108', n:'Cuentas por Cobrar Empleados', g:'Activo Corriente', est:'BG'},
+  {c:'1109', n:'Inversiones Temporales', g:'Activo Corriente', est:'BG'},
   {c:'1110', n:'IVA Crédito Tributario', g:'Activo Corriente', est:'BG'},
-  {c:'1114', n:'Arriendo Pagado por Anticipado', g:'Activo Corriente', est:'BG'},
-  {c:'1115', n:'Suministros de Oficina', g:'Activo Corriente', est:'BG'},
-  {c:'1116', n:'(–) Provisión Cuentas Incobrables', g:'Activo Corriente', est:'BG', contra:true},
-  {c:'120103', n:'Equipo de Oficina', g:'Activo No Corriente', est:'BG'},
-  {c:'1202', n:'(–) Depreciación Acumulada', g:'Activo No Corriente', est:'BG', contra:true},
+  {c:'1111', n:'Retenciones en la Fuente por Cobrar', g:'Activo Corriente', est:'BG'},
+  {c:'1112', n:'Anticipos Sueldos', g:'Activo Corriente', est:'BG'},
+  {c:'1113', n:'Anticipos a Proveedores', g:'Activo Corriente', est:'BG'},
+  {c:'1114', n:'Arriendos Prepagados', g:'Activo Corriente', est:'BG'},
+  {c:'1115', n:'Otros Activos Corrientes', g:'Activo Corriente', est:'BG'},
+  {c:'1116', n:'(-) Provisión Cuentas Incobrables', g:'Activo Corriente', est:'BG', contra:true},
+
+  // 1.2 Activo No Corriente (12)
+  {c:'1201', n:'Propiedad, Planta y Equipo', g:'Activo No Corriente', est:'BG'},
+  {c:'120101', n:'Terrenos', g:'Activo No Corriente', est:'BG'},
+  {c:'120102', n:'Edificios', g:'Activo No Corriente', est:'BG'},
+  {c:'120103', n:'Equipos de Oficina', g:'Activo No Corriente', est:'BG'},
+  {c:'120104', n:'Equipos de Computación', g:'Activo No Corriente', est:'BG'},
+  {c:'120105', n:'Vehículos', g:'Activo No Corriente', est:'BG'},
+  {c:'120106', n:'Muebles y Enseres', g:'Activo No Corriente', est:'BG'},
+  {c:'1202', n:'(-) Depreciación Acumulada', g:'Activo No Corriente', est:'BG', contra:true},
+  {c:'1203', n:'Intangibles', g:'Activo No Corriente', est:'BG'},
+  {c:'120301', n:'Licencias', g:'Activo No Corriente', est:'BG'},
+  {c:'120302', n:'Software', g:'Activo No Corriente', est:'BG'},
+  {c:'120303', n:'Marcas y patentes', g:'Activo No Corriente', est:'BG'},
+  {c:'1204', n:'(-) Amortización Acumulada', g:'Activo No Corriente', est:'BG', contra:true},
+  {c:'1205', n:'Inversiones a Largo Plazo', g:'Activo No Corriente', est:'BG'},
+  {c:'1206', n:'Otros Activos No Corrientes', g:'Activo No Corriente', est:'BG'},
+
+  // 2. PASIVO (2)
+  // 2.1 Pasivo Corriente (21)
   {c:'2101', n:'Proveedores', g:'Pasivo Corriente', est:'BG'},
+  {c:'2102', n:'Documentos por Pagar a Corto Plazo', g:'Pasivo Corriente', est:'BG'},
   {c:'2103', n:'Cuentas por Pagar', g:'Pasivo Corriente', est:'BG'},
-  {c:'2106', n:'Sueldos por Pagar', g:'Pasivo Corriente', est:'BG'},
+  {c:'2104', n:'Obligaciones con IESS', g:'Pasivo Corriente', est:'BG'},
+  {c:'2105', n:'Retenciones por Pagar', g:'Pasivo Corriente', est:'BG'},
+  {c:'210501', n:'Retención en la Fuente', g:'Pasivo Corriente', est:'BG'},
+  {c:'210502', n:'Retención IVA', g:'Pasivo Corriente', est:'BG'},
+  {c:'2106', n:'Sueldos y Salarios por Pagar', g:'Pasivo Corriente', est:'BG'},
   {c:'2107', n:'IVA Débito Fiscal', g:'Pasivo Corriente', est:'BG'},
-  {c:'2108', n:'Préstamos Bancarios', g:'Pasivo No Corriente', est:'BG'},
+  {c:'2108', n:'Préstamos Bancarios', g:'Pasivo Corriente', est:'BG'},
+  {c:'2110', n:'Provisiones', g:'Pasivo Corriente', est:'BG'},
+  {c:'2111', n:'Otros Pasivos Corrientes', g:'Pasivo Corriente', est:'BG'},
+
+  // 2.2 Pasivo No Corriente (22)
+  {c:'2201', n:'Préstamos Bancarios a Largo Plazo', g:'Pasivo No Corriente', est:'BG'},
+  {c:'2202', n:'Documentos por Pagar a Largo Plazo', g:'Pasivo No Corriente', est:'BG'},
+  {c:'2203', n:'Provisiones a Largo Plazo', g:'Pasivo No Corriente', est:'BG'},
+  {c:'2204', n:'Otros Pasivos No Corrientes', g:'Pasivo No Corriente', est:'BG'},
+
+  // 3. PATRIMONIO (3)
   {c:'3101', n:'Capital Social', g:'Patrimonio', est:'BG'},
+  {c:'3102', n:'Aportes de Socios', g:'Patrimonio', est:'BG'},
+  {c:'3201', n:'Reservas', g:'Patrimonio', est:'BG'},
+  {c:'3202', n:'Resultados Acumulados', g:'Patrimonio', est:'BG'},
   {c:'3203', n:'Utilidad del Ejercicio', g:'Patrimonio', est:'BG'},
+  {c:'3204', n:'(-) Pérdida del Ejercicio', g:'Patrimonio', est:'BG', contra:true},
   {c:'3900', n:'Resumen de Rentas y Gastos', g:'Cuenta Puente', est:'X'},
+
+  // 4. INGRESOS (4)
+  // 4.1 Ingresos Operacionales (41)
   {c:'4101', n:'Ventas', g:'Ingresos', est:'ER'},
-  {c:'5101', n:'Costo de Ventas', g:'Gastos', est:'ER'},
-  {c:'5102', n:'Sueldos y Salarios', g:'Gastos', est:'ER'},
+  {c:'4102', n:'Ingresos por Servicios', g:'Ingresos', est:'ER'},
+  {c:'4103', n:'Otros Ingresos Operacionales', g:'Ingresos', est:'ER'},
+  // 4.2 Otros Ingresos no operacionales (42)
+  {c:'4201', n:'Ingresos Financieros', g:'Ingresos', est:'ER'},
+  {c:'420101', n:'Intereses Ganados', g:'Ingresos', est:'ER'},
+  {c:'420102', n:'Rendimientos Bancarios', g:'Ingresos', est:'ER'},
+  {c:'4202', n:'Ingresos Diversos', g:'Ingresos', est:'ER'},
+  {c:'4203', n:'Otros Ingresos No Operacionales', g:'Ingresos', est:'ER'},
+
+  // 5. GASTOS Y COSTOS (5)
+  {c:'5001', n:'Costo de Ventas', g:'Gastos', est:'ER'},
+  // 5.1 Gastos Operativos (51)
+  {c:'5101', n:'Sueldos y Salarios Administrativos', g:'Gastos', est:'ER'},
+  {c:'5102', n:'Aportes Patronales', g:'Gastos', est:'ER'},
   {c:'5103', n:'Servicios Básicos', g:'Gastos', est:'ER'},
-  {c:'5104', n:'Gasto Arriendo', g:'Gastos', est:'ER'},
-  {c:'5105', n:'Gasto Suministros', g:'Gastos', est:'ER'},
-  {c:'5106', n:'Gasto Depreciación', g:'Gastos', est:'ER'},
-  {c:'5107', n:'Gasto Provisión Cuentas Incobrables', g:'Gastos', est:'ER'},
-  {c:'5108', n:'Gastos Financieros', g:'Gastos', est:'ER'},
+  {c:'5104', n:'Arrendamientos', g:'Gastos', est:'ER'},
+  {c:'5105', n:'Papelería y Útiles de Oficina', g:'Gastos', est:'ER'},
+  {c:'5106', n:'Depreciaciones', g:'Gastos', est:'ER'},
+  {c:'5107', n:'Amortizaciones', g:'Gastos', est:'ER'},
+  {c:'5108', n:'Honorarios Profesionales', g:'Gastos', est:'ER'},
+  {c:'5109', n:'Servicios Notariales', g:'Gastos', est:'ER'},
+  {c:'5110', n:'Servicios Generales', g:'Gastos', est:'ER'},
+  {c:'5111', n:'Materiales de Limpieza', g:'Gastos', est:'ER'},
+  // 5.2 Gastos de Ventas (52)
+  {c:'5201', n:'Publicidad y Propaganda', g:'Gastos', est:'ER'},
+  {c:'5202', n:'Comisiones en Ventas', g:'Gastos', est:'ER'},
+  {c:'5203', n:'Gastos de Transporte', g:'Gastos', est:'ER'},
+  {c:'5204', n:'Empaques y Embalajes', g:'Gastos', est:'ER'},
+  // 5.3 Gastos No Operacionales (53)
+  {c:'5301', n:'Gastos Financieros', g:'Gastos', est:'ER'},
+  {c:'5302', n:'Pérdidas en Venta de Activos', g:'Gastos', est:'ER'},
+  {c:'5303', n:'Multas y Recargos', g:'Gastos', est:'ER'},
+  {c:'5304', n:'Gastos Diversos', g:'Gastos', est:'ER'},
+  {c:'5305', n:'Otros Gastos No Operacionales', g:'Gastos', est:'ER'},
 ];
 
 const SEED_ENTRIES = [
@@ -823,11 +902,11 @@ const SEED_ENTRIES = [
   ]},
   {id:'s2', fase:'operacion', fecha:'2026-01-05', num:2, glosa:'Venta de mercadería al contado, valor depositado en banco; se registra a la vez el costo de venta (inventario permanente).', lines:[
     {c:'1103',d:6900,h:0},{c:'4101',d:0,h:6000},{c:'2107',d:0,h:900},
-    {c:'5101',d:3600,h:0},{c:'1105',d:0,h:3600},
+    {c:'5001',d:3600,h:0},{c:'1105',d:0,h:3600},
   ]},
   {id:'s3', fase:'operacion', fecha:'2026-01-08', num:3, glosa:'Venta de mercadería a crédito, 30 días.', lines:[
     {c:'1107',d:11500,h:0},{c:'4101',d:0,h:10000},{c:'2107',d:0,h:1500},
-    {c:'5101',d:6000,h:0},{c:'1105',d:0,h:6000},
+    {c:'5001',d:6000,h:0},{c:'1105',d:0,h:6000},
   ]},
   {id:'s4', fase:'operacion', fecha:'2026-01-10', num:4, glosa:'Pago total a proveedores por la compra del 03/01.', lines:[
     {c:'2101',d:9200,h:0},{c:'1103',d:0,h:9200},
@@ -839,7 +918,7 @@ const SEED_ENTRIES = [
     {c:'1114',d:1800,h:0},{c:'1103',d:0,h:1800},
   ]},
   {id:'s7', fase:'operacion', fecha:'2026-01-16', num:7, glosa:'Pago de sueldos, primera quincena de enero, en efectivo.', lines:[
-    {c:'5102',d:2400,h:0},{c:'1101',d:0,h:2400},
+    {c:'5101',d:2400,h:0},{c:'1101',d:0,h:2400},
   ]},
   {id:'s8', fase:'operacion', fecha:'2026-01-18', num:8, glosa:'Compra de suministros de oficina al contado.', lines:[
     {c:'1115',d:500,h:0},{c:'1101',d:0,h:500},
@@ -852,16 +931,16 @@ const SEED_ENTRIES = [
   ]},
   {id:'s11', fase:'operacion', fecha:'2026-01-25', num:11, glosa:'Venta de mercadería al contado, cobrada en efectivo.', lines:[
     {c:'1101',d:4600,h:0},{c:'4101',d:0,h:4000},{c:'2107',d:0,h:600},
-    {c:'5101',d:2400,h:0},{c:'1105',d:0,h:2400},
+    {c:'5001',d:2400,h:0},{c:'1105',d:0,h:2400},
   ]},
   {id:'s12', fase:'operacion', fecha:'2026-01-28', num:12, glosa:'Depósito del excedente de caja en la cuenta bancaria.', lines:[
     {c:'1103',d:3000,h:0},{c:'1101',d:0,h:3000},
   ]},
   {id:'s13', fase:'operacion', fecha:'2026-01-30', num:13, glosa:'Pago de sueldos, segunda quincena de enero, por transferencia.', lines:[
-    {c:'5102',d:2400,h:0},{c:'1103',d:0,h:2400},
+    {c:'5101',d:2400,h:0},{c:'1103',d:0,h:2400},
   ]},
   {id:'s14', fase:'operacion', fecha:'2026-01-31', num:14, glosa:'Pago de cuota mensual de préstamo bancario: capital $500 e interés $100.', lines:[
-    {c:'2108',d:500,h:0},{c:'5108',d:100,h:0},{c:'1103',d:0,h:600},
+    {c:'2108',d:500,h:0},{c:'5301',d:100,h:0},{c:'1103',d:0,h:600},
   ]},
   {id:'s15', fase:'operacion', fecha:'2026-01-31', num:15, glosa:'Declaración y pago mensual del IVA (Formulario 104): débito fiscal $3,000 menos crédito tributario $1,500.', lines:[
     {c:'2107',d:3000,h:0},{c:'1110',d:0,h:1500},{c:'1103',d:0,h:1500},
@@ -876,7 +955,7 @@ const SEED_ENTRIES = [
     {c:'5105',d:350,h:0},{c:'1115',d:0,h:350},
   ]},
   {id:'s19', fase:'ajuste', fecha:'2026-01-31', num:'A4', glosa:'Sueldos devengados de los últimos días de enero, pendientes de pago.', lines:[
-    {c:'5102',d:600,h:0},{c:'2106',d:0,h:600},
+    {c:'5101',d:600,h:0},{c:'2106',d:0,h:600},
   ]},
   {id:'s20', fase:'ajuste', fecha:'2026-01-31', num:'A5', glosa:'Provisión del 1% sobre cuentas por cobrar a clientes, según política de la empresa.', lines:[
     {c:'5107',d:50,h:0},{c:'1116',d:0,h:50},
@@ -886,8 +965,8 @@ const SEED_ENTRIES = [
   ]},
   {id:'s22', fase:'cierre', fecha:'2026-01-31', num:'C2', glosa:'Cierre de las cuentas de gastos contra Resumen de Rentas y Gastos.', lines:[
     {c:'3900',d:18930,h:0},
-    {c:'5101',d:0,h:12000},{c:'5102',d:0,h:5400},{c:'5103',d:0,h:350},{c:'5104',d:0,h:600},
-    {c:'5105',d:0,h:350},{c:'5106',d:0,h:80},{c:'5107',d:0,h:50},{c:'5108',d:0,h:100},
+    {c:'5001',d:0,h:12000},{c:'5101',d:0,h:5400},{c:'5103',d:0,h:350},{c:'5104',d:0,h:600},
+    {c:'5105',d:0,h:350},{c:'5106',d:0,h:80},{c:'5107',d:0,h:50},{c:'5301',d:0,h:100},
   ]},
   {id:'s23', fase:'cierre', fecha:'2026-01-31', num:'C3', glosa:'Traslado de la utilidad del ejercicio al patrimonio.', lines:[
     {c:'3900',d:1070,h:0},{c:'3203',d:0,h:1070},
@@ -1163,7 +1242,15 @@ function renderDatosPanel(){
   </div>
 
   <div class="card">
-    <h3>Nueva cuenta</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+      <div>
+        <h3 style="margin:0;">Catálogo de cuentas (Plan Oficial UTEQ — 82 cuentas)</h3>
+        <div class="hint" style="margin-top:2px;">Plan de cuentas actualizado de la asignatura. Todas las cuentas del PDF oficial están incorporadas y listas para usar.</div>
+      </div>
+      <div>
+        <input type="text" id="search-cuenta-input" placeholder="🔍 Buscar cuenta por código o nombre..." style="width:280px; padding:7px 12px; font-size:12.5px; border-radius:7px; border:1px solid var(--border-strong);">
+      </div>
+    </div>
     <form id="form-cuenta" class="form-grid">
       <label class="field">Código<input name="c" required placeholder="Ej. 1109"></label>
       <label class="field">Nombre<input name="n" required placeholder="Ej. Anticipo de Impuestos"></label>
@@ -1171,9 +1258,9 @@ function renderDatosPanel(){
       <label class="field" style="flex-direction:row; align-items:center; gap:6px;"><input type="checkbox" name="contra" style="width:auto;"> Cuenta contra (resta)</label>
       <button type="submit" class="btn primary">Agregar cuenta</button>
     </form>
-    <div class="tblwrap" style="margin-top:16px;"><table>
-      <thead><tr><th>Código</th><th>Cuenta</th><th>Clasificación</th><th></th></tr></thead>
-      <tbody>${cuentaRows}</tbody>
+    <div class="tblwrap" style="margin-top:16px; max-height:450px; overflow-y:auto;"><table>
+      <thead><tr style="position:sticky; top:0; background:var(--surface-2); z-index:2;"><th>Código</th><th>Cuenta</th><th>Clasificación</th><th style="text-align:right;">Acciones</th></tr></thead>
+      <tbody id="cuentas-tbody">${cuentaRows}</tbody>
     </table></div>
   </div>
 
@@ -1440,12 +1527,12 @@ function renderEstadosPanel(){
   const ingresos = ACCOUNTS.filter(a=>a.g==='Ingresos');
   const gastos = ACCOUNTS.filter(a=>a.g==='Gastos');
   const ventas = ingresos.reduce((s,a)=>s-b(a.c),0);
-  const costoVentas = b('5101');
+  const costoVentas = b('5001') + b('5101_cv_compat');
   const utilidadBruta = ventas-costoVentas;
-  const gastosOp = gastos.filter(a=>a.c!=='5101' && a.c!=='5108');
+  const gastosOp = gastos.filter(a=>a.c!=='5001' && a.c!=='5108' && a.c!=='5301');
   const totalGastosOp = gastosOp.reduce((s,a)=>s+b(a.c),0);
   const utilOperacional = utilidadBruta-totalGastosOp;
-  const gastosFin = b('5108');
+  const gastosFin = b('5301') + b('5108');
   const utilNeta = utilOperacional-gastosFin;
 
   const activos = ACCOUNTS.filter(a=>a.g.startsWith('Activo'));
@@ -2681,6 +2768,15 @@ function updateAsientoCheck(form){
 }
 
 contentEl.addEventListener('input', e=>{
+  // Filtro de búsqueda en catálogo de cuentas
+  if(e.target.id === 'search-cuenta-input'){
+    const q = e.target.value.toLowerCase().trim();
+    const rows = document.querySelectorAll('#cuentas-tbody tr');
+    rows.forEach(r => {
+      const text = r.textContent.toLowerCase();
+      r.style.display = (!q || text.includes(q)) ? '' : 'none';
+    });
+  }
   const form=e.target.closest('#form-asiento');
   if(form) updateAsientoCheck(form);
 });
@@ -3333,7 +3429,7 @@ document.addEventListener('click', e => {
     const totPC = ACCOUNTS.filter(a=>a.g==='Pasivo Corriente').reduce((s,a)=>s-b(a.c),0);
     const totPT = ACCOUNTS.filter(a=>a.g.startsWith('Pasivo')).reduce((s,a)=>s-b(a.c),0);
     const ventasVal = ACCOUNTS.filter(a=>a.g==='Ingresos').reduce((s,a)=>s-b(a.c),0);
-    const cvVal = b('5101');
+    const cvVal = b('5001') || b('5101');
     const gastosVal = ACCOUNTS.filter(a=>a.g==='Gastos').reduce((s,a)=>s+b(a.c),0);
     const unVal = ventasVal - gastosVal;
     const patVal = ACCOUNTS.filter(a=>a.g==='Patrimonio' && a.c!=='3203').reduce((s,a)=>s-b(a.c),0) + unVal;
