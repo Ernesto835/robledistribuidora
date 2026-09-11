@@ -2021,7 +2021,7 @@ function renderHojaPanel(){
       <tr class="total"><td></td><td>Subtotales</td><td></td><td></td>
         <td class="num">${fmt(erD)}</td><td class="num">${fmt(erH)}</td>
         <td class="num">${fmt(bgD)}</td><td class="num">${fmt(bgH)}</td></tr>
-      <tr><td></td><td>Utilidad del ejercicio</td><td></td><td></td>
+      <tr><td></td><td>${utilidad >= 0 ? 'Utilidad del ejercicio' : 'Pérdida del ejercicio'}</td><td></td><td></td>
         <td class="num">${fmt(Math.max(utilidad,0))}</td><td class="num">${fmt(Math.max(-utilidad,0))}</td>
         <td class="num">${fmt(Math.max(-utilidad,0))}</td><td class="num">${fmt(Math.max(utilidad,0))}</td></tr>
       <tr class="total"><td></td><td>Totales</td><td></td><td></td>
@@ -2081,7 +2081,7 @@ function renderEstadosPanel(){
       <div class="sline sub-total"><span>Total Gastos Operacionales</span><span class="amt">${fmt(totalGastosOp)}</span></div>
       <div class="sline sub-total"><span>Utilidad Operacional</span><span class="amt">${fmt(utilOperacional)}</span></div>
       <div class="sline indent"><span>(–) Gastos Financieros</span><span class="amt">(${fmt(gastosFin)})</span></div>
-      <div class="sline grand"><span>Utilidad Neta del Ejercicio</span><span class="amt">${fmt(utilNeta)}</span></div>
+      <div class="sline grand"><span>${utilNeta >= 0 ? 'Utilidad Neta del Ejercicio' : 'Pérdida Neta del Ejercicio'}</span><span class="amt">${fmt(utilNeta)}</span></div>
     </div>
     <div class="statement">
       <h3>Balance General (Balance Financiero)</h3>
@@ -2101,7 +2101,7 @@ function renderEstadosPanel(){
       <div class="sline sub-total"><span>Total Pasivos</span><span class="amt">${fmt(totPasivos)}</span></div>
       <div class="sline section-lbl">Patrimonio</div>
       ${ACCOUNTS.filter(a=>a.g==='Patrimonio' && a.c!=='3203').map(a=>`<div class="sline indent"><span>${escHtml(a.n)}</span><span class="amt">${fmt(-b(a.c))}</span></div>`).join('')}
-      <div class="sline indent"><span>Utilidad del Ejercicio</span><span class="amt">${fmt(utilNeta)}</span></div>
+      <div class="sline indent"><span>${utilNeta >= 0 ? 'Utilidad del Ejercicio' : '(-) Pérdida del Ejercicio'}</span><span class="amt">${fmt(utilNeta)}</span></div>
       <div class="sline sub-total"><span>Total Patrimonio</span><span class="amt">${fmt(totPatrimonio)}</span></div>
       <div class="sline grand"><span>Total Pasivo + Patrimonio</span><span class="amt">${fmt(totPasivos+totPatrimonio)}</span></div>
     </div>
