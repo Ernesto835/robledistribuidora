@@ -347,15 +347,59 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
 @media (prefers-reduced-motion: reduce){ .intro{display:none;} }
 
 /* ---------- Impresión / Exportar a PDF ---------- */
+.print-only-header{display:none;}
 @media print{
-  .sidebar, .btn-row, #form-asiento, #form-cuenta, .mini-del, .asiento .del, .topline, .intro{display:none !important;}
-  #panel-datos{display:none !important;}
-  .app{display:block;}
-  main{padding:0; max-width:100%;}
-  body{background:#fff; color:#000;}
-  section.panel{display:block !important; page-break-after:always;}
-  section.panel:last-child{page-break-after:auto;}
-  .card,.tblwrap,.tacct,.statement,.chart-card,.ajuste-card,.asiento{box-shadow:none; border:1px solid #ccc;}
+  /* Elementos de la interfaz a ocultar en la impresión */
+  .sidebar, .btn-row, #form-asiento, #form-cuenta, .mini-del, .asiento .del, .topline, .intro,
+  .modal-overlay, .panel-actions-bar, .file-input, .act-btn, #toast-container, .ws-banner, #ws-switcher,
+  .subnav-tabs, .calc-box, button.btn {
+    display:none !important;
+  }
+  .app{display:block !important;}
+  main{padding:0 !important; max-width:100% !important; margin:0 !important;}
+  body{background:#fff !important; color:#000 !important; font-size:12pt;}
+
+  /* Encabezado formal visible ÚNICAMENTE en la versión impresa / PDF */
+  .print-only-header{
+    display:block !important;
+    border-bottom:2px solid #1F5C46 !important;
+    padding-bottom:10px !important;
+    margin-bottom:18px !important;
+    page-break-inside:avoid !important;
+  }
+
+  /* Control de alcance: POR DEFECTO exporta SOLO el apartado activo */
+  body:not(.print-all) section.panel{
+    display:none !important;
+  }
+  body:not(.print-all) section.panel.active{
+    display:block !important;
+    page-break-after:auto !important;
+    page-break-before:auto !important;
+  }
+
+  /* Modo informe completo: Exporta todos los apartados correlativamente */
+  body.print-all #panel-datos{display:none !important;}
+  body.print-all section.panel{
+    display:block !important;
+    page-break-after:always !important;
+  }
+  body.print-all section.panel:last-child{
+    page-break-after:auto !important;
+  }
+
+  /* Formato para tablas y elementos */
+  table{page-break-inside:auto; width:100% !important;}
+  tr{page-break-inside:avoid; page-break-after:auto;}
+  thead{display:table-header-group;}
+  tfoot{display:table-footer-group;}
+  .card, .tblwrap, .tacct, .statement, .chart-card, .ajuste-card, .asiento{
+    box-shadow:none !important;
+    border:1px solid #d0d7d2 !important;
+    page-break-inside:avoid !important;
+  }
+  .tacct{break-inside:avoid; margin-bottom:14px;}
+  .asiento{break-inside:avoid; margin-bottom:12px;}
 }
 
 /* ---------- MÓDULO EXAMEN: INDICADORES FINANCIEROS ---------- */
@@ -762,9 +806,36 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
           </button>
         </div>
         <div class="period" id="topline-period">01 – 31 ENE 2026</div>
-        <button type="button" class="btn" id="btn-export-pdf" title="Abre el diálogo de impresión; elige 'Guardar como PDF'">Exportar a PDF</button>
+        <button type="button" class="btn primary" id="btn-export-pdf" title="Exportar a PDF (elige solo el apartado actual o el ciclo completo)">📄 Exportar a PDF</button>
       </div>
     </div>
+
+    <!-- Encabezado formal visible ÚNICAMENTE al imprimir / guardar en PDF -->
+    <div class="print-only-header" id="print-only-header">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <h1 style="font-family:'Fraunces',serif; font-size:18pt; color:#1F5C46; margin:0 0 3px 0; font-weight:700;">Distribuidora Comercial El Roble S.A.</h1>
+          <div style="font-size:9.5pt; color:#333; margin-bottom:2px;">
+            <b>RUC:</b> 1291748261001 &bull; <b>Ciudad:</b> Quevedo, Los Ríos, Ecuador &bull; <b>Periodo Fiscal:</b> Enero 2026
+          </div>
+          <div style="font-size:9pt; color:#555;">
+            <b>Institución:</b> Universidad Técnica Estatal de Quevedo (UTEQ) &bull; 4to Software "B" &bull; <b>Estudiante:</b> Ernesto Gregory Luna Mora
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="display:inline-block; font-size:9pt; font-weight:700; background:#1F5C46; color:#fff; padding:3px 8px; border-radius:4px;">
+            DOCUMENTO OFICIAL
+          </div>
+          <div style="font-size:8.5pt; color:#666; margin-top:4px;" id="print-header-periodo">
+            Periodo: 01 – 31 ENE 2026
+          </div>
+        </div>
+      </div>
+      <div id="print-header-section-title" style="font-size:12pt; font-weight:700; color:#182420; text-transform:uppercase; margin-top:8px; padding-top:6px; border-top:1px dashed #A9B6AD;">
+        SECCIÓN: LIBRO DIARIO
+      </div>
+    </div>
+
     <div id="content"></div>
   </main>
 </div>
@@ -1314,7 +1385,14 @@ function renderInicial(){
   const td=e.lines.reduce((s,l)=>s+l.d,0), th=e.lines.reduce((s,l)=>s+l.h,0);
   return `
   <div class="eyebrow">Paso 03</div>
-  <h2 class="title">Estado de Situación Inicial</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Estado de Situación Inicial</h2>
+    <div class="panel-actions-bar">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente el Estado de Situación Inicial a PDF" style="font-size:12.5px;">
+        📄 Exportar solo este Balance Inicial a PDF
+      </button>
+    </div>
+  </div>
   <p class="lede">Saldos con los que Distribuidora El Roble S.A. abre su contabilidad. Este mismo estado se registra como el asiento de apertura del Libro Diario.</p>
   <div class="tblwrap"><table>
     <thead><tr><th>Código</th><th>Cuenta</th><th class="num">Debe</th><th class="num">Haber</th></tr></thead>
@@ -1358,7 +1436,24 @@ function renderDiario(fasesToShow, allowActions = true){
 function renderDiarioPanel(){
   return `
   <div class="eyebrow">Paso 04</div>
-  <h2 class="title">Libro Diario</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Libro Diario</h2>
+    <div class="panel-actions-bar" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente el Libro Diario a PDF" style="font-size:12.5px;">
+        📄 Exportar solo este Diario a PDF
+      </button>
+      <button type="button" class="btn" data-action="export-diario-csv" title="Descargar todos los asientos del Libro Diario en formato CSV para Excel" style="font-size:12.5px;">
+        📊 Descargar Asientos (CSV / Excel)
+      </button>
+      <button type="button" class="btn" data-action="export-diario-json" title="Descargar únicamente los asientos contables en formato JSON" style="font-size:12.5px;">
+        📋 Descargar Asientos (JSON)
+      </button>
+      <button type="button" class="btn" data-action="import-diario-trigger" title="Cargar asientos adicionales desde archivo JSON" style="font-size:12.5px;">
+        📥 Importar Asientos (JSON)
+      </button>
+      <input type="file" id="import-diario-file" class="file-input" accept="application/json">
+    </div>
+  </div>
   <p class="lede">Registro cronológico de todos los asientos: apertura y las operaciones del periodo. Puedes editar o eliminar cualquier asiento directamente aquí o desde "Mis Datos".</p>
   ${renderDiario(BASE, true)}`;
 }
@@ -1392,7 +1487,14 @@ function renderBalance(fases, nota){
 function renderBalancePanel(){
   return `
   <div class="eyebrow">Paso 05</div>
-  <h2 class="title">Balance de Comprobación</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Balance de Comprobación</h2>
+    <div class="panel-actions-bar">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este Balance de Comprobación a PDF" style="font-size:12.5px;">
+        📄 Exportar solo este Balance a PDF
+      </button>
+    </div>
+  </div>
   <p class="lede">Balance de sumas y saldos elaborado con los movimientos del periodo, antes de registrar los ajustes de fin de mes.</p>
   ${renderBalance(BASE,'sin ajustar')}`;
 }
@@ -1465,7 +1567,14 @@ function renderMayorPanel(){
   }).join('');
   return `
   <div class="eyebrow">Paso 07</div>
-  <h2 class="title">Libro Mayor — Cuentas T</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Libro Mayor — Cuentas T</h2>
+    <div class="panel-actions-bar">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente el Libro Mayor a PDF" style="font-size:12.5px;">
+        📄 Exportar solo este Libro Mayor a PDF
+      </button>
+    </div>
+  </div>
   <p class="lede">Cada cuenta del catálogo con movimiento, en formato de "Cuenta T", incluyendo apertura, operaciones y ajustes ya incorporados.</p>
   <div class="mayor-grid">${cards || '<div class="note">Todavía no hay movimientos.</div>'}</div>`;
 }
@@ -1476,7 +1585,14 @@ function renderMayorPanel(){
 function renderBalanceAjustadoPanel(){
   return `
   <div class="eyebrow">Paso 08</div>
-  <h2 class="title">Balance de Comprobación Ajustado</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Balance de Comprobación Ajustado</h2>
+    <div class="panel-actions-bar">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este Balance Ajustado a PDF" style="font-size:12.5px;">
+        📄 Exportar solo este Balance Ajustado a PDF
+      </button>
+    </div>
+  </div>
   <p class="lede">El mismo balance de sumas y saldos, incorporando los asientos de ajuste. Es la base directa para elaborar los estados financieros.</p>
   ${renderBalance(ADJ,'ajustado')}`;
 }
@@ -1508,7 +1624,14 @@ function renderHojaPanel(){
   </tr>`).join('');
   return `
   <div class="eyebrow">Paso 09</div>
-  <h2 class="title">Hoja de Trabajo (10 columnas)</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Hoja de Trabajo (10 columnas)</h2>
+    <div class="panel-actions-bar">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente la Hoja de Trabajo a PDF" style="font-size:12.5px;">
+        📄 Exportar solo esta Hoja de Trabajo a PDF
+      </button>
+    </div>
+  </div>
   <p class="lede">Puente entre el balance ajustado y los estados financieros: separa cada cuenta hacia el Estado de Resultados o el Estado de Situación Financiera y comprueba que la utilidad coincide en ambos.</p>
   <div class="tblwrap"><table style="min-width:880px;">
     <thead><tr>
@@ -1567,7 +1690,14 @@ function renderEstadosPanel(){
 
   return `
   <div class="eyebrow">Paso 10</div>
-  <h2 class="title">Estados Financieros — Balance General y Resultados</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Estados Financieros — Balance General y Resultados</h2>
+    <div class="panel-actions-bar">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este Balance General y Resultados a PDF" style="font-size:12.5px;">
+        📄 Exportar solo este Balance General a PDF
+      </button>
+    </div>
+  </div>
   <p class="lede">Resultado final del ciclo contable: el Estado de Resultados mide el desempeño económico y el Balance General (Balance Financiero) muestra la posición patrimonial de la empresa.</p>
   <div class="two-col">
     <div class="statement">
@@ -1899,7 +2029,14 @@ function renderExamenPanel(){
 
   return `
   <div class="eyebrow">Paso 12 &middot; Indicadores Financieros &middot; Caso Examen UTEQ</div>
-  <h2 class="title">Indicadores Financieros — Examen Parcial</h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+    <h2 class="title" style="margin:0;">Indicadores Financieros — Examen Parcial</h2>
+    <div class="panel-actions-bar">
+      <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente este informe de Indicadores Financieros a PDF" style="font-size:12.5px;">
+        📄 Exportar solo estos Indicadores a PDF
+      </button>
+    </div>
+  </div>
   <p class="lede">Resolución completa del examen con base en el caso de <b>Distribuidora Comercial El Roble S.A.</b> (2024 vs 2025). Incluye los 8 indicadores requeridos, fórmulas detalladas, análisis comparativo entre ambos períodos, respuestas a las preguntas de análisis, estados financieros completos y calculadora interactiva.</p>
 
   <!-- Banner Universitario -->
@@ -2712,8 +2849,268 @@ updateWorkspaceUI();
 selectPanel(activePanelId);
 initPersistence();
 
+/* =========================================================
+   SISTEMA DE EXPORTACIÓN A PDF Y DESCARGA POR APARTADO
+   Permite exportar ÚNICAMENTE la sección activa o el informe completo
+   ========================================================= */
+function updatePrintHeader(customTitle){
+  const titleEl = document.getElementById('print-header-section-title');
+  if(!titleEl) return;
+  if(customTitle){
+    titleEl.textContent = customTitle;
+  } else {
+    const p = PANELS.find(x => x.id === activePanelId);
+    titleEl.textContent = p ? `SECCIÓN: ${p.label.toUpperCase()}` : 'DOCUMENTO CONTABLE OFICIAL';
+  }
+}
+
+function exportCurrentSectionToPdf(){
+  document.body.classList.remove('print-all');
+  updatePrintHeader();
+  setTimeout(() => {
+    window.print();
+  }, 120);
+}
+
+function exportAllSectionsToPdf(){
+  document.body.classList.add('print-all');
+  updatePrintHeader('INFORME CONSOLIDADO COMPLETO DEL CICLO CONTABLE');
+  setTimeout(() => {
+    window.print();
+    window.addEventListener('afterprint', () => {
+      document.body.classList.remove('print-all');
+    }, { once: true });
+  }, 120);
+}
+
+function showExportPdfModal(){
+  const curr = PANELS.find(p => p.id === activePanelId) || { id: 'diario', label: 'Libro Diario' };
+  const isDiario = curr.id === 'diario';
+
+  const html = `
+    <div class="modal-header">
+      <div class="modal-header-icon info">📄</div>
+      <div>
+        <div class="modal-title">Exportar a PDF / Descargas</div>
+        <div class="modal-subtitle">Estás visualizando: <b style="color:var(--accent);">${escHtml(curr.label)}</b></div>
+      </div>
+      <button type="button" class="modal-close-btn" data-modal-close aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13.5px; color:var(--ink-soft); margin-bottom:16px; line-height:1.5;">
+        Elige si deseas exportar <b>únicamente el apartado en el que te encuentras</b> (${escHtml(curr.label)}) o generar el informe completo de los 12 pasos del ciclo:
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px;">
+        <!-- Opción 1: Solo sección actual -->
+        <button type="button" class="btn primary" id="modal-btn-print-current" style="text-align:left; padding:14px 18px; display:flex; align-items:center; gap:14px; cursor:pointer;">
+          <span style="font-size:26px; line-height:1;">📄</span>
+          <div style="flex:1;">
+            <div style="font-size:14px; font-weight:700; color:var(--surface);">Exportar solo este apartado: ${escHtml(curr.label)} (PDF)</div>
+            <div style="font-size:12px; opacity:0.92; font-weight:normal; margin-top:2px;">
+              Genera el documento PDF exclusivamente con las tablas y datos de este apartado actual.
+            </div>
+          </div>
+          <span style="font-size:11px; background:rgba(255,255,255,0.25); padding:3px 8px; border-radius:4px; font-weight:600;">Recomendado</span>
+        </button>
+
+        <!-- Opción 2: Todo el informe -->
+        <button type="button" class="btn" id="modal-btn-print-all" style="text-align:left; padding:14px 18px; display:flex; align-items:center; gap:14px; cursor:pointer;">
+          <span style="font-size:26px; line-height:1;">📚</span>
+          <div style="flex:1;">
+            <div style="font-size:14px; font-weight:700; color:var(--ink);">Exportar informe completo (Todos los apartados)</div>
+            <div style="font-size:12px; color:var(--ink-soft); font-weight:normal; margin-top:2px;">
+              Genera el PDF consolidado correlativo con los 12 pasos de Distribuidora Comercial El Roble S.A.
+            </div>
+          </div>
+        </button>
+      </div>
+
+      ${isDiario ? `
+        <div style="border-top:1px solid var(--border); padding-top:14px; margin-top:8px;">
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--gold); margin-bottom:10px;">
+            Descargas de datos exclusivas para el Libro Diario:
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="btn" id="modal-btn-diario-csv" style="font-size:12.5px;">
+              📊 Descargar Asientos (CSV / Excel)
+            </button>
+            <button type="button" class="btn" id="modal-btn-diario-json" style="font-size:12.5px;">
+              📋 Descargar Asientos (JSON)
+            </button>
+            <button type="button" class="btn" id="modal-btn-diario-import" style="font-size:12.5px;">
+              📥 Cargar Asientos (JSON)
+            </button>
+          </div>
+        </div>
+      ` : ''}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn" data-modal-close>Cancelar</button>
+    </div>
+  `;
+
+  openModal(html, false);
+
+  const btnCurr = document.getElementById('modal-btn-print-current');
+  if(btnCurr) btnCurr.onclick = () => {
+    closeModal();
+    exportCurrentSectionToPdf();
+  };
+
+  const btnAll = document.getElementById('modal-btn-print-all');
+  if(btnAll) btnAll.onclick = () => {
+    closeModal();
+    exportAllSectionsToPdf();
+  };
+
+  const btnCsv = document.getElementById('modal-btn-diario-csv');
+  if(btnCsv) btnCsv.onclick = () => {
+    closeModal();
+    exportDiarioCSV();
+  };
+
+  const btnJson = document.getElementById('modal-btn-diario-json');
+  if(btnJson) btnJson.onclick = () => {
+    closeModal();
+    exportDiarioJSON();
+  };
+
+  const btnImp = document.getElementById('modal-btn-diario-import');
+  if(btnImp) btnImp.onclick = () => {
+    closeModal();
+    const fi = document.getElementById('import-diario-file');
+    if(fi) fi.click();
+  };
+}
+
+function exportDiarioCSV(){
+  const headers = ['Asiento', 'Fecha', 'Fase', 'Codigo_Cuenta', 'Nombre_Cuenta', 'Debe', 'Haber', 'Glosa'];
+  const rows = [];
+  ENTRIES.forEach(e => {
+    e.lines.forEach((l, idx) => {
+      const accName = ACC[l.c] ? ACC[l.c].n : l.c;
+      rows.push([
+        `"${e.num}"`,
+        `"${e.fecha || ''}"`,
+        `"${FASE_LABEL[e.fase] || e.fase}"`,
+        `"${l.c}"`,
+        `"${accName.replace(/"/g, '""')}"`,
+        l.d ? Number(l.d).toFixed(2) : '0.00',
+        l.h ? Number(l.h).toFixed(2) : '0.00',
+        idx === 0 ? `"${(e.glosa || '').replace(/"/g, '""')}"` : '""'
+      ]);
+    });
+  });
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `libro-diario-el-roble-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Libro Diario exportado a CSV (compatible con Excel)', 'success');
+}
+
+function exportDiarioJSON(){
+  const payload = JSON.stringify({
+    empresa: 'Distribuidora Comercial El Roble S.A.',
+    seccion: 'Libro Diario',
+    fechaExportacion: new Date().toISOString(),
+    totalAsientos: ENTRIES.length,
+    entries: ENTRIES
+  }, null, 2);
+  const blob = new Blob([payload], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `asientos-libro-diario-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Asientos del Libro Diario exportados a JSON', 'success');
+}
+
+function importDiarioJSON(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(reader.result);
+      let incomingEntries = null;
+      if (Array.isArray(parsed)) {
+        incomingEntries = parsed;
+      } else if (parsed && Array.isArray(parsed.entries)) {
+        incomingEntries = parsed.entries;
+      } else {
+        throw new Error('Estructura no reconocida');
+      }
+
+      const validEntries = incomingEntries.filter(e => e && e.lines && Array.isArray(e.lines));
+      if (!validEntries.length) throw new Error('No se encontraron asientos con líneas válidas');
+
+      showModalConfirm({
+        title: '¿Cómo deseas importar los asientos?',
+        message: `Se encontraron <b>${validEntries.length} asientos válidos</b> en el archivo.<br><br>¿Deseas <b>añadirlos</b> a los asientos actuales del Libro Diario o <b>reemplazarlos</b> por completo?`,
+        confirmText: '➕ Añadir a los actuales',
+        cancelText: '🔄 Reemplazar asientos',
+        type: 'info',
+        onConfirm: () => {
+          ENTRIES = ENTRIES.concat(validEntries);
+          rebuildIndex();
+          afterMutation();
+          showToast(`${validEntries.length} asientos añadidos con éxito al Libro Diario`, 'success');
+        }
+      });
+
+      const cancelBtn = document.getElementById('btn-modal-cancel-action');
+      if (cancelBtn) {
+        cancelBtn.onclick = () => {
+          closeModal();
+          showModalConfirm({
+            title: '⚠️ ¿Confirmar reemplazo de asientos?',
+            message: `Se reemplazarán los <b>${ENTRIES.length} asientos actuales</b> por los <b>${validEntries.length} asientos nuevos</b> del archivo JSON.`,
+            confirmText: 'Sí, reemplazar asientos',
+            type: 'warning',
+            onConfirm: () => {
+              ENTRIES = validEntries;
+              rebuildIndex();
+              afterMutation();
+              showToast(`Se cargaron ${validEntries.length} asientos en el Libro Diario`, 'success');
+            }
+          });
+        };
+      }
+    } catch(err) {
+      showModalAlert({
+        title: 'Archivo Inválido',
+        message: 'El archivo seleccionado no tiene un formato JSON válido de asientos contables.',
+        type: 'danger'
+      });
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Sincronizar encabezado de impresión con la sección activa en caso de Ctrl+P directo
+window.addEventListener('beforeprint', () => {
+  if(!document.body.classList.contains('print-all')){
+    updatePrintHeader();
+  }
+});
+window.addEventListener('afterprint', () => {
+  document.body.classList.remove('print-all');
+});
+
 const btnExportPdf = document.getElementById('btn-export-pdf');
-if(btnExportPdf) btnExportPdf.addEventListener('click', ()=>window.print());
+if(btnExportPdf) btnExportPdf.addEventListener('click', (e) => {
+  e.preventDefault();
+  showExportPdfModal();
+});
 
 /* =========================================================
    Animación de arranque — se omite con prefers-reduced-motion,
@@ -3568,6 +3965,35 @@ document.addEventListener('click', e => {
     document.getElementById('import-file').click();
     return;
   }
+
+  // 14. Exportar sección actual a PDF
+  if(e.target.closest('[data-action="export-current-pdf"]')){
+    e.preventDefault();
+    exportCurrentSectionToPdf();
+    return;
+  }
+
+  // 15. Exportar Libro Diario a CSV
+  if(e.target.closest('[data-action="export-diario-csv"]')){
+    e.preventDefault();
+    exportDiarioCSV();
+    return;
+  }
+
+  // 16. Exportar Libro Diario a JSON
+  if(e.target.closest('[data-action="export-diario-json"]')){
+    e.preventDefault();
+    exportDiarioJSON();
+    return;
+  }
+
+  // 17. Trigger importar asientos Libro Diario
+  if(e.target.closest('[data-action="import-diario-trigger"]')){
+    e.preventDefault();
+    const fi = document.getElementById('import-diario-file');
+    if(fi) fi.click();
+    return;
+  }
 });
 
 contentEl.addEventListener('change', e=>{
@@ -3591,6 +4017,12 @@ contentEl.addEventListener('change', e=>{
       e.target.value='';
     };
     reader.readAsText(file);
+  }
+
+  if(e.target.id==='import-diario-file'){
+    const file=e.target.files[0];
+    if(file) importDiarioJSON(file);
+    e.target.value='';
   }
 });
 document.addEventListener('keydown', e => {
