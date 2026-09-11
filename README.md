@@ -74,7 +74,7 @@ del sistema).
   obtener el proyecto completo en un archivo, listo para entregar o imprimir.
 - **Módulo de Examen — Indicadores Financieros (Paso 12)**: sección previa al
   cierre del periodo que contiene el análisis financiero integral para la evaluación
-  parcial (caso *Distribuidora Industrial Andina S.A.*, 2024 vs. 2025).
+  parcial (caso *Distribuidora Comercial El Roble S.A.*, 2024 vs. 2025).
   Calcula y explica los 8 indicadores requeridos (Razón Corriente, Prueba Ácida,
   Nivel de Endeudamiento, Deuda/Patrimonio, ROA, ROE, Margen Neto y Rotación de
   Inventarios con base del 50%), resuelve las preguntas de análisis cualitativo y cuantitativo,
