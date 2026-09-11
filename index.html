@@ -877,10 +877,10 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
       </div>
       <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
         <div class="ws-switcher" id="ws-switcher" role="radiogroup" aria-label="Espacio de trabajo">
-          <button type="button" class="ws-tab active" data-ws="roble" title="Caso de estudio completo con 16 asientos y estados resueltos">
+          <button type="button" class="ws-tab active" data-ws="roble" title="Ejercicio contable completo con 24 asientos y estados financieros resueltos">
             <span>🏢 Caso El Roble</span>
           </button>
-          <button type="button" class="ws-tab" data-ws="limpio" title="Lienzo limpio en blanco para ingresar nuevos asientos en vivo">
+          <button type="button" class="ws-tab" data-ws="limpio" title="Lienzo en blanco para registrar nuevos ejercicios contables">
             <span>✨ Modo Limpio (En Blanco)</span>
           </button>
         </div>
@@ -893,7 +893,7 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
             <span>🌙 Oscuro</span>
           </button>
         </div>
-        <button type="button" class="btn primary" id="btn-export-pdf" title="Exportar a PDF (elige solo el apartado actual o el ciclo completo)">📄 Exportar a PDF</button>
+        <button type="button" class="btn primary" id="btn-export-pdf" title="Exportar reporte contable en formato PDF o Excel">📥 Exportar Reporte</button>
       </div>
     </div>
 
@@ -1145,8 +1145,8 @@ const SEED_ENTRIES = [
 
 /* =========================================================
    SISTEMA DE MULTI-ENTORNO (CASO EL ROBLE vs MODO LIMPIO)
-   Permite alternar entre el caso resuelto y un lienzo limpio en blanco
-   para agregar asientos en vivo frente a la docente.
+   Permite alternar entre el ejercicio principal y un lienzo en blanco
+   para registrar ejercicios contables independientes.
    ========================================================= */
 const WS_ACTIVE_KEY = 'elRoble.activeWorkspace.v2';
 const WS_ROBLE_KEY = 'elRoble.workspace.roble.v2';
@@ -1405,8 +1405,8 @@ function renderDatosPanel(){
     <div class="ws-banner limpio">
       <div>
         <span class="ws-banner-badge">✨ MODO LIMPIO ACTIVO</span>
-        <b>Lienzo en blanco listo para la evaluación:</b> Agrega los asientos que tu profesora te dicte en el formulario de abajo. El diario, mayor, balances y estados financieros se calcularán al instante para este ejercicio.
-        <div style="font-size:12px; color:var(--ink-soft); margin-top:4px;">💡 El caso resuelto de <b>Distribuidora El Roble</b> sigue intacto y puedes regresar a él en cualquier momento.</div>
+        <b>Lienzo en blanco para nuevo ejercicio contable:</b> Registra transacciones comerciales libres en el formulario inferior. El libro diario, mayorización en Cuentas 'T', balances y estados financieros se procesarán automáticamente en tiempo real.
+        <div style="font-size:12px; color:var(--ink-soft); margin-top:4px;">💡 El ejercicio principal de <b>Distribuidora El Roble</b> permanece guardado y puedes alternar entre ambos entornos cuando desees.</div>
       </div>
       <button type="button" class="btn" data-switch-ws="roble" style="padding:6px 12px; font-size:12px; white-space:nowrap;">Volver a El Roble 🏢</button>
     </div>
@@ -1414,7 +1414,7 @@ function renderDatosPanel(){
     <div class="ws-banner">
       <div>
         <span class="ws-banner-badge">🏢 CASO EL ROBLE</span>
-        Estás visualizando el caso de estudio resuelto (16 asientos contables de enero 2026). Si tu profesora te pide agregar un ejercicio nuevo desde cero sin alterar este trabajo, activa el <b>Modo Limpio</b>.
+        Estás visualizando el ejercicio contable completo de Distribuidora Comercial El Roble S.A. (24 asientos contables de enero 2026). Para registrar un ejercicio nuevo desde cero sin alterar estos datos, utiliza el <b>Modo Limpio</b>.
       </div>
       <button type="button" class="btn primary" data-switch-ws="limpio" style="padding:6px 12px; font-size:12px; white-space:nowrap;">Abrir Modo Limpio ✨</button>
     </div>
@@ -1446,6 +1446,9 @@ function renderDatosPanel(){
       </button>
       <button type="button" class="quicknav-btn" data-jump="sec-respaldo-datos" title="Descargar o restaurar copias de respaldo">
         <span>💾 Respaldo y Acciones</span>
+      </button>
+      <button type="button" class="quicknav-btn" data-action="open-export-modal" title="Exportar reporte contable en PDF o Excel" style="background:var(--accent-soft); color:var(--accent); font-weight:700; border-color:var(--accent);">
+        <span>📥 Exportar (PDF / Excel)</span>
       </button>
     </div>
   </div>
@@ -1617,6 +1620,7 @@ function renderDatosPanel(){
     </div>
     <div class="hint">La app se guarda sola, pero puedes descargar una copia o cargar una anterior.</div>
     <div class="btn-row">
+      <button type="button" class="btn primary" data-action="open-export-modal" style="font-weight:700;">📥 Exportar Reporte (PDF / Excel)</button>
       <button type="button" class="btn" data-action="export">Descargar copia (JSON)</button>
       <button type="button" class="btn" data-action="import-trigger">Cargar copia (JSON)</button>
       <input type="file" id="import-file" class="file-input" accept="application/json">
@@ -3267,68 +3271,99 @@ function exportAllSectionsToPdf(){
 
 function showExportPdfModal(){
   const curr = PANELS.find(p => p.id === activePanelId) || { id: 'diario', label: 'Libro Diario' };
-  const isDiario = curr.id === 'diario';
 
   const html = `
     <div class="modal-header">
-      <div class="modal-header-icon info">📄</div>
+      <div class="modal-header-icon info">📥</div>
       <div>
-        <div class="modal-title">Exportar a PDF / Descargas</div>
-        <div class="modal-subtitle">Estás visualizando: <b style="color:var(--accent);">${escHtml(curr.label)}</b></div>
+        <div class="modal-title">Exportar Reporte Contable</div>
+        <div class="modal-subtitle">Apartado activo: <b style="color:var(--accent);">${escHtml(curr.label)}</b></div>
       </div>
       <button type="button" class="modal-close-btn" data-modal-close aria-label="Cerrar">&times;</button>
     </div>
     <div class="modal-body">
       <p style="font-size:13.5px; color:var(--ink-soft); margin-bottom:16px; line-height:1.5;">
-        Elige si deseas exportar <b>únicamente el apartado en el que te encuentras</b> (${escHtml(curr.label)}) o generar el informe completo de los 12 pasos del ciclo:
+        Elige el formato en el que deseas exportar la información financiera (<b>Documento PDF</b> o <b>Hoja de Cálculo Excel</b>):
       </p>
 
-      <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px;">
-        <!-- Opción 1: Solo sección actual -->
-        <button type="button" class="btn primary" id="modal-btn-print-current" style="text-align:left; padding:14px 18px; display:flex; align-items:center; gap:14px; cursor:pointer;">
-          <span style="font-size:26px; line-height:1;">📄</span>
-          <div style="flex:1;">
-            <div style="font-size:14px; font-weight:700; color:var(--surface);">Exportar solo este apartado: ${escHtml(curr.label)} (PDF)</div>
-            <div style="font-size:12px; opacity:0.92; font-weight:normal; margin-top:2px;">
-              Genera el documento PDF exclusivamente con las tablas y datos de este apartado actual.
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-bottom:16px;">
+        
+        <!-- Bloque 1: Exportar a PDF -->
+        <div style="background:var(--surface-2); border:1px solid var(--border-strong); border-radius:10px; padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+              <span style="font-size:24px;">📄</span>
+              <div>
+                <div style="font-size:15px; font-weight:700; color:var(--ink);">Documento PDF Formal</div>
+                <div style="font-size:11.5px; color:var(--ink-soft);">Formato oficial imprimible con membrete y firmas</div>
+              </div>
             </div>
+            <p style="font-size:12.5px; color:var(--ink-soft); line-height:1.4; margin-bottom:14px;">
+              Ideal para presentación de informes, entrega a la evaluación docente o archivado digital en formato no editable.
+            </p>
           </div>
-          <span style="font-size:11px; background:rgba(255,255,255,0.25); padding:3px 8px; border-radius:4px; font-weight:600;">Recomendado</span>
-        </button>
-
-        <!-- Opción 2: Todo el informe -->
-        <button type="button" class="btn" id="modal-btn-print-all" style="text-align:left; padding:14px 18px; display:flex; align-items:center; gap:14px; cursor:pointer;">
-          <span style="font-size:26px; line-height:1;">📚</span>
-          <div style="flex:1;">
-            <div style="font-size:14px; font-weight:700; color:var(--ink);">Exportar informe completo (Todos los apartados)</div>
-            <div style="font-size:12px; color:var(--ink-soft); font-weight:normal; margin-top:2px;">
-              Genera el PDF consolidado correlativo con los 12 pasos de Distribuidora Comercial El Roble S.A.
-            </div>
-          </div>
-        </button>
-      </div>
-
-      ${isDiario ? `
-        <div style="border-top:1px solid var(--border); padding-top:14px; margin-top:8px;">
-          <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--gold); margin-bottom:10px;">
-            Descargas de datos exclusivas para el Libro Diario:
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button type="button" class="btn" id="modal-btn-diario-csv" style="font-size:12.5px;">
-              📊 Descargar Asientos (CSV / Excel)
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button type="button" class="btn primary" id="modal-btn-print-current" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">📄</span>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:13px; color:var(--surface);">Exportar este apartado a PDF</div>
+                <div style="font-size:11px; opacity:0.9; color:var(--surface);">Solo ${escHtml(curr.label)}</div>
+              </div>
             </button>
-            <button type="button" class="btn" id="modal-btn-diario-json" style="font-size:12.5px;">
-              📋 Descargar Asientos (JSON)
-            </button>
-            <button type="button" class="btn" id="modal-btn-diario-import" style="font-size:12.5px;">
-              📥 Cargar Asientos (JSON)
+            <button type="button" class="btn" id="modal-btn-print-all" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">📚</span>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:13px; color:var(--ink);">Exportar ciclo completo a PDF</div>
+                <div style="font-size:11px; color:var(--ink-soft);">Informe consolidado con los 12 pasos</div>
+              </div>
             </button>
           </div>
         </div>
-      ` : ''}
+
+        <!-- Bloque 2: Exportar a Excel -->
+        <div style="background:var(--surface-2); border:1px solid var(--border-strong); border-radius:10px; padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+              <span style="font-size:24px;">📊</span>
+              <div>
+                <div style="font-size:15px; font-weight:700; color:var(--ink);">Hoja de Cálculo Excel</div>
+                <div style="font-size:11.5px; color:var(--ink-soft);">Archivos .xls y .csv con tablas editables y números</div>
+              </div>
+            </div>
+            <p style="font-size:12.5px; color:var(--ink-soft); line-height:1.4; margin-bottom:14px;">
+              Compatible con Microsoft Excel, Google Sheets y LibreOffice con cabeceras verdes, sumas y columnas separadas.
+            </p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button type="button" class="btn" id="modal-btn-excel-current" style="background:#1D6F42; color:#ffffff; border-color:#1D6F42; text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">📊</span>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:13px; color:#ffffff;">Descargar este apartado en Excel (.xls)</div>
+                <div style="font-size:11px; opacity:0.9; color:#ffffff;">Tablas actuales de ${escHtml(curr.label)}</div>
+              </div>
+            </button>
+            <button type="button" class="btn" id="modal-btn-diario-csv" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">📋</span>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar Libro Diario en Excel (.csv)</div>
+                <div style="font-size:11px; color:var(--ink-soft);">24 asientos con débitos, créditos y cuentas</div>
+              </div>
+            </button>
+            <button type="button" class="btn" id="modal-btn-catalogo-excel" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">🌿</span>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar Catálogo de Cuentas (.xls)</div>
+                <div style="font-size:11px; color:var(--ink-soft);">94 cuentas y subcuentas del plan oficial</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn" data-modal-close>Cancelar</button>
+    <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:11.5px; color:var(--ink-faint);">💡 Consejo: Los archivos .xls y .csv se abren directamente con doble clic en Microsoft Excel.</div>
+      <button type="button" class="btn" data-modal-close>Cerrar</button>
     </div>
   `;
 
@@ -3346,24 +3381,133 @@ function showExportPdfModal(){
     exportAllSectionsToPdf();
   };
 
+  const btnExcelCurr = document.getElementById('modal-btn-excel-current');
+  if(btnExcelCurr) btnExcelCurr.onclick = () => {
+    closeModal();
+    exportCurrentSectionToExcel();
+  };
+
   const btnCsv = document.getElementById('modal-btn-diario-csv');
   if(btnCsv) btnCsv.onclick = () => {
     closeModal();
     exportDiarioCSV();
   };
 
-  const btnJson = document.getElementById('modal-btn-diario-json');
-  if(btnJson) btnJson.onclick = () => {
+  const btnCat = document.getElementById('modal-btn-catalogo-excel');
+  if(btnCat) btnCat.onclick = () => {
     closeModal();
-    exportDiarioJSON();
+    exportCatalogoExcel();
   };
+}
 
-  const btnImp = document.getElementById('modal-btn-diario-import');
-  if(btnImp) btnImp.onclick = () => {
-    closeModal();
-    const fi = document.getElementById('import-diario-file');
-    if(fi) fi.click();
-  };
+function exportCatalogoExcel(){
+  const headers = ['Código', 'Nombre de la Cuenta', 'Clasificación / Grupo', 'Estado Financiero', 'Tipo', 'Código Padre'];
+  let rowsHtml = '';
+  ACCOUNTS.forEach(a => {
+    const isSub = a.c.length > 4;
+    const parentCode = isSub ? a.c.slice(0, 4) : '-';
+    rowsHtml += `<tr>
+      <td style="mso-number-format:'\\@'; font-weight:600;">${a.c}</td>
+      <td>${escHtml(a.n)}</td>
+      <td>${escHtml(a.g)}</td>
+      <td>${a.est === 'BG' ? 'Balance General' : (a.est === 'ER' ? 'Estado de Resultados' : 'Cuenta Puente')}</td>
+      <td>${isSub ? 'Subcuenta (Hija)' : 'Cuenta Principal'}</td>
+      <td style="mso-number-format:'\\@';">${parentCode}</td>
+    </tr>`;
+  });
+
+  const fullHtml = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; font-size: 10pt; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th { background-color: #1F5C46; color: #ffffff; font-weight: bold; border: 1px solid #143e2f; padding: 7px 10px; text-align: left; }
+        td { border: 1px solid #d0d7d3; padding: 5px 8px; }
+        tr:nth-child(even) td { background-color: #f7f9f7; }
+      </style>
+    </head>
+    <body>
+      <h2 style="color:#1F5C46; margin-bottom:2px;">Distribuidora Comercial El Roble S.A. — RUC: 1291748261001</h2>
+      <h3 style="margin-top:0; color:#4B5850;">Plan Oficial de Cuentas (${ACCOUNTS.length} Cuentas y Subcuentas UTEQ)</h3>
+      <p style="font-size:9pt; color:#666;">Fecha de descarga: ${new Date().toLocaleDateString('es-EC')}</p>
+      <table>
+        <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </body></html>
+  `;
+  const blob = new Blob(['\uFEFF' + fullHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `catalogo-cuentas-el-roble-${new Date().toISOString().slice(0,10)}.xls`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  showToast(`Catálogo oficial (${ACCOUNTS.length} cuentas) descargado en Excel (.xls)`, 'success');
+}
+
+function exportCurrentSectionToExcel(){
+  const curr = PANELS.find(p => p.id === activePanelId) || { id: 'diario', label: 'Libro Diario' };
+  
+  if(curr.id === 'diario'){
+    exportDiarioCSV();
+    return;
+  }
+  if(curr.id === 'catalogo'){
+    exportCatalogoExcel();
+    return;
+  }
+
+  const panelEl = document.querySelector(`section.panel[data-panel="${curr.id}"]`);
+  const tables = panelEl ? panelEl.querySelectorAll('table') : [];
+
+  if(!tables || tables.length === 0){
+    exportDiarioCSV();
+    return;
+  }
+
+  let tablesHtml = '';
+  tables.forEach((t, i) => {
+    const clone = t.cloneNode(true);
+    clone.querySelectorAll('button, .row-actions, input, select').forEach(el => el.remove());
+    clone.querySelectorAll('td.code, td.num').forEach(td => {
+      if(td.classList.contains('code')) td.setAttribute('style', "mso-number-format:'\\@';");
+    });
+    tablesHtml += `
+      <h3 style="font-family:Arial,sans-serif; color:#1F5C46; margin-top:20px; margin-bottom:6px;">${escHtml(curr.label)} — Tabla ${i+1}</h3>
+      ${clone.outerHTML}
+    `;
+  });
+
+  const fullHtml = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; font-size: 10pt; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 18px; }
+        th { background-color: #1F5C46; color: #ffffff; font-weight: bold; border: 1px solid #143e2f; padding: 7px 10px; text-align: left; }
+        td { border: 1px solid #d0d7d3; padding: 5px 8px; }
+        tr:nth-child(even) td { background-color: #f7f9f7; }
+        .num { text-align: right; }
+      </style>
+    </head>
+    <body>
+      <h2 style="color:#1F5C46; margin-bottom:2px;">Distribuidora Comercial El Roble S.A. — RUC: 1291748261001</h2>
+      <p style="margin-top:0; font-size:10pt;"><b>Reporte Contable:</b> ${escHtml(curr.label)} &bull; <b>Fecha de Emisión:</b> ${new Date().toLocaleDateString('es-EC')}</p>
+      ${tablesHtml}
+    </body></html>
+  `;
+
+  const blob = new Blob(['\uFEFF' + fullHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const safeName = curr.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  a.download = `reporte-el-roble-${safeName}-${new Date().toISOString().slice(0,10)}.xls`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  showToast(`Apartado «${curr.label}» descargado en Excel (.xls)`, 'success');
 }
 
 function exportDiarioCSV(){
@@ -4507,6 +4651,13 @@ document.addEventListener('click', e => {
   if(e.target.closest('[data-action="export-current-pdf"]')){
     e.preventDefault();
     exportCurrentSectionToPdf();
+    return;
+  }
+
+  // 14.b Abrir modal de exportación unificado (PDF o Excel)
+  if(e.target.closest('[data-action="open-export-modal"]')){
+    e.preventDefault();
+    showExportPdfModal();
     return;
   }
 
