@@ -642,6 +642,54 @@ textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
   display: inline-block;
   letter-spacing: .03em;
 }
+/* ---------- ACCESO RÁPIDO EN MIS DATOS ---------- */
+.misdatos-quicknav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 10px;
+  z-index: 10;
+}
+.quicknav-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  padding: 7px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s ease;
+}
+.quicknav-btn:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.quicknav-pill {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 1px 7px;
+  border-radius: 12px;
+  font-weight: 700;
+}
 .sidebar-ws-box {
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -1356,18 +1404,64 @@ function renderDatosPanel(){
 
   ${bannerHtml}
 
-  <div class="card">
-    <h3>Nuevo asiento contable</h3>
+  <!-- Barra de Acceso Rápido y Salto Directo -->
+  <div class="misdatos-quicknav" id="misdatos-quicknav">
+    <div style="font-size:12px; font-weight:700; color:var(--ink-soft); display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:.04em;">
+      ⚡ Acceso rápido:
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <button type="button" class="quicknav-btn" data-jump="sec-nuevo-asiento" title="Ir al formulario para crear un nuevo asiento">
+        <span>➕ Nuevo Asiento</span>
+      </button>
+      <button type="button" class="quicknav-btn" data-jump="sec-catalogo-cuentas" title="Ir a la lista y creación de cuentas del catálogo">
+        <span>🌿 Catálogo de Cuentas</span>
+        <span class="quicknav-pill">${ACCOUNTS.length}</span>
+      </button>
+      <button type="button" class="quicknav-btn" data-jump="sec-asientos-registrados" title="Ver la tabla de asientos guardados">
+        <span>📋 Asientos Guardados</span>
+        <span class="quicknav-pill">${ENTRIES.length}</span>
+      </button>
+      <button type="button" class="quicknav-btn" data-jump="sec-respaldo-datos" title="Descargar o restaurar copias de respaldo">
+        <span>💾 Respaldo y Acciones</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card" id="sec-nuevo-asiento">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+      <h3 style="margin:0;">Nuevo asiento contable</h3>
+      <button type="button" class="btn" data-jump="misdatos-quicknav" title="Volver arriba al menú rápido" style="font-size:11.5px; padding:5px 9px;">↑ Menú rápido</button>
+    </div>
     <div class="hint">Llena solo las líneas que necesites (mínimo dos) y que el Debe y el Haber cuadren.</div>
     <form id="form-asiento">
-      <div class="form-grid">
-        <label class="field">Fecha<input type="date" name="fecha" required></label>
-        <label class="field">Fase<select name="fase">
-          <option value="operacion">Operación</option>
-          <option value="apertura">Apertura</option>
-          <option value="ajuste">Ajuste</option>
-          <option value="cierre">Cierre</option>
-        </select></label>
+      <div class="form-grid" style="grid-template-columns: 1fr auto;">
+        <label class="field">Fecha del asiento<input type="date" name="fecha" required></label>
+        <input type="hidden" name="fase" id="asiento-fase-input" value="operacion">
+        <div style="display:flex; align-items:flex-end;">
+          <details style="font-size:12px; color:var(--ink-soft); cursor:pointer; position:relative;">
+            <summary style="padding:8px 11px; border:1px dashed var(--border-strong); border-radius:7px; background:var(--surface-2); user-select:none;" title="Clic solo si necesitas cambiar de fase (Apertura, Ajuste o Cierre)">
+              ⚙️ Tipo: <b id="fase-current-label" style="color:var(--accent);">Operación</b> ▾
+            </summary>
+            <div style="position:absolute; right:0; top:calc(100% + 4px); z-index:50; background:var(--surface); border:1px solid var(--border-strong); border-radius:8px; padding:10px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:6px; min-width:250px;">
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px;">
+                <input type="radio" name="fase_radio_opt" value="operacion" checked style="width:auto; margin:0;" onchange="document.getElementById('asiento-fase-input').value='operacion'; document.getElementById('fase-current-label').textContent='Operación';">
+                <span><b>Operación</b> (común: compra/venta)</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px;">
+                <input type="radio" name="fase_radio_opt" value="apertura" style="width:auto; margin:0;" onchange="document.getElementById('asiento-fase-input').value='apertura'; document.getElementById('fase-current-label').textContent='Apertura';">
+                <span><b>Apertura</b> (balance inicial)</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px;">
+                <input type="radio" name="fase_radio_opt" value="ajuste" style="width:auto; margin:0;" onchange="document.getElementById('asiento-fase-input').value='ajuste'; document.getElementById('fase-current-label').textContent='Ajuste';">
+                <span><b>Ajuste</b> (depreciaciones/gastos)</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px;">
+                <input type="radio" name="fase_radio_opt" value="cierre" style="width:auto; margin:0;" onchange="document.getElementById('asiento-fase-input').value='cierre'; document.getElementById('fase-current-label').textContent='Cierre';">
+                <span><b>Cierre</b> (asientos C1, C2, C3)</span>
+              </label>
+            </div>
+          </details>
+        </div>
       </div>
       <label class="field" style="margin-top:12px;">Glosa / explicación<textarea name="glosa" rows="2" required placeholder="Ej: Pago de arriendo del mes de febrero"></textarea></label>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; margin-bottom:6px;">
@@ -1387,14 +1481,15 @@ function renderDatosPanel(){
     </form>
   </div>
 
-  <div class="card">
+  <div class="card" id="sec-catalogo-cuentas">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
       <div>
         <h3 style="margin:0;">Catálogo de cuentas (Plan Oficial UTEQ — 82 cuentas)</h3>
         <div class="hint" style="margin-top:2px;">Plan de cuentas actualizado de la asignatura. Todas las cuentas del PDF oficial están incorporadas y listas para usar.</div>
       </div>
-      <div>
-        <input type="text" id="search-cuenta-input" placeholder="🔍 Buscar cuenta por código o nombre..." style="width:280px; padding:7px 12px; font-size:12.5px; border-radius:7px; border:1px solid var(--border-strong);">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input type="text" id="search-cuenta-input" placeholder="🔍 Buscar cuenta por código o nombre..." style="width:260px; padding:7px 12px; font-size:12.5px; border-radius:7px; border:1px solid var(--border-strong);">
+        <button type="button" class="btn" data-jump="misdatos-quicknav" title="Volver al menú rápido superior" style="font-size:11.5px; padding:6px 10px; white-space:nowrap;">↑ Menú rápido</button>
       </div>
     </div>
     <form id="form-cuenta" style="background:var(--surface-2); border:1px solid var(--border-strong); border-radius:9px; padding:16px 18px; margin-bottom:18px;">
@@ -1481,16 +1576,22 @@ function renderDatosPanel(){
     </table></div>
   </div>
 
-  <div class="card">
-    <h3>Asientos registrados</h3>
+  <div class="card" id="sec-asientos-registrados">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0;">Asientos registrados (${ENTRIES.length})</h3>
+      <button type="button" class="btn" data-jump="misdatos-quicknav" title="Volver al menú rápido superior" style="font-size:11.5px; padding:5px 9px;">↑ Menú rápido</button>
+    </div>
     <div class="tblwrap"><table>
       <thead><tr><th>N.º</th><th>Fecha</th><th>Fase</th><th>Glosa</th><th class="num">Monto</th><th></th></tr></thead>
       <tbody>${entryRows}</tbody>
     </table></div>
   </div>
 
-  <div class="card">
-    <h3>Respaldo de datos</h3>
+  <div class="card" id="sec-respaldo-datos">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+      <h3 style="margin:0;">Respaldo de datos</h3>
+      <button type="button" class="btn" data-jump="misdatos-quicknav" title="Volver al menú rápido superior" style="font-size:11.5px; padding:5px 9px;">↑ Menú rápido</button>
+    </div>
     <div class="hint">La app se guarda sola, pero puedes descargar una copia o cargar una anterior.</div>
     <div class="btn-row">
       <button type="button" class="btn" data-action="export">Descargar copia (JSON)</button>
@@ -4171,6 +4272,25 @@ document.addEventListener('click', e => {
   if(e.target.closest('#btn-theme-toggle') || e.target.closest('#sidebar-theme-toggle')){
     e.preventDefault();
     toggleTheme();
+    return;
+  }
+
+  // 0.1 Salto Rápido dentro del panel Mis Datos
+  const jumpBtn = e.target.closest('[data-jump]');
+  if(jumpBtn){
+    e.preventDefault();
+    const targetId = jumpBtn.dataset.jump;
+    const targetEl = document.getElementById(targetId);
+    if(targetEl){
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      targetEl.style.transition = 'box-shadow 0.35s ease, border-color 0.35s ease';
+      targetEl.style.borderColor = 'var(--accent)';
+      targetEl.style.boxShadow = '0 0 0 3px var(--accent-soft), var(--shadow)';
+      setTimeout(() => {
+        targetEl.style.borderColor = '';
+        targetEl.style.boxShadow = '';
+      }, 1500);
+    }
     return;
   }
   // 1. Acciones de Asientos: Editar
