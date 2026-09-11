@@ -943,7 +943,7 @@ const LOCAL_STORAGE_KEY = 'elRoble.cicloContable.v1';
 /*SEED_START*/
 const SEED_ACCOUNTS = [
   /* =========================================================
-     PLAN DE CUENTAS ACTUALIZADO (OFICIAL UTEQ - 82 CUENTAS)
+     PLAN DE CUENTAS ACTUALIZADO (OFICIAL UTEQ - 94 CUENTAS Y SUBCUENTAS)
      ========================================================= */
   // 1. ACTIVO (1)
   // 1.1 Activo Corriente (11)
@@ -972,7 +972,11 @@ const SEED_ACCOUNTS = [
   {c:'120104', n:'Equipos de Computación', g:'Activo No Corriente', est:'BG'},
   {c:'120105', n:'Vehículos', g:'Activo No Corriente', est:'BG'},
   {c:'120106', n:'Muebles y Enseres', g:'Activo No Corriente', est:'BG'},
+  {c:'120107', n:'Maquinaria y Equipos', g:'Activo No Corriente', est:'BG'},
   {c:'1202', n:'(-) Depreciación Acumulada', g:'Activo No Corriente', est:'BG', contra:true},
+  {c:'120201', n:'(-) Deprec. Acum. Edificaciones', g:'Activo No Corriente', est:'BG', contra:true},
+  {c:'120202', n:'(-) Deprec. Acum. Equipos de Oficina', g:'Activo No Corriente', est:'BG', contra:true},
+  {c:'120203', n:'(-) Deprec. Acum. Vehículos', g:'Activo No Corriente', est:'BG', contra:true},
   {c:'1203', n:'Intangibles', g:'Activo No Corriente', est:'BG'},
   {c:'120301', n:'Licencias', g:'Activo No Corriente', est:'BG'},
   {c:'120302', n:'Software', g:'Activo No Corriente', est:'BG'},
@@ -993,7 +997,10 @@ const SEED_ACCOUNTS = [
   {c:'2106', n:'Sueldos y Salarios por Pagar', g:'Pasivo Corriente', est:'BG'},
   {c:'2107', n:'IVA Débito Fiscal', g:'Pasivo Corriente', est:'BG'},
   {c:'2108', n:'Préstamos Bancarios', g:'Pasivo Corriente', est:'BG'},
+  {c:'2109', n:'Préstamos Bancarios a Corto Plazo', g:'Pasivo Corriente', est:'BG'},
   {c:'2110', n:'Provisiones', g:'Pasivo Corriente', est:'BG'},
+  {c:'211001', n:'Provisión de Vacaciones', g:'Pasivo Corriente', est:'BG'},
+  {c:'211002', n:'Provisión de Décimos', g:'Pasivo Corriente', est:'BG'},
   {c:'2111', n:'Otros Pasivos Corrientes', g:'Pasivo Corriente', est:'BG'},
 
   // 2.2 Pasivo No Corriente (22)
@@ -1036,6 +1043,10 @@ const SEED_ACCOUNTS = [
   {c:'5108', n:'Honorarios Profesionales', g:'Gastos', est:'ER'},
   {c:'5109', n:'Servicios Notariales', g:'Gastos', est:'ER'},
   {c:'5110', n:'Servicios Generales', g:'Gastos', est:'ER'},
+  {c:'511001', n:'Limpieza y Mantenimiento', g:'Gastos', est:'ER'},
+  {c:'511002', n:'Seguridad y Vigilancia', g:'Gastos', est:'ER'},
+  {c:'511003', n:'Jardinería', g:'Gastos', est:'ER'},
+  {c:'511004', n:'Mantenimiento de Áreas Comunes', g:'Gastos', est:'ER'},
   {c:'5111', n:'Materiales de Limpieza', g:'Gastos', est:'ER'},
   // 5.2 Gastos de Ventas (52)
   {c:'5201', n:'Publicidad y Propaganda', g:'Gastos', est:'ER'},
@@ -1170,6 +1181,22 @@ function loadWorkspaceData(ws){
       if(Array.isArray(parsed.accounts) && Array.isArray(parsed.entries)){
         ACCOUNTS = parsed.accounts;
         ENTRIES = parsed.entries;
+        // Sincronizar automáticamente cualquier cuenta del catálogo oficial que falte en el almacenamiento local
+        const existingCodes = new Set(ACCOUNTS.map(a => a.c));
+        let addedCount = 0;
+        SEED_ACCOUNTS.forEach(sa => {
+          if(!existingCodes.has(sa.c)){
+            ACCOUNTS.push(JSON.parse(JSON.stringify(sa)));
+            addedCount++;
+          }
+        });
+        if(addedCount > 0){
+          ACCOUNTS.sort((a, b) => a.c.localeCompare(b.c, undefined, {numeric: true}));
+          try {
+            localStorage.setItem(key, JSON.stringify({accounts:ACCOUNTS, entries:ENTRIES}));
+            if(ws === 'roble') localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({accounts:ACCOUNTS, entries:ENTRIES}));
+          } catch(e){}
+        }
         loaded = true;
       }
     }
@@ -1480,8 +1507,8 @@ function renderDatosPanel(){
   <div class="card" id="sec-catalogo-cuentas">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
       <div>
-        <h3 style="margin:0;">Catálogo de cuentas (Plan Oficial UTEQ — 82 cuentas)</h3>
-        <div class="hint" style="margin-top:2px;">Plan de cuentas actualizado de la asignatura. Todas las cuentas del PDF oficial están incorporadas y listas para usar.</div>
+        <h3 style="margin:0;">Catálogo de cuentas (Plan Oficial UTEQ — ${ACCOUNTS.length} cuentas)</h3>
+        <div class="hint" style="margin-top:2px;">Plan de cuentas oficial de la asignatura (100% de cuentas y subcuentas del PDF de la cátedra incorporadas y listas para usar).</div>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
         <input type="text" id="search-cuenta-input" placeholder="🔍 Buscar cuenta por código o nombre..." style="width:260px; padding:7px 12px; font-size:12.5px; border-radius:7px; border:1px solid var(--border-strong);">
