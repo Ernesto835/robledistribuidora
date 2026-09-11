@@ -1679,18 +1679,20 @@ function renderDiarioPanel(){
     <h2 class="title" style="margin:0;">Libro Diario</h2>
     <div class="panel-actions-bar" style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
       <button type="button" class="btn primary" data-action="export-current-pdf" title="Exportar únicamente el Libro Diario a PDF" style="font-size:12.5px;">
-        📄 Exportar solo este Diario a PDF
+        📄 Exportar Diario a PDF
       </button>
-      <button type="button" class="btn" data-action="export-diario-csv" title="Descargar todos los asientos del Libro Diario en formato CSV para Excel" style="font-size:12.5px;">
-        📊 Descargar Asientos (CSV / Excel)
+      <button type="button" class="btn" data-action="export-diario-excel" title="Descargar todos los asientos en formato oficial Excel (.xls) con membrete institucional y firmas" style="font-size:12.5px; background:#1D6F42; color:#ffffff; border-color:#1D6F42; font-weight:600;">
+        📊 Descargar en Excel (.xls)
+      </button>
+      <button type="button" class="btn" data-action="open-import-diario-modal" title="Importar asientos contables desde archivo Excel (CSV) o JSON con previsualización y validación" style="font-size:12.5px;">
+        📥 Importar Asientos (Excel / JSON)
+      </button>
+      <button type="button" class="btn" data-action="export-diario-csv" title="Descargar todos los asientos del Libro Diario en formato CSV para hojas de cálculo" style="font-size:12.5px;">
+        📋 Exportar CSV
       </button>
       <button type="button" class="btn" data-action="export-diario-json" title="Descargar únicamente los asientos contables en formato JSON" style="font-size:12.5px;">
-        📋 Descargar Asientos (JSON)
+        💾 Exportar JSON
       </button>
-      <button type="button" class="btn" data-action="import-diario-trigger" title="Cargar asientos adicionales desde archivo JSON" style="font-size:12.5px;">
-        📥 Importar Asientos (JSON)
-      </button>
-      <input type="file" id="import-diario-file" class="file-input" accept="application/json">
     </div>
   </div>
   <p class="lede">Registro cronológico de todos los asientos: apertura y las operaciones del periodo. Puedes editar o eliminar cualquier asiento directamente aquí o desde "Mis Datos".</p>
@@ -3304,34 +3306,41 @@ function showExportPdfModal(){
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
               <span style="font-size:24px;">📊</span>
               <div>
-                <div style="font-size:15px; font-weight:700; color:var(--ink);">Hoja de Cálculo Excel</div>
-                <div style="font-size:11.5px; color:var(--ink-soft);">Archivos .xls y .csv con tablas editables y números</div>
+                <div style="font-size:15px; font-weight:700; color:var(--ink);">Hojas de Cálculo Excel Oficiales</div>
+                <div style="font-size:11.5px; color:var(--ink-soft);">Archivos .xls con membrete institucional, moneda ($) y firmas</div>
               </div>
             </div>
             <p style="font-size:12.5px; color:var(--ink-soft); line-height:1.4; margin-bottom:14px;">
-              Compatible con Microsoft Excel, Google Sheets y LibreOffice con cabeceras verdes, sumas y columnas separadas.
+              Diseño contable ejecutivo: cabeceras verde esmeralda (#1F5C46), códigos como texto (@), totales con doble línea contable y cuadro de 3 firmas de control interno.
             </p>
           </div>
           <div style="display:flex; flex-direction:column; gap:8px;">
-            <button type="button" class="btn" id="modal-btn-excel-current" style="background:#1D6F42; color:#ffffff; border-color:#1D6F42; text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
-              <span style="font-size:18px;">📊</span>
+            <button type="button" class="btn" id="modal-btn-excel-diario" style="background:#1D6F42; color:#ffffff; border-color:#1D6F42; text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">📗</span>
               <div style="flex:1;">
-                <div style="font-weight:700; font-size:13px; color:#ffffff;">Descargar este apartado en Excel (.xls)</div>
-                <div style="font-size:11px; opacity:0.9; color:#ffffff;">Tablas actuales de ${escHtml(curr.label)}</div>
+                <div style="font-weight:700; font-size:13px; color:#ffffff;">Descargar Libro Diario en Excel (.xls)</div>
+                <div style="font-size:11px; opacity:0.9; color:#ffffff;">24 asientos contables con formato formal y firmas</div>
               </div>
             </button>
-            <button type="button" class="btn" id="modal-btn-diario-csv" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
-              <span style="font-size:18px;">📋</span>
+            <button type="button" class="btn" id="modal-btn-excel-current" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">📊</span>
               <div style="flex:1;">
-                <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar Libro Diario en Excel (.csv)</div>
-                <div style="font-size:11px; color:var(--ink-soft);">24 asientos con débitos, créditos y cuentas</div>
+                <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar este apartado en Excel (.xls)</div>
+                <div style="font-size:11px; color:var(--ink-soft);">Tablas de «${escHtml(curr.label)}» con diseño corporativo</div>
               </div>
             </button>
             <button type="button" class="btn" id="modal-btn-catalogo-excel" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
               <span style="font-size:18px;">🌿</span>
               <div style="flex:1;">
                 <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar Catálogo de Cuentas (.xls)</div>
-                <div style="font-size:11px; color:var(--ink-soft);">94 cuentas y subcuentas del plan oficial</div>
+                <div style="font-size:11px; color:var(--ink-soft);">94 cuentas y subcuentas del plan contable UTEQ</div>
+              </div>
+            </button>
+            <button type="button" class="btn" id="modal-btn-diario-csv" style="text-align:left; padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer;">
+              <span style="font-size:18px;">📋</span>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:13px; color:var(--ink);">Descargar Libro Diario en CSV</div>
+                <div style="font-size:11px; color:var(--ink-soft);">Archivo delimitado para importación en otros sistemas</div>
               </div>
             </button>
           </div>
@@ -3359,6 +3368,12 @@ function showExportPdfModal(){
     exportAllSectionsToPdf();
   };
 
+  const btnExcelDiario = document.getElementById('modal-btn-excel-diario');
+  if(btnExcelDiario) btnExcelDiario.onclick = () => {
+    closeModal();
+    exportDiarioExcel();
+  };
+
   const btnExcelCurr = document.getElementById('modal-btn-excel-current');
   if(btnExcelCurr) btnExcelCurr.onclick = () => {
     closeModal();
@@ -3378,50 +3393,280 @@ function showExportPdfModal(){
   };
 }
 
-function exportCatalogoExcel(){
-  const headers = ['Código', 'Nombre de la Cuenta', 'Clasificación / Grupo', 'Estado Financiero', 'Tipo', 'Código Padre'];
-  let rowsHtml = '';
-  ACCOUNTS.forEach(a => {
-    const isSub = a.c.length > 4;
-    const parentCode = isSub ? a.c.slice(0, 4) : '-';
-    rowsHtml += `<tr>
-      <td style="mso-number-format:'\\@'; font-weight:600;">${a.c}</td>
-      <td>${escHtml(a.n)}</td>
-      <td>${escHtml(a.g)}</td>
-      <td>${a.est === 'BG' ? 'Balance General' : (a.est === 'ER' ? 'Estado de Resultados' : 'Cuenta Puente')}</td>
-      <td>${isSub ? 'Subcuenta (Hija)' : 'Cuenta Principal'}</td>
-      <td style="mso-number-format:'\\@';">${parentCode}</td>
-    </tr>`;
-  });
+/* =========================================================
+   GENERADOR CORPORATIVO DE EXCEL (.XLS) DE ALTA CALIDAD
+   ========================================================= */
+function generateCorporateExcelXml({ title, subtitle, worksheetName, colSpan, contentHtml }){
+  const span = Math.max(colSpan || 6, 6);
+  const sCol1 = Math.floor(span / 3);
+  const sCol2 = Math.floor(span / 3);
+  const sCol3 = span - (sCol1 + sCol2);
 
-  const fullHtml = `
-    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-    <head><meta charset="utf-8">
+  return `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+          xmlns:x="urn:schemas-microsoft-com:office:excel" 
+          xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <meta name="ProgId" content="Excel.Sheet">
+      <meta name="Generator" content="Microsoft Excel 15">
+      <!--[if gte mso 9]>
+      <xml>
+        <x:ExcelWorkbook>
+          <x:ExcelWorksheets>
+            <x:ExcelWorksheet>
+              <x:Name>${worksheetName ? escHtml(worksheetName.replace(/[:\\\\/?*\\[\\]]/g, '')) : 'Reporte'}</x:Name>
+              <x:WorksheetOptions>
+                <x:DisplayGridlines/>
+                <x:Print>
+                  <x:ValidPrinterInfo/>
+                  <x:PaperSizeIndex>9</x:PaperSizeIndex>
+                  <x:HorizontalResolution>600</x:HorizontalResolution>
+                  <x:VerticalResolution>600</x:VerticalResolution>
+                </x:Print>
+              </x:WorksheetOptions>
+            </x:ExcelWorksheet>
+          </x:ExcelWorksheets>
+        </x:ExcelWorkbook>
+      </xml>
+      <![endif]-->
       <style>
-        body { font-family: Arial, sans-serif; font-size: 10pt; }
-        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-        th { background-color: #1F5C46; color: #ffffff; font-weight: bold; border: 1px solid #143e2f; padding: 7px 10px; text-align: left; }
-        td { border: 1px solid #d0d7d3; padding: 5px 8px; }
-        tr:nth-child(even) td { background-color: #f7f9f7; }
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 10pt; color: #1a1a1a; margin: 0; padding: 15px; }
+        table.data-table { border-collapse: collapse; width: 100%; margin-top: 10px; margin-bottom: 20px; }
+        table.data-table th { background-color: #1F5C46; color: #ffffff; font-weight: bold; font-size: 10pt; border: 1px solid #143e2f; padding: 8px 10px; text-align: center; vertical-align: middle; height: 26px; }
+        table.data-table td { border: 1px solid #D0DCD5; padding: 6px 9px; font-size: 9.5pt; vertical-align: middle; }
+        .row-even td { background-color: #FFFFFF; }
+        .row-odd td { background-color: #F8FAF9; }
+        .total-row td { background-color: #E6EFEA; font-weight: bold; color: #12382B; font-size: 10.5pt; border-top: 2px solid #1F5C46; border-bottom: 3px double #1F5C46; height: 28px; }
+        .tot-val { mso-number-format:'\\&quot;\\$\\&quot;#,##0.00'; text-align: right; }
       </style>
     </head>
     <body>
-      <h2 style="color:#1F5C46; margin-bottom:2px;">Distribuidora Comercial El Roble S.A. — RUC: 1291748261001</h2>
-      <h3 style="margin-top:0; color:#4B5850;">Plan Oficial de Cuentas (${ACCOUNTS.length} Cuentas y Subcuentas UTEQ)</h3>
-      <p style="font-size:9pt; color:#666;">Fecha de descarga: ${new Date().toLocaleDateString('es-EC')}</p>
-      <table>
-        <thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-        <tbody>${rowsHtml}</tbody>
+      <!-- Membrete Institucional Corporativo -->
+      <table style="width:100%; border-collapse:collapse; margin-bottom:12px;">
+        <tr>
+          <td colspan="${span}" style="text-align:center; font-family:'Calibri',Arial,sans-serif; font-size:16pt; font-weight:bold; color:#1F5C46; padding:8px 0; background-color:#EBF3EE; border:1px solid #1F5C46;">
+            DISTRIBUIDORA COMERCIAL EL ROBLE S.A.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="${span}" style="text-align:center; font-family:'Calibri',Arial,sans-serif; font-size:9.5pt; color:#444444; padding:4px 0;">
+            <b>R.U.C.:</b> 1291748261001 &bull; <b>Dirección:</b> Av. Walter Andrade y 7ma, Quevedo, Los Ríos, Ecuador &bull; <b>Teléfono:</b> (05) 275-0199
+          </td>
+        </tr>
+        <tr>
+          <td colspan="${span}" style="text-align:center; font-family:'Calibri',Arial,sans-serif; font-size:12pt; font-weight:bold; color:#ffffff; background-color:#1F5C46; padding:7px 0; border:1px solid #143e2f;">
+            ${title}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="${span}" style="text-align:center; font-family:'Calibri',Arial,sans-serif; font-size:9.5pt; color:#2D4D3D; background-color:#F2F7F4; padding:4px 0; border-left:1px solid #D0DCD5; border-right:1px solid #D0DCD5; border-bottom:1px solid #D0DCD5;">
+            ${subtitle}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="${span}" style="text-align:right; font-family:'Calibri',Arial,sans-serif; font-size:8.5pt; color:#666666; padding:4px 0;">
+            <b>Fecha de Emisión:</b> ${new Date().toLocaleDateString('es-EC', { year:'numeric', month:'long', day:'numeric' })} &bull; <b>Hora:</b> ${new Date().toLocaleTimeString('es-EC')} &bull; <b>Responsable:</b> Ernesto Gregory Luna Mora
+          </td>
+        </tr>
+      </table>
+
+      ${contentHtml}
+
+      <!-- Bloque de 3 Firmas de Control Interno y Responsabilidad Legal -->
+      <table style="width:100%; border-collapse:collapse; margin-top:35px; page-break-inside:avoid;">
+        <tr>
+          <td colspan="${span}" style="height:40px;"></td>
+        </tr>
+        <tr>
+          <td colspan="${sCol1}" style="text-align:center; vertical-align:top; border-top:1px solid #333333; padding-top:6px; font-family:'Calibri',Arial,sans-serif;">
+            <div style="font-weight:bold; font-size:10pt; color:#1F5C46;">ERNESTO GREGORY LUNA MORA</div>
+            <div style="font-size:8.5pt; color:#444444;">Auxiliar Contable / Estudiante 4to "B" UTEQ</div>
+            <div style="font-size:8pt; color:#777777; margin-top:2px;"><b>ELABORADO POR</b></div>
+          </td>
+          <td colspan="${sCol2}" style="text-align:center; vertical-align:top; border-top:1px solid #333333; padding-top:6px; font-family:'Calibri',Arial,sans-serif;">
+            <div style="font-weight:bold; font-size:10pt; color:#1F5C46;">ING. JESSICA MONCAYO LOMAS</div>
+            <div style="font-size:8.5pt; color:#444444;">Docente Titular / Cátedra de Contabilidad</div>
+            <div style="font-size:8pt; color:#777777; margin-top:2px;"><b>REVISADO POR</b></div>
+          </td>
+          <td colspan="${sCol3}" style="text-align:center; vertical-align:top; border-top:1px solid #333333; padding-top:6px; font-family:'Calibri',Arial,sans-serif;">
+            <div style="font-weight:bold; font-size:10pt; color:#1F5C46;">GERENCIA GENERAL</div>
+            <div style="font-size:8.5pt; color:#444444;">Distribuidora Comercial El Roble S.A.</div>
+            <div style="font-size:8pt; color:#777777; margin-top:2px;"><b>APROBADO POR</b></div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="${span}" style="text-align:center; font-family:'Calibri',Arial,sans-serif; font-size:8pt; color:#888888; padding-top:18px;">
+            Documento contable oficial emitido por el Sistema Integral de Contabilidad — Distribuidora Comercial El Roble S.A. &bull; RUC 1291748261001 &bull; Quevedo, Ecuador
+          </td>
+        </tr>
       </table>
     </body></html>
   `;
-  const blob = new Blob(['\uFEFF' + fullHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+}
+
+function downloadExcelBlob(htmlContent, fileName){
+  const blob = new Blob(['\uFEFF' + htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `catalogo-cuentas-el-roble-${new Date().toISOString().slice(0,10)}.xls`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportDiarioExcel(){
+  let totD = 0, totH = 0;
+  let rowsHtml = '';
+  
+  ENTRIES.forEach(e => {
+    const faseName = FASE_LABEL[e.fase] || e.fase;
+    rowsHtml += `
+      <tr style="background-color:#EBF3EE;">
+        <td colspan="7" style="font-weight:bold; color:#1F5C46; font-size:10pt; border-left:4px solid #1F5C46; padding:6px 8px; border-top:1px solid #B8CFC3; border-bottom:1px solid #B8CFC3;">
+          ASIENTO N° ${e.num} &bull; FASE: ${faseName.toUpperCase()} &bull; FECHA: ${e.fecha || '-'}
+        </td>
+      </tr>
+    `;
+    
+    e.lines.forEach((l, idx) => {
+      const acc = ACC[l.c];
+      const accName = acc ? acc.n : l.c;
+      const dVal = Number(l.d) || 0;
+      const hVal = Number(l.h) || 0;
+      totD += dVal;
+      totH += hVal;
+      
+      const isCredit = hVal > 0 && dVal === 0;
+      const displayName = isCredit ? `&nbsp;&nbsp;&nbsp;&nbsp;a ${escHtml(accName)}` : escHtml(accName);
+      
+      rowsHtml += `
+        <tr class="${idx % 2 === 0 ? 'row-even' : 'row-odd'}">
+          <td style="mso-number-format:'\\@'; text-align:center;">${e.num}</td>
+          <td style="mso-number-format:'yyyy-mm-dd'; text-align:center;">${e.fecha || ''}</td>
+          <td style="mso-number-format:'\\@'; text-align:center;">${faseName}</td>
+          <td style="mso-number-format:'\\@'; text-align:center; font-weight:600;">${l.c}</td>
+          <td style="text-align:left; ${isCredit ? 'padding-left:20px;' : ''}">${displayName}</td>
+          <td style="mso-number-format:'\\&quot;\\$\\&quot;#,##0.00'; text-align:right;">${dVal > 0 ? dVal.toFixed(2) : ''}</td>
+          <td style="mso-number-format:'\\&quot;\\$\\&quot;#,##0.00'; text-align:right;">${hVal > 0 ? hVal.toFixed(2) : ''}</td>
+        </tr>
+      `;
+    });
+    
+    if (e.glosa) {
+      rowsHtml += `
+        <tr style="background-color:#F9FBFA;">
+          <td colspan="7" style="font-style:italic; color:#4B5850; font-size:9pt; padding:4px 10px; border-bottom:1px solid #D0DCD5;">
+            <b>Glosa / Explicación:</b> ${escHtml(e.glosa)}
+          </td>
+        </tr>
+      `;
+    }
+  });
+
+  const cuadreDiff = Math.abs(totD - totH);
+  const cuadreText = cuadreDiff < 0.01 
+    ? '✓ CUADRE EXACTO DE PARTIDA DOBLE (DIFERENCIA: $0.00)' 
+    : `⚠️ DESCUADRE CONTABLE: $${cuadreDiff.toFixed(2)}`;
+
+  const tableHtml = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:70px;">Asiento</th>
+          <th style="width:90px;">Fecha</th>
+          <th style="width:100px;">Fase</th>
+          <th style="width:80px;">Código</th>
+          <th style="width:280px; text-align:left;">Denominación de la Cuenta</th>
+          <th style="width:110px; text-align:right;">Debe (USD)</th>
+          <th style="width:110px; text-align:right;">Haber (USD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+        <tr class="total-row">
+          <td colspan="5" class="tot-label" style="text-align:right; font-weight:bold; padding-right:10px;">
+            TOTALES GENERALES DEL LIBRO DIARIO:
+          </td>
+          <td class="tot-val">${totD.toFixed(2)}</td>
+          <td class="tot-val">${totH.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td colspan="7" style="text-align:center; font-weight:bold; font-size:9.5pt; color:${cuadreDiff < 0.01 ? '#1F5C46' : '#9B1C1C'}; background-color:#F2F7F4; padding:6px; border:1px solid #C4DCD1;">
+            ${cuadreText}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  const fullHtml = generateCorporateExcelXml({
+    title: 'LIBRO DIARIO GENERAL — REGISTRO CRONOLÓGICO',
+    subtitle: `Ejercicio Fiscal 2026 &bull; ${ENTRIES.length} Asientos Contables Registrados &bull; Moneda: Dólares de los Estados Unidos de América (USD)`,
+    worksheetName: 'Libro Diario',
+    colSpan: 7,
+    contentHtml: tableHtml
+  });
+
+  downloadExcelBlob(fullHtml, `libro-diario-el-roble-2026.xls`);
+  showToast(`Libro Diario oficial (${ENTRIES.length} asientos) descargado en Excel (.xls)`, 'success');
+}
+
+function exportCatalogoExcel(){
+  const headers = ['Código', 'Nombre de la Cuenta', 'Clasificación / Elemento', 'Estado Financiero', 'Nivel Jerárquico', 'Código Padre'];
+  let rowsHtml = '';
+  ACCOUNTS.forEach((a, idx) => {
+    const isSub = a.c.length > 4;
+    const parentCode = isSub ? a.c.slice(0, 4) : '-';
+    const estLabel = a.est === 'BG' ? 'Balance General' : (a.est === 'ER' ? 'Estado de Resultados' : 'Cuenta Puente / Orden');
+    const rowClass = idx % 2 === 0 ? 'row-even' : 'row-odd';
+    
+    rowsHtml += `
+      <tr class="${rowClass}">
+        <td style="mso-number-format:'\\@'; font-weight:600; text-align:center;">${a.c}</td>
+        <td style="text-align:left; ${isSub ? 'padding-left:18px;' : 'font-weight:600;'}">${escHtml(a.n)}</td>
+        <td style="text-align:center;">${escHtml(a.g)}</td>
+        <td style="text-align:center;">${estLabel}</td>
+        <td style="text-align:center;">${isSub ? 'Subcuenta (Detalle)' : 'Cuenta Principal'}</td>
+        <td style="mso-number-format:'\\@'; text-align:center;">${parentCode}</td>
+      </tr>
+    `;
+  });
+
+  const tableHtml = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:80px;">Código</th>
+          <th style="width:300px; text-align:left;">Nombre de la Cuenta</th>
+          <th style="width:130px;">Clasificación</th>
+          <th style="width:160px;">Estado Financiero</th>
+          <th style="width:140px;">Nivel Jerárquico</th>
+          <th style="width:90px;">Código Padre</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+        <tr class="total-row">
+          <td colspan="6" style="text-align:center; font-weight:bold; background-color:#E6EFEA; color:#12382B; padding:8px;">
+            TOTAL: ${ACCOUNTS.length} CUENTAS Y SUBCUENTAS VINCULADAS AL PLAN CONTABLE INSTITUCIONAL
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  const fullHtml = generateCorporateExcelXml({
+    title: 'CATÁLOGO OFICIAL Y PLAN DE CUENTAS CODIFICADO',
+    subtitle: `Plan Contable Vigente NIIF PYMES &bull; Total: ${ACCOUNTS.length} Cuentas &bull; Universidad Técnica Estatal de Quevedo`,
+    worksheetName: 'Plan de Cuentas',
+    colSpan: 6,
+    contentHtml: tableHtml
+  });
+
+  downloadExcelBlob(fullHtml, `catalogo-cuentas-el-roble-${new Date().toISOString().slice(0,10)}.xls`);
   showToast(`Catálogo oficial (${ACCOUNTS.length} cuentas) descargado en Excel (.xls)`, 'success');
 }
 
@@ -3429,7 +3674,7 @@ function exportCurrentSectionToExcel(){
   const curr = PANELS.find(p => p.id === activePanelId) || { id: 'diario', label: 'Libro Diario' };
   
   if(curr.id === 'diario'){
-    exportDiarioCSV();
+    exportDiarioExcel();
     return;
   }
   if(curr.id === 'catalogo'){
@@ -3441,51 +3686,76 @@ function exportCurrentSectionToExcel(){
   const tables = panelEl ? panelEl.querySelectorAll('table') : [];
 
   if(!tables || tables.length === 0){
-    exportDiarioCSV();
+    exportDiarioExcel();
     return;
   }
 
   let tablesHtml = '';
+  let maxCols = 4;
+
   tables.forEach((t, i) => {
     const clone = t.cloneNode(true);
-    clone.querySelectorAll('button, .row-actions, input, select').forEach(el => el.remove());
-    clone.querySelectorAll('td.code, td.num').forEach(td => {
-      if(td.classList.contains('code')) td.setAttribute('style', "mso-number-format:'\\@';");
+    clone.querySelectorAll('button, .row-actions, input, select, .action-cell').forEach(el => el.remove());
+    
+    const firstRowTh = clone.querySelectorAll('thead tr th');
+    const firstRowTd = clone.querySelectorAll('tbody tr:first-child td');
+    const cols = Math.max(firstRowTh.length, firstRowTd.length, 1);
+    if(cols > maxCols) maxCols = cols;
+
+    clone.querySelectorAll('th').forEach(th => {
+      th.setAttribute('style', 'background-color:#1F5C46; color:#ffffff; font-weight:bold; font-size:10pt; border:1px solid #143e2f; padding:7px 9px; text-align:center;');
     });
+
+    clone.querySelectorAll('tr').forEach((tr, rowIdx) => {
+      const isTotal = tr.classList.contains('tot-row') || tr.classList.contains('total') || tr.parentElement.tagName === 'TFOOT';
+      if(isTotal){
+        tr.querySelectorAll('td').forEach(td => {
+          const isNum = td.classList.contains('num') || /^\$?-?[\d,]+(\.\d+)?$/.test(td.textContent.trim());
+          td.setAttribute('style', `background-color:#E6EFEA; font-weight:bold; color:#12382B; font-size:10.5pt; border-top:2px solid #1F5C46; border-bottom:3px double #1F5C46; padding:6px 9px; ${isNum ? "mso-number-format:'\\&quot;\\$\\&quot;#,##0.00'; text-align:right;" : "text-align:left;"}`);
+        });
+      } else {
+        const bg = rowIdx % 2 === 0 ? '#FFFFFF' : '#F8FAF9';
+        tr.querySelectorAll('td').forEach(td => {
+          const text = td.textContent.trim();
+          const isCode = td.classList.contains('code') || /^[\d\.]+$/.test(text);
+          const isDate = /^\d{4}-\d{2}-\d{2}$/.test(text);
+          const isNum = td.classList.contains('num') || /^\$?-?[\d,]+(\.\d+)?$/.test(text);
+          
+          let cellStyle = `border:1px solid #D0DCD5; padding:5px 8px; font-size:9.5pt; background-color:${bg}; `;
+          if(isCode){
+            cellStyle += "mso-number-format:'\\@'; text-align:center; font-weight:600;";
+          } else if(isDate){
+            cellStyle += "mso-number-format:'yyyy-mm-dd'; text-align:center;";
+          } else if(isNum){
+            cellStyle += "mso-number-format:'\\&quot;\\$\\&quot;#,##0.00'; text-align:right;";
+          } else {
+            cellStyle += "text-align:left;";
+          }
+          td.setAttribute('style', cellStyle);
+        });
+      }
+    });
+
+    clone.classList.add('data-table');
     tablesHtml += `
-      <h3 style="font-family:Arial,sans-serif; color:#1F5C46; margin-top:20px; margin-bottom:6px;">${escHtml(curr.label)} — Tabla ${i+1}</h3>
+      <div style="margin-top:18px; margin-bottom:6px; font-family:'Calibri',Arial,sans-serif; font-weight:bold; font-size:11pt; color:#1F5C46;">
+        ${escHtml(curr.label)} ${tables.length > 1 ? `— Sección ${i+1}` : ''}
+      </div>
       ${clone.outerHTML}
     `;
   });
 
-  const fullHtml = `
-    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-    <head><meta charset="utf-8">
-      <style>
-        body { font-family: Arial, sans-serif; font-size: 10pt; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 18px; }
-        th { background-color: #1F5C46; color: #ffffff; font-weight: bold; border: 1px solid #143e2f; padding: 7px 10px; text-align: left; }
-        td { border: 1px solid #d0d7d3; padding: 5px 8px; }
-        tr:nth-child(even) td { background-color: #f7f9f7; }
-        .num { text-align: right; }
-      </style>
-    </head>
-    <body>
-      <h2 style="color:#1F5C46; margin-bottom:2px;">Distribuidora Comercial El Roble S.A. — RUC: 1291748261001</h2>
-      <p style="margin-top:0; font-size:10pt;"><b>Reporte Contable:</b> ${escHtml(curr.label)} &bull; <b>Fecha de Emisión:</b> ${new Date().toLocaleDateString('es-EC')}</p>
-      ${tablesHtml}
-    </body></html>
-  `;
+  const fullHtml = generateCorporateExcelXml({
+    title: `REPORTE FINANCIERO: ${curr.label.toUpperCase()}`,
+    subtitle: `Distribuidora Comercial El Roble S.A. &bull; Ejercicio Económico 2026 &bull; Expresado en Dólares (USD)`,
+    worksheetName: curr.label.slice(0, 30),
+    colSpan: maxCols,
+    contentHtml: tablesHtml
+  });
 
-  const blob = new Blob(['\uFEFF' + fullHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
   const safeName = curr.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  a.download = `reporte-el-roble-${safeName}-${new Date().toISOString().slice(0,10)}.xls`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
-  showToast(`Apartado «${curr.label}» descargado en Excel (.xls)`, 'success');
+  downloadExcelBlob(fullHtml, `reporte-el-roble-${safeName}-${new Date().toISOString().slice(0,10)}.xls`);
+  showToast(`Apartado «${curr.label}» descargado en Excel (.xls) con diseño oficial`, 'success');
 }
 
 function exportDiarioCSV(){
@@ -3537,6 +3807,327 @@ function exportDiarioJSON(){
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   showToast('Asientos del Libro Diario exportados a JSON', 'success');
+}
+
+function downloadDiarioCSVTemplate(){
+  const csvContent = '\uFEFF' + [
+    '"Asiento","Fecha","Fase","Codigo_Cuenta","Nombre_Cuenta","Debe","Haber","Glosa"',
+    '"1","2026-01-03","operacion","1105","Inventario de Mercaderías",8000.00,0.00,"Compra de mercadería a crédito a proveedores, factura N.º 001, IVA 15%."',
+    '"1","2026-01-03","operacion","1110","IVA Compras 15%",1200.00,0.00,""',
+    '"1","2026-01-03","operacion","2101","Proveedores Locales",0.00,9200.00,""',
+    '"2","2026-01-05","operacion","1103","Bancos e Instituciones Financieras",6900.00,0.00,"Venta de mercadería al contado con inventario permanente."',
+    '"2","2026-01-05","operacion","4101","Ventas de Bienes",0.00,6000.00,""',
+    '"2","2026-01-05","operacion","2107","IVA Ventas 15%",0.00,900.00,""',
+    '"2","2026-01-05","operacion","5001","Costo de Ventas",3600.00,0.00,""',
+    '"2","2026-01-05","operacion","1105","Inventario de Mercaderías",0.00,3600.00,""'
+  ].join('\r\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `plantilla-asientos-el-roble.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Plantilla Excel (.csv) descargada con éxito', 'success');
+}
+
+function parseCSVToEntries(text){
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) throw new Error('El archivo CSV está vacío o solo contiene encabezados.');
+
+  const delimiter = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
+
+  function splitRow(row) {
+    const cells = [];
+    let cur = '', inQuotes = false;
+    for (let i = 0; i < row.length; i++) {
+      const c = row[i];
+      if (c === '"') {
+        if (inQuotes && row[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === delimiter && !inQuotes) {
+        cells.push(cur.trim());
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    cells.push(cur.trim());
+    return cells;
+  }
+
+  function parseAmount(valStr) {
+    if (typeof valStr === 'number') return isNaN(valStr) ? 0 : valStr;
+    if (!valStr) return 0;
+    let s = String(valStr).trim().replace(/[$€\s]/g, '');
+    if (!s || s === '-') return 0;
+    if (s.indexOf(',') > -1 && s.indexOf('.') > -1) {
+      if (s.lastIndexOf(',') > s.lastIndexOf('.')) {
+        s = s.replace(/\\./g, '').replace(',', '.');
+      } else {
+        s = s.replace(/,/g, '');
+      }
+    } else if (s.indexOf(',') > -1) {
+      s = s.replace(',', '.');
+    }
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  }
+
+  const rows = lines.map(splitRow);
+  const header = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  
+  let idxAsiento = header.findIndex(h => h.includes('asiento') || h.includes('num'));
+  let idxFecha = header.findIndex(h => h.includes('fecha') || h.includes('date'));
+  let idxFase = header.findIndex(h => h.includes('fase'));
+  let idxCodigo = header.findIndex(h => h.includes('codigo') || (h.includes('cuenta') && !h.includes('nombre')));
+  let idxDebe = header.findIndex(h => h.includes('debe') || h.includes('debito'));
+  let idxHaber = header.findIndex(h => h.includes('haber') || h.includes('credito'));
+  let idxGlosa = header.findIndex(h => h.includes('glosa') || h.includes('detalle') || h.includes('concepto') || h.includes('explicacion'));
+
+  if(idxAsiento === -1) idxAsiento = 0;
+  if(idxFecha === -1) idxFecha = 1;
+  if(idxFase === -1) idxFase = 2;
+  if(idxCodigo === -1) idxCodigo = 3;
+  if(idxDebe === -1) idxDebe = 5;
+  if(idxHaber === -1) idxHaber = 6;
+  if(idxGlosa === -1) idxGlosa = 7;
+
+  const entries = [];
+  const rowData = rows.slice(1);
+  let currentEntry = null;
+
+  for (const r of rowData) {
+    if (!r || r.length < 4) continue;
+    const numRaw = r[idxAsiento] !== undefined ? r[idxAsiento].trim() : '';
+    if (!numRaw) continue;
+    
+    const fecha = idxFecha > -1 && r[idxFecha] ? r[idxFecha].trim() : '';
+    const fase = idxFase > -1 && r[idxFase] ? r[idxFase].trim().toLowerCase() : 'operacion';
+    const c = idxCodigo > -1 && r[idxCodigo] ? r[idxCodigo].trim() : '';
+    const d = idxDebe > -1 ? parseAmount(r[idxDebe]) : 0;
+    const h = idxHaber > -1 ? parseAmount(r[idxHaber]) : 0;
+    const glosa = idxGlosa > -1 && r[idxGlosa] ? r[idxGlosa].trim() : '';
+
+    if (!c && d === 0 && h === 0) continue;
+
+    if (!currentEntry || String(currentEntry.num) !== String(numRaw)) {
+      currentEntry = {
+        id: 'imp_' + Math.random().toString(36).substr(2, 9),
+        num: isNaN(numRaw) ? numRaw : Number(numRaw),
+        fecha: fecha || new Date().toISOString().slice(0, 10),
+        fase: (['apertura', 'operacion', 'ajuste', 'cierre'].includes(fase) ? fase : 'operacion'),
+        glosa: glosa,
+        lines: []
+      };
+      entries.push(currentEntry);
+    } else if (!currentEntry.glosa && glosa) {
+      currentEntry.glosa = glosa;
+    }
+
+    if (c) {
+      currentEntry.lines.push({ c, d, h });
+    }
+  }
+
+  return entries;
+}
+
+function openImportDiarioModal(){
+  const html = `
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:24px;">📥</span>
+        <div>
+          <h3 class="modal-title" style="margin:0;">Importar Asientos al Libro Diario</h3>
+          <div style="font-size:11.5px; color:var(--ink-soft);">Distribuidora Comercial El Roble S.A. &bull; RUC: 1291748261001</div>
+        </div>
+      </div>
+      <button type="button" class="modal-close-btn" data-modal-close aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--ink-soft); margin-bottom:14px; line-height:1.45;">
+        Carga asientos contables directamente desde una hoja de cálculo <b>Excel (.csv)</b> o un archivo de respaldo <b>JSON</b>. El sistema auditará la partida doble (Debe = Haber) en tiempo real antes de aplicar los cambios.
+      </p>
+
+      <!-- Zona de selección de archivo con diseño elegante -->
+      <div id="modal-import-dropzone" style="border:2px dashed var(--accent); border-radius:10px; padding:22px 16px; text-align:center; background:var(--surface-2); cursor:pointer; transition:all 0.2s; position:relative;">
+        <div style="font-size:32px; margin-bottom:6px;">📊 📥</div>
+        <div style="font-weight:700; font-size:14px; color:var(--ink); margin-bottom:3px;">
+          Haz clic aquí o arrastra tu archivo Excel (.csv) o JSON
+        </div>
+        <div style="font-size:11.5px; color:var(--ink-soft);">
+          Formatos compatibles: Hoja de cálculo delimitada (.csv) o Respaldo estructurado (.json)
+        </div>
+        <input type="file" id="modal-import-file-input" accept=".csv, .json, text/csv, application/json" style="display:none;">
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+        <button type="button" class="btn" id="modal-btn-download-csv-template" style="font-size:11.5px; display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+          <span>📄</span> Descargar Plantilla Excel de Ejemplo (.csv)
+        </button>
+        <span style="font-size:11px; color:var(--ink-faint);">Compatible con Excel, LibreOffice y Google Sheets</span>
+      </div>
+
+      <!-- Contenedor dinámico de previsualización y validación contable -->
+      <div id="modal-import-preview" style="display:none;"></div>
+    </div>
+    <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:8px;">
+      <button type="button" class="btn" data-modal-close>Cerrar</button>
+    </div>
+  `;
+
+  openModal(html, false);
+
+  const dropzone = document.getElementById('modal-import-dropzone');
+  const fileInput = document.getElementById('modal-import-file-input');
+  const previewEl = document.getElementById('modal-import-preview');
+  const btnTpl = document.getElementById('modal-btn-download-csv-template');
+
+  if(btnTpl) btnTpl.onclick = () => downloadDiarioCSVTemplate();
+
+  if(dropzone && fileInput){
+    dropzone.onclick = () => fileInput.click();
+    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.style.background = 'var(--accent-soft)'; };
+    dropzone.ondragleave = () => { dropzone.style.background = 'var(--surface-2)'; };
+    dropzone.ondrop = (e) => {
+      e.preventDefault();
+      dropzone.style.background = 'var(--surface-2)';
+      if(e.dataTransfer.files && e.dataTransfer.files[0]){
+        processImportFile(e.dataTransfer.files[0]);
+      }
+    };
+    fileInput.onchange = () => {
+      if(fileInput.files && fileInput.files[0]){
+        processImportFile(fileInput.files[0]);
+      }
+    };
+  }
+
+  function processImportFile(file){
+    if(!file) return;
+    const isJson = file.name.endsWith('.json') || file.type === 'application/json';
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        let incomingEntries = [];
+        if(isJson){
+          const parsed = JSON.parse(reader.result);
+          if (Array.isArray(parsed)) incomingEntries = parsed;
+          else if (parsed && Array.isArray(parsed.entries)) incomingEntries = parsed.entries;
+          else throw new Error('El JSON no contiene un arreglo de asientos.');
+        } else {
+          incomingEntries = parseCSVToEntries(reader.result);
+        }
+
+        const validEntries = incomingEntries.filter(e => e && Array.isArray(e.lines) && e.lines.length > 0);
+        if(!validEntries.length) throw new Error('No se detectaron asientos válidos en el archivo.');
+
+        let totD = 0, totH = 0, totLines = 0;
+        validEntries.forEach(e => {
+          e.lines.forEach(l => {
+            totLines++;
+            totD += Number(l.d) || 0;
+            totH += Number(l.h) || 0;
+          });
+        });
+
+        const diff = Math.abs(totD - totH);
+        const isBalanced = diff < 0.01;
+
+        previewEl.style.display = 'block';
+        previewEl.innerHTML = `
+          <div style="border:1px solid ${isBalanced ? 'var(--accent)' : '#E05A47'}; background:${isBalanced ? 'var(--accent-soft)' : '#FEECEB'}; border-radius:8px; padding:14px; margin-top:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-weight:700; font-size:13.5px; color:var(--ink);">
+                ${isBalanced ? '✅ Partida Doble Verificada' : '⚠️ Advertencia de Descuadre Contable'}
+              </div>
+              <span style="font-size:11px; background:var(--surface); border:1px solid var(--border); padding:2px 8px; border-radius:12px;">
+                ${escHtml(file.name)} (${(file.size/1024).toFixed(1)} KB)
+              </span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:12px; text-align:center;">
+              <div style="background:var(--surface); padding:8px; border-radius:6px; border:1px solid var(--border);">
+                <div style="font-size:10.5px; color:var(--ink-soft);">Asientos</div>
+                <div style="font-size:15px; font-weight:700; color:var(--ink);">${validEntries.length}</div>
+                <div style="font-size:9.5px; color:var(--ink-faint);">${totLines} movimientos</div>
+              </div>
+              <div style="background:var(--surface); padding:8px; border-radius:6px; border:1px solid var(--border);">
+                <div style="font-size:10.5px; color:var(--ink-soft);">Total Débitos</div>
+                <div style="font-size:15px; font-weight:700; color:#1F5C46;">$${totD.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+              </div>
+              <div style="background:var(--surface); padding:8px; border-radius:6px; border:1px solid var(--border);">
+                <div style="font-size:10.5px; color:var(--ink-soft);">Total Créditos</div>
+                <div style="font-size:15px; font-weight:700; color:#1F5C46;">$${totH.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+              </div>
+            </div>
+
+            <p style="font-size:12px; margin:0 0 12px 0; color:var(--ink); line-height:1.4;">
+              ${isBalanced 
+                ? 'El archivo cumple perfectamente con el principio de partida doble. Elige cómo deseas integrarlo al Libro Diario:'
+                : `<b style="color:#C53030;">Atención:</b> Existe una diferencia de $${diff.toFixed(2)} entre el Debe y el Haber. Puedes importarlo para corregirlo manualmente o revisar el archivo.`
+              }
+            </p>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn primary" id="btn-import-append" style="flex:1; justify-content:center;">
+                ➕ Añadir ${validEntries.length} asientos a los actuales
+              </button>
+              <button type="button" class="btn" id="btn-import-replace" style="flex:1; justify-content:center; border-color:#E05A47; color:#E05A47;">
+                🔄 Reemplazar los ${ENTRIES.length} actuales
+              </button>
+            </div>
+          </div>
+        `;
+
+        const btnAppend = document.getElementById('btn-import-append');
+        if(btnAppend) btnAppend.onclick = () => {
+          ENTRIES = ENTRIES.concat(validEntries);
+          rebuildIndex();
+          afterMutation();
+          closeModal();
+          showToast(`Se añadieron con éxito ${validEntries.length} asientos al Libro Diario`, 'success');
+        };
+
+        const btnReplace = document.getElementById('btn-import-replace');
+        if(btnReplace) btnReplace.onclick = () => {
+          closeModal();
+          showModalConfirm({
+            title: '⚠️ ¿Confirmar reemplazo completo de asientos?',
+            message: `Esta acción reemplazará los <b>${ENTRIES.length} asientos actuales</b> por los <b>${validEntries.length} asientos nuevos</b> del archivo importado.`,
+            confirmText: 'Sí, reemplazar libro diario',
+            type: 'warning',
+            onConfirm: () => {
+              ENTRIES = validEntries;
+              rebuildIndex();
+              afterMutation();
+              showToast(`Libro Diario actualizado con ${validEntries.length} asientos`, 'success');
+            }
+          });
+        };
+
+      } catch(err) {
+        previewEl.style.display = 'block';
+        previewEl.innerHTML = `
+          <div style="border:1px solid #E05A47; background:#FEECEB; border-radius:8px; padding:12px; margin-top:12px; color:#9B1C1C; font-size:12.5px;">
+            <b>Error al procesar archivo:</b> ${escHtml(err.message || 'El formato no es compatible.')}
+            <div style="font-size:11px; margin-top:4px; color:#666;">Asegúrate de que las columnas del archivo sigan la plantilla: Asiento, Fecha, Fase, Codigo_Cuenta, Nombre_Cuenta, Debe, Haber, Glosa.</div>
+          </div>
+        `;
+      }
+    };
+
+    reader.readAsText(file);
+  }
 }
 
 function importDiarioJSON(file){
@@ -4639,6 +5230,20 @@ document.addEventListener('click', e => {
     return;
   }
 
+  // 14.c Exportar Libro Diario a Excel (.xls oficial)
+  if(e.target.closest('[data-action="export-diario-excel"]')){
+    e.preventDefault();
+    exportDiarioExcel();
+    return;
+  }
+
+  // 14.d Abrir modal de importación de Libro Diario (Excel / JSON)
+  if(e.target.closest('[data-action="open-import-diario-modal"]')){
+    e.preventDefault();
+    openImportDiarioModal();
+    return;
+  }
+
   // 15. Exportar Libro Diario a CSV
   if(e.target.closest('[data-action="export-diario-csv"]')){
     e.preventDefault();
@@ -4656,8 +5261,7 @@ document.addEventListener('click', e => {
   // 17. Trigger importar asientos Libro Diario
   if(e.target.closest('[data-action="import-diario-trigger"]')){
     e.preventDefault();
-    const fi = document.getElementById('import-diario-file');
-    if(fi) fi.click();
+    openImportDiarioModal();
     return;
   }
 });
