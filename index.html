@@ -1,0 +1,3142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distribuidora El Roble — Ciclo Contable</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC;
+  --surface:#FFFFFF;
+  --surface-2:#F4F6F2;
+  --ink:#182420;
+  --ink-soft:#4B5850;
+  --ink-faint:#7C8A82;
+  --accent:#1F5C46;
+  --accent-soft:#DCEAE1;
+  --gold:#9C7A2C;
+  --haber:#8C4A3A;
+  --border:#CBD3CB;
+  --border-strong:#A9B6AD;
+  --danger:#B23B2E;
+  --danger-soft:#F3E1DD;
+  --shadow: 0 1px 2px rgba(24,36,32,0.06), 0 6px 20px rgba(24,36,32,0.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10160E;
+    --surface:#171F1A;
+    --surface-2:#1C251F;
+    --ink:#E7ECE7;
+    --ink-soft:#A9B6AE;
+    --ink-faint:#7C8A82;
+    --accent:#5FC493;
+    --accent-soft:#1D3229;
+    --gold:#D9B15C;
+    --haber:#CB8F79;
+    --border:#2A3530;
+    --border-strong:#3B4941;
+    --danger:#E08573;
+    --danger-soft:#33201C;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10160E;
+  --surface:#171F1A;
+  --surface-2:#1C251F;
+  --ink:#E7ECE7;
+  --ink-soft:#A9B6AE;
+  --ink-faint:#7C8A82;
+  --accent:#5FC493;
+  --accent-soft:#1D3229;
+  --gold:#D9B15C;
+  --haber:#CB8F79;
+  --border:#2A3530;
+  --border-strong:#3B4941;
+  --danger:#E08573;
+  --danger-soft:#33201C;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-soft);color:var(--ink);}
+
+.mono{font-family:"IBM Plex Mono", ui-monospace, SFMono-Regular, monospace; font-variant-numeric: tabular-nums;}
+.num{font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; white-space:nowrap;}
+
+h1,h2,h3{font-family:"Fraunces", Georgia, serif; text-wrap:balance; margin:0; color:var(--ink);}
+button{font-family:inherit;}
+a{color:var(--accent);}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+/* ---------- App shell ---------- */
+.app{ display:grid; grid-template-columns: 260px 1fr; min-height:100vh; }
+@media (max-width: 880px){ .app{grid-template-columns:1fr;} }
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background:var(--surface); border-right:1px solid var(--border);
+  padding:28px 20px 28px 24px; display:flex; flex-direction:column; gap:22px;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+@media (max-width: 880px){ .sidebar{position:static; height:auto; border-right:none; border-bottom:1px solid var(--border);} }
+.brand{ display:flex; flex-direction:column; gap:4px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.brand .mark{
+  width:34px;height:34px; border-radius:7px; background:var(--accent); color:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Fraunces", serif; font-weight:700; font-size:17px; margin-bottom:6px;
+}
+.brand .name{font-family:"Fraunces", serif; font-weight:600; font-size:18px; line-height:1.15;}
+.brand .tag{font-size:12px; color:var(--ink-soft); letter-spacing:.01em;}
+
+nav.steps{display:flex; flex-direction:column; gap:2px;}
+.steps .step{
+  display:flex; align-items:baseline; gap:10px; padding:9px 10px; border-radius:6px; cursor:pointer;
+  border:1px solid transparent; background:none; text-align:left;
+  font-family:"IBM Plex Sans", sans-serif; font-size:13.5px; color:var(--ink-soft); width:100%;
+}
+.steps .step:hover{background:var(--surface-2); color:var(--ink);}
+.steps .step .n{font-family:"IBM Plex Mono", monospace; font-size:11px; color:var(--ink-faint); min-width:16px;}
+.steps .step.active{background:var(--accent-soft); color:var(--accent); font-weight:600; border-color:var(--accent-soft);}
+.steps .step.active .n{color:var(--accent);}
+.steps .step.datos{border-top:1px solid var(--border); border-radius:0; margin-top:4px; padding-top:13px;}
+
+.sidebar-foot{margin-top:auto; padding-top:16px; border-top:1px solid var(--border); font-size:11.5px; color:var(--ink-faint); line-height:1.5;}
+.sync-pill{display:inline-flex; align-items:center; gap:6px; font-size:11px; padding:4px 9px; border-radius:20px; border:1px solid var(--border); margin-top:10px; color:var(--ink-soft);}
+.sync-pill .dot{width:7px;height:7px;border-radius:50%; background:var(--ink-faint);}
+.sync-pill.ok .dot{background:var(--accent);}
+.sync-pill.busy .dot{background:var(--gold); animation:pulse 1s infinite;}
+.sync-pill.off .dot{background:var(--danger);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ---------- Main ---------- */
+main{padding:40px 48px 80px; max-width:1080px;}
+@media (max-width:640px){ main{padding:24px 18px 60px;} }
+
+.topline{
+  display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap;
+  padding-bottom:14px; margin-bottom:28px; border-bottom:1px solid var(--border);
+}
+.topline .co{font-size:12.5px; color:var(--ink-soft); letter-spacing:.02em;}
+.topline .co b{color:var(--ink);}
+.topline .period{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-faint); background:var(--surface-2); padding:4px 10px; border-radius:20px; border:1px solid var(--border);}
+
+section.panel{display:none;}
+section.panel.active{display:block; animation: fade .35s ease;}
+@media (prefers-reduced-motion: reduce){ section.panel.active{animation:none;} }
+@keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;}
+h2.title{font-size:28px; margin-bottom:6px;}
+p.lede{color:var(--ink-soft); max-width:62ch; margin:10px 0 28px; font-size:14.5px;}
+
+/* ---------- Cards / KPIs ---------- */
+.kpi-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:22px 0 8px;}
+.kpi{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow);}
+.kpi .lbl{font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em;}
+.kpi .val{font-family:"IBM Plex Mono",monospace; font-size:21px; font-weight:600; margin-top:6px; color:var(--accent); font-variant-numeric:tabular-nums;}
+.kpi .val.gold{color:var(--gold);}
+
+.card{background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:22px 24px; margin-bottom:20px;}
+.card h3{font-size:15px; font-weight:600; font-family:"IBM Plex Sans",sans-serif; margin-bottom:4px; color:var(--ink);}
+.card .hint{font-size:12.5px; color:var(--ink-soft); margin-bottom:16px;}
+
+/* ---------- Tables ---------- */
+.tblwrap{overflow-x:auto; border:1px solid var(--border); border-radius:10px; background:var(--surface); box-shadow:var(--shadow);}
+table{width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px;}
+thead th{
+  text-align:left; font-family:"IBM Plex Sans",sans-serif; font-weight:600; font-size:11px;
+  text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft);
+  padding:11px 14px; border-bottom:1px solid var(--border-strong); background:var(--surface-2); white-space:nowrap;
+}
+tbody td{padding:9px 14px; border-bottom:1px solid var(--border); vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr.total td{border-top:2px solid var(--border-strong); font-weight:600; background:var(--surface-2);}
+td.num, th.num{text-align:right; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;}
+td.code{font-family:"IBM Plex Mono",monospace; color:var(--ink-faint); font-size:12.5px;}
+td.indent{padding-left:30px; color:var(--ink-soft);}
+tr.group-row td{background:var(--surface-2); font-weight:600; color:var(--accent); font-size:12px; text-transform:uppercase; letter-spacing:.03em;}
+
+/* ---------- Journal entries ---------- */
+.asiento{background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); margin-bottom:16px; overflow:hidden;}
+.asiento .ahead{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:11px 18px; background:var(--surface-2); border-bottom:1px solid var(--border); }
+.asiento .ahead .num{font-family:"IBM Plex Mono",monospace; font-weight:600; color:var(--accent); font-size:13px;}
+.asiento .ahead .fecha{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-faint);}
+.asiento .ahead .del{background:none;border:1px solid var(--border); color:var(--danger); border-radius:6px; padding:3px 9px; font-size:11.5px; cursor:pointer;}
+.asiento .ahead .del:hover{background:var(--danger-soft);}
+.asiento .lines{padding:6px 18px;}
+.aline{display:grid; grid-template-columns:70px 1fr 100px 100px; gap:8px; padding:6px 0; font-size:13.5px; align-items:baseline;}
+.aline .code{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-faint);}
+.aline .nombre.h{padding-left:26px; color:var(--ink-soft);}
+.aline .d, .aline .h{font-family:"IBM Plex Mono",monospace; text-align:right; font-variant-numeric:tabular-nums;}
+.aline .d{color:var(--ink);}
+.aline .h{color:var(--haber);}
+.glosa{padding:10px 18px 16px; font-size:12.5px; color:var(--ink-soft); font-style:italic; border-top:1px dashed var(--border); margin-top:4px;}
+.faseband{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--gold); margin:34px 0 12px; display:flex; align-items:center; gap:10px;
+}
+.faseband::after{content:""; height:1px; flex:1; background:var(--border);}
+.faseband:first-child{margin-top:4px;}
+
+/* ---------- T accounts ---------- */
+.mayor-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px;}
+.tacct{background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); overflow:hidden;}
+.tacct .thead{padding:12px 16px; border-bottom:1px solid var(--border-strong); background:var(--surface-2);}
+.tacct .thead .code{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint);}
+.tacct .thead .name{font-family:"Fraunces",serif; font-weight:600; font-size:15px;}
+.tacct .body{display:grid; grid-template-columns:1fr 1fr; position:relative;}
+.tacct .body::before{content:""; position:absolute; left:50%; top:0; bottom:0; width:1px; background:var(--border-strong);}
+.tacct .side{padding:10px 12px;}
+.tacct .collbl{font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); margin-bottom:6px;}
+.tacct .row{display:flex; justify-content:space-between; gap:6px; padding:3px 0; font-size:12.5px;}
+.tacct .row .ref{color:var(--ink-faint); font-family:"IBM Plex Mono",monospace; font-size:11px;}
+.tacct .row .amt{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;}
+.tacct .side.debe .amt{color:var(--ink);}
+.tacct .side.haber .amt{color:var(--haber);}
+.tacct .foot{ display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--border-strong); font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600; background:var(--surface-2); }
+.tacct .foot > div{padding:8px 12px; text-align:right;}
+.tacct .foot .d{color:var(--ink);}
+.tacct .foot .h{color:var(--haber); border-left:1px solid var(--border-strong);}
+.tacct .saldo{padding:8px 12px; font-size:11.5px; color:var(--ink-soft); border-top:1px solid var(--border); text-align:right;}
+.tacct .saldo b{color:var(--accent); font-family:"IBM Plex Mono",monospace;}
+
+/* ---------- Adjustment explanation cards ---------- */
+.ajuste-card{display:grid; grid-template-columns:1.1fr .9fr; gap:0; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); margin-bottom:16px; overflow:hidden;}
+@media (max-width:700px){.ajuste-card{grid-template-columns:1fr;}}
+.ajuste-card .why{padding:18px 20px; background:var(--surface-2); border-left:3px solid var(--gold);}
+@media (max-width:700px){.ajuste-card .why{border-left:none; border-top:3px solid var(--gold);}}
+.ajuste-card .why .lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--gold); margin-bottom:6px;}
+.ajuste-card .why p{margin:0; font-size:13px; color:var(--ink-soft); line-height:1.55;}
+.ajuste-card .entry{padding:16px 18px;}
+
+/* ---------- Financial statements ---------- */
+.statement{max-width:520px; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:26px 28px; margin-bottom:26px;}
+.statement h3{font-family:"Fraunces",serif; font-size:18px; text-align:center; margin-bottom:2px;}
+.statement .sub{text-align:center; font-size:11.5px; color:var(--ink-faint); margin-bottom:20px;}
+.sline{display:flex; justify-content:space-between; gap:12px; padding:5px 0; font-size:13.5px;}
+.sline.indent{padding-left:16px; color:var(--ink-soft); font-size:13px;}
+.sline .amt{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;}
+.sline.sub-total{border-top:1px solid var(--border); margin-top:4px; font-weight:600;}
+.sline.grand{border-top:2px solid var(--ink); margin-top:8px; padding-top:8px; font-weight:700; font-size:15px; color:var(--accent);}
+.sline.section-lbl{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--gold); margin-top:14px; padding-bottom:2px;}
+.sline.section-lbl:first-child{margin-top:0;}
+
+/* ---------- misc ---------- */
+.note{background:var(--accent-soft); border:1px solid var(--border); border-radius:8px; padding:14px 16px; font-size:13px; color:var(--ink-soft); margin:18px 0;}
+.note b{color:var(--accent);}
+.note.warn{background:var(--danger-soft);}
+.note.warn b{color:var(--danger);}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+@media (max-width:760px){.two-col{grid-template-columns:1fr;}}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px;}
+.chip{font-family:"IBM Plex Mono",monospace; font-size:11.5px; background:var(--surface-2); border:1px solid var(--border); padding:4px 10px; border-radius:20px; color:var(--ink-soft);}
+
+/* ---------- Forms ---------- */
+label.field{display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--ink-soft);}
+input, select, textarea{
+  font-family:"IBM Plex Sans", sans-serif; font-size:13.5px; color:var(--ink);
+  background:var(--surface); border:1px solid var(--border-strong); border-radius:7px; padding:8px 10px;
+  width:100%;
+}
+input[type="number"]{font-family:"IBM Plex Mono",monospace; text-align:right;}
+textarea{resize:vertical; font-family:"IBM Plex Sans",sans-serif;}
+.form-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; align-items:end;}
+.btn{
+  font-size:13px; font-weight:600; border-radius:7px; padding:9px 16px; cursor:pointer;
+  border:1px solid var(--border-strong); background:var(--surface); color:var(--ink);
+}
+.btn:hover{background:var(--surface-2);}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--surface);}
+.btn.primary:hover{filter:brightness(1.08);}
+.btn.danger{border-color:var(--danger); color:var(--danger); background:none;}
+.btn.danger:hover{background:var(--danger-soft);}
+.btn:disabled{opacity:.5; cursor:not-allowed;}
+.btn-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+.lines-editor{border:1px solid var(--border); border-radius:8px; max-height:340px; overflow-y:auto; margin-top:12px;}
+.lines-head{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; padding:8px 12px; background:var(--surface-2); font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); position:sticky; top:0; }
+.line-row{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; padding:6px 12px; border-top:1px solid var(--border); }
+.line-row:first-child{border-top:none;}
+.asiento-check{ display:flex; gap:18px; flex-wrap:wrap; align-items:center; margin-top:14px; padding:10px 14px; border-radius:8px; background:var(--surface-2); font-size:13px; font-family:"IBM Plex Mono",monospace; }
+.asiento-check.ok{background:var(--accent-soft); color:var(--accent);}
+.asiento-check.bad{background:var(--danger-soft); color:var(--danger);}
+.mini-del{background:none;border:none;color:var(--danger); cursor:pointer; font-size:16px; line-height:1; padding:2px 6px;}
+.mini-del:hover{opacity:.7;}
+.file-input{display:none;}
+
+/* ---------- Gráficos ---------- */
+.viz-root{
+  --series-1:      #1baf7a;  /* ingresos / activos */
+  --series-2:      #eb6834;  /* gastos */
+  --status-good:   #0ca30c;
+  --status-critical:#d03b3b;
+  --viz-surface:   var(--surface);
+  --viz-ink:       var(--ink);
+  --viz-ink-soft:  var(--ink-soft);
+  --viz-grid:      var(--border);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .viz-root{ --series-1:#199e70; --series-2:#d95926; }
+}
+:root[data-theme="dark"] .viz-root{ --series-1:#199e70; --series-2:#d95926; }
+.chart-card{background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:22px 24px; margin-bottom:20px;}
+.chart-card h3{font-size:15px; font-weight:600; font-family:"IBM Plex Sans",sans-serif; margin-bottom:2px;}
+.chart-card .chart-hint{font-size:12.5px; color:var(--ink-soft); margin-bottom:18px;}
+.chart-legend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; font-size:12px; color:var(--ink-soft);}
+.chart-legend .sw{display:inline-flex; align-items:center; gap:6px;}
+.chart-legend .dot{width:9px;height:9px;border-radius:2px;}
+.bar-row{display:grid; grid-template-columns:150px 1fr 92px; gap:10px; align-items:center; padding:5px 0;}
+.bar-row .lbl{font-size:12.5px; color:var(--ink-soft); text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.bar-track{position:relative; height:20px; background:var(--surface-2); border-radius:4px; overflow:hidden;}
+.bar-fill{position:absolute; left:0; top:0; height:100%; border-radius:4px; min-width:4px; transition:filter .15s ease;}
+.bar-fill:hover{filter:brightness(1.12);}
+.bar-val{font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap; text-align:right;}
+.pl-bars{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:8px;}
+.pl-bar-col{display:flex; flex-direction:column; align-items:center; gap:8px;}
+.pl-bar-track{width:100%; max-width:64px; height:180px; background:var(--surface-2); border-radius:6px; display:flex; align-items:flex-end; overflow:hidden;}
+.pl-bar-fill{width:100%; border-radius:6px 6px 0 0; transition:filter .15s ease;}
+.pl-bar-fill:hover{filter:brightness(1.12);}
+.pl-bar-amt{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;}
+.pl-bar-lbl{font-size:11.5px; color:var(--ink-soft); text-align:center;}
+
+/* ---------- Intro de arranque ---------- */
+.intro{
+  position:fixed; inset:0; z-index:9999; background:#080b09;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  transition:opacity .6s ease, visibility .6s ease; cursor:pointer;
+}
+.intro.hide{opacity:0; visibility:hidden; pointer-events:none;}
+.intro-grid{
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(95,196,147,.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(95,196,147,.14) 1px, transparent 1px);
+  background-size:42px 42px;
+  -webkit-mask-image:radial-gradient(ellipse at center, black 0%, transparent 72%);
+  mask-image:radial-gradient(ellipse at center, black 0%, transparent 72%);
+  animation:introGridIn 2.8s ease-out both;
+}
+@keyframes introGridIn{from{opacity:0; transform:scale(1.15);}to{opacity:1; transform:scale(1);}}
+.intro-scan{position:absolute; left:0; right:0; height:140px; top:-140px; background:linear-gradient(180deg, transparent, rgba(95,196,147,.22), transparent); animation:introScan 2.8s linear infinite;}
+@keyframes introScan{from{top:-140px;}to{top:100%;}}
+.intro-content{position:relative; z-index:1; text-align:center; width:92%; max-width:440px; padding:0 20px;}
+.intro-mark{
+  width:52px; height:52px; margin:0 auto 20px; border-radius:12px; border:1px solid rgba(95,196,147,.4); color:#5FC493;
+  display:flex; align-items:center; justify-content:center; font-family:"Fraunces",serif; font-size:24px; font-weight:700;
+  box-shadow:0 0 22px rgba(95,196,147,.35); animation:introPulse 1.7s ease-in-out infinite;
+}
+@keyframes introPulse{0%,100%{box-shadow:0 0 16px rgba(95,196,147,.25);}50%{box-shadow:0 0 32px rgba(95,196,147,.5);}}
+.intro-log{font-family:"IBM Plex Mono",monospace; font-size:12px; color:#5FC493; min-height:130px; text-align:left; line-height:1.95; letter-spacing:.02em;}
+.intro-log .line{opacity:0; animation:introLineIn .3s ease forwards;}
+.intro-log .line.done{color:#8fd9bb;}
+@keyframes introLineIn{from{opacity:0; transform:translateY(4px);}to{opacity:1; transform:none;}}
+.intro-bar{width:100%; height:3px; background:rgba(95,196,147,.15); border-radius:2px; margin-top:16px; overflow:hidden;}
+.intro-bar-fill{height:100%; width:0%; background:#5FC493; box-shadow:0 0 10px #5FC493; transition:width .25s linear;}
+.intro-skip{margin-top:18px; font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:rgba(255,255,255,.38); letter-spacing:.05em;}
+@media (prefers-reduced-motion: reduce){ .intro{display:none;} }
+
+/* ---------- Impresión / Exportar a PDF ---------- */
+@media print{
+  .sidebar, .btn-row, #form-asiento, #form-cuenta, .mini-del, .asiento .del, .topline, .intro{display:none !important;}
+  #panel-datos{display:none !important;}
+  .app{display:block;}
+  main{padding:0; max-width:100%;}
+  body{background:#fff; color:#000;}
+  section.panel{display:block !important; page-break-after:always;}
+  section.panel:last-child{page-break-after:auto;}
+  .card,.tblwrap,.tacct,.statement,.chart-card,.ajuste-card,.asiento{box-shadow:none; border:1px solid #ccc;}
+}
+
+/* ---------- MÓDULO EXAMEN: INDICADORES FINANCIEROS ---------- */
+.step.step-highlight {
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+  padding-top: 12px;
+  background: rgba(156, 122, 44, 0.08);
+  font-weight: 600;
+  color: var(--ink);
+}
+.step.step-highlight:hover { background: rgba(156, 122, 44, 0.16); }
+.step.step-highlight.active { background: var(--gold); color: #fff; border-color: var(--gold); }
+.step.step-highlight.active .n { color: #fff; }
+.step.step-highlight.active .examen-badge { background: #fff; color: var(--gold); }
+.examen-badge {
+  display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; padding: 2px 7px; border-radius: 4px;
+  background: var(--gold); color: #fff; vertical-align: middle; margin-left: auto;
+}
+.uni-banner {
+  background: linear-gradient(135deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--border-strong); border-left: 5px solid var(--gold);
+  border-radius: 10px; padding: 18px 22px; margin-bottom: 24px;
+  display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center;
+  box-shadow: var(--shadow);
+}
+@media (max-width: 640px) { .uni-banner { grid-template-columns: 1fr; text-align: center; } }
+.uni-logo-box {
+  width: 52px; height: 52px; border-radius: 12px; background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-family: "Fraunces", serif;
+  font-size: 24px; font-weight: 700; box-shadow: 0 4px 12px rgba(31, 92, 70, 0.25);
+}
+.uni-banner .uni-title { font-family: "Fraunces", serif; font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.uni-banner .uni-meta { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+.uni-banner .uni-meta b { color: var(--ink); }
+
+.subnav-tabs {
+  display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 24px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.subnav-btn {
+  background: var(--surface); border: 1px solid var(--border-strong); border-radius: 7px;
+  padding: 8px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--ink-soft);
+  transition: all .15s ease; display: inline-flex; align-items: center; gap: 6px;
+}
+.subnav-btn:hover { background: var(--surface-2); color: var(--ink); }
+.subnav-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.ratio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin: 20px 0; }
+.ratio-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: var(--shadow); padding: 20px 22px; display: flex; flex-direction: column;
+  gap: 12px; position: relative; overflow: hidden; transition: transform .15s ease, box-shadow .15s ease;
+}
+.ratio-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(24, 36, 32, 0.08); }
+.ratio-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent); }
+.ratio-card.status-warn::before { background: var(--danger); }
+.ratio-card.status-good::before { background: var(--accent); }
+.ratio-card.status-neutral::before { background: var(--gold); }
+
+.ratio-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.ratio-title-wrap { display: flex; flex-direction: column; gap: 3px; }
+.ratio-cat { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-faint); }
+.ratio-title { font-family: "Fraunces", serif; font-size: 17px; font-weight: 600; color: var(--ink); margin: 0; }
+.ratio-badge {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 20px; white-space: nowrap; font-family: "IBM Plex Mono", monospace;
+}
+.ratio-badge.good { background: var(--accent-soft); color: var(--accent); }
+.ratio-badge.warn { background: var(--danger-soft); color: var(--danger); }
+.ratio-badge.neutral { background: #FBF3DC; color: var(--gold); }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .ratio-badge.neutral { background: #2E2614; color: var(--gold); }
+}
+
+.formula-box {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 12px; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+  color: var(--ink); display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.formula-fraction { display: inline-flex; flex-direction: column; align-items: center; text-align: center; }
+.formula-num { border-bottom: 1.5px solid var(--ink-soft); padding: 0 6px 2px; }
+.formula-den { padding: 2px 6px 0; }
+
+.ratio-compare-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--surface-2);
+  border-radius: 8px; padding: 10px 14px; font-family: "IBM Plex Mono", monospace;
+}
+.ratio-col { display: flex; flex-direction: column; gap: 2px; }
+.ratio-col .year-lbl { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; }
+.ratio-col .val-large { font-size: 18px; font-weight: 700; color: var(--ink); }
+.ratio-col .calc-line { font-size: 10.5px; color: var(--ink-soft); }
+
+.ratio-diff {
+  display: flex; justify-content: space-between; align-items: center; padding: 4px 2px;
+  font-family: "IBM Plex Mono", monospace; font-size: 11.5px; border-top: 1px dashed var(--border);
+  color: var(--ink-soft);
+}
+.ratio-diff .delta-val { font-weight: 600; }
+.ratio-diff .delta-val.good { color: var(--accent); }
+.ratio-diff .delta-val.warn { color: var(--danger); }
+.ratio-diff .delta-val.neutral { color: var(--gold); }
+
+.ratio-expl { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin: 0; border-top: 1px solid var(--border); padding-top: 10px; }
+
+.question-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: var(--shadow); padding: 22px 24px; margin-bottom: 20px; border-left: 4px solid var(--gold);
+}
+.question-card h4 { font-family: "Fraunces", Georgia, serif; font-size: 17px; margin: 0 0 8px; color: var(--ink); }
+.question-card .q-statement {
+  font-size: 13.5px; font-style: italic; color: var(--ink-soft); background: var(--surface-2);
+  border-radius: 7px; padding: 10px 14px; margin-bottom: 14px; border: 1px solid var(--border);
+}
+.question-card .answer-content { font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+.question-card .answer-content p { margin: 8px 0; }
+.question-card .answer-content ul { margin: 6px 0 10px 20px; padding: 0; }
+.question-card .answer-content li { margin-bottom: 4px; }
+.question-card .key-takeaway {
+  background: var(--accent-soft); border-radius: 7px; padding: 9px 13px; margin-top: 10px;
+  font-size: 12.5px; color: var(--ink);
+}
+.question-card .key-takeaway b { color: var(--accent); }
+
+.calc-inputs-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 16px 0;
+}
+.calc-field-group {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 14px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.calc-field-group .group-title {
+  font-size: 11px; text-transform: uppercase; font-family: "IBM Plex Mono", monospace; font-weight: 600; color: var(--gold);
+}
+.examen-section { display: block; margin-bottom: 32px; }
+.examen-section.is-hidden { display: none; }
+
+
+/* ---------- SISTEMA UNIVERSAL DE MODALES Y ACCIONES (EDITAR / ELIMINAR) ---------- */
+.row-actions { display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end; }
+.act-btn {
+  font-family: "IBM Plex Sans", sans-serif; font-size: 11.5px; font-weight: 600;
+  padding: 4px 9px; border-radius: 6px; border: 1px solid var(--border-strong);
+  background: var(--surface); color: var(--ink-soft); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px; transition: all .15s ease;
+  line-height: 1.2;
+}
+.act-btn:hover { background: var(--surface-2); color: var(--ink); border-color: var(--ink-soft); }
+.act-btn.edit { color: var(--accent); }
+.act-btn.edit:hover { background: var(--accent-soft); border-color: var(--accent); }
+.act-btn.del { color: var(--danger); }
+.act-btn.del:hover { background: var(--danger-soft); border-color: var(--danger); }
+
+/* Modal Overlay & Window */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(12, 18, 14, 0.65);
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 0; visibility: hidden;
+  transition: opacity .22s ease, visibility .22s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+
+.modal-window {
+  background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: 14px; box-shadow: 0 16px 44px rgba(0, 0, 0, 0.35);
+  width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
+  transform: scale(0.95) translateY(10px);
+  transition: transform .22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column;
+}
+.modal-overlay.active .modal-window { transform: scale(1) translateY(0); }
+.modal-window.wide { max-width: 780px; }
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; border-bottom: 1px solid var(--border);
+  background: var(--surface-2); border-radius: 14px 14px 0 0;
+}
+.modal-header-left { display: flex; align-items: center; gap: 12px; }
+.modal-icon-badge {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.modal-icon-badge.danger { background: var(--danger-soft); color: var(--danger); }
+.modal-icon-badge.warning { background: #FBF3DC; color: var(--gold); }
+.modal-icon-badge.info { background: var(--accent-soft); color: var(--accent); }
+.modal-icon-badge.edit { background: var(--accent-soft); color: var(--accent); }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .modal-icon-badge.warning { background: #2E2614; color: var(--gold); }
+}
+
+.modal-title { font-family: "Fraunces", Georgia, serif; font-size: 18px; font-weight: 600; margin: 0; color: var(--ink); }
+.modal-close-btn {
+  background: none; border: none; color: var(--ink-faint); font-size: 20px; cursor: pointer;
+  padding: 4px 8px; border-radius: 6px; line-height: 1; transition: all .15s;
+}
+.modal-close-btn:hover { background: var(--surface); color: var(--ink); }
+
+.modal-body { padding: 22px; font-size: 14px; line-height: 1.55; color: var(--ink); }
+.modal-body p { margin: 0 0 12px; }
+.modal-body p:last-child { margin-bottom: 0; }
+
+.modal-info-box {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 16px; margin: 14px 0; font-size: 13px; font-family: "IBM Plex Mono", monospace;
+  line-height: 1.6;
+}
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 10px; padding: 14px 22px;
+  border-top: 1px solid var(--border); background: var(--surface-2);
+  border-radius: 0 0 14px 14px;
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px; z-index: 10001;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+}
+.toast {
+  background: var(--surface); border: 1px solid var(--border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22); border-radius: 8px;
+  padding: 12px 18px; font-size: 13.5px; color: var(--ink);
+  display: flex; align-items: center; gap: 10px; pointer-events: auto;
+  transform: translateY(20px); opacity: 0;
+  transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 260px; max-width: 420px;
+}
+.toast.active { transform: translateY(0); opacity: 1; }
+.toast.success { border-left: 4px solid var(--accent); }
+.toast.warn { border-left: 4px solid var(--gold); }
+.toast.danger { border-left: 4px solid var(--danger); }
+
+</style>
+</head>
+<body>
+
+<div id="intro" class="intro" role="status" aria-label="Cargando la aplicación">
+  <div class="intro-grid"></div>
+  <div class="intro-scan"></div>
+  <div class="intro-content">
+    <div class="intro-mark">R</div>
+    <div class="intro-log" id="intro-log"></div>
+    <div class="intro-bar"><div class="intro-bar-fill" id="intro-bar-fill"></div></div>
+    <div class="intro-skip">clic o cualquier tecla para omitir</div>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">R</div>
+      <div class="name">El Roble</div>
+      <div class="tag">Ciclo contable completo</div>
+    </div>
+    <nav class="steps" id="steps"></nav>
+    <div class="sidebar-foot">
+      Distribuidora El Roble S.A.<br>
+      Ejercicio: enero 2026 &middot; USD<br>
+      Sistema de inventario permanente<br>
+      Elaborado por: Ernesto Gregory Luna Mora
+      <div class="sync-pill off" id="sync-pill"><span class="dot"></span><span id="sync-label">Comprobando guardado…</span></div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topline">
+      <div class="co">Proyecto de contabilidad &middot; <b>Distribuidora Comercial El Roble S.A.</b></div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="period">01 – 31 ENE 2026</div>
+        <button type="button" class="btn" id="btn-export-pdf" title="Abre el diálogo de impresión; elige 'Guardar como PDF'">Exportar a PDF</button>
+      </div>
+    </div>
+    <div id="content"></div>
+  </main>
+</div>
+
+<!-- Modal System Overlay -->
+<div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-window" id="modal-window"></div>
+</div>
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<script>
+const LOCAL_STORAGE_KEY = 'elRoble.cicloContable.v1';
+/* =========================================================
+   CATÁLOGO DE CUENTAS Y ASIENTOS DE SEMILLA (caso "El Roble")
+   Se usan como datos de ejemplo y para "Restaurar ejemplo".
+   ========================================================= */
+/*SEED_START*/
+const SEED_ACCOUNTS = [
+  {c:'1101', n:'Caja', g:'Activo Corriente', est:'BG'},
+  {c:'1103', n:'Bancos', g:'Activo Corriente', est:'BG'},
+  {c:'1105', n:'Inventario de Mercadería', g:'Activo Corriente', est:'BG'},
+  {c:'1107', n:'Cuentas por Cobrar Clientes', g:'Activo Corriente', est:'BG'},
+  {c:'1110', n:'IVA Crédito Tributario', g:'Activo Corriente', est:'BG'},
+  {c:'1114', n:'Arriendo Pagado por Anticipado', g:'Activo Corriente', est:'BG'},
+  {c:'1115', n:'Suministros de Oficina', g:'Activo Corriente', est:'BG'},
+  {c:'1116', n:'(–) Provisión Cuentas Incobrables', g:'Activo Corriente', est:'BG', contra:true},
+  {c:'120103', n:'Equipo de Oficina', g:'Activo No Corriente', est:'BG'},
+  {c:'1202', n:'(–) Depreciación Acumulada', g:'Activo No Corriente', est:'BG', contra:true},
+  {c:'2101', n:'Proveedores', g:'Pasivo Corriente', est:'BG'},
+  {c:'2103', n:'Cuentas por Pagar', g:'Pasivo Corriente', est:'BG'},
+  {c:'2106', n:'Sueldos por Pagar', g:'Pasivo Corriente', est:'BG'},
+  {c:'2107', n:'IVA Débito Fiscal', g:'Pasivo Corriente', est:'BG'},
+  {c:'2108', n:'Préstamos Bancarios', g:'Pasivo No Corriente', est:'BG'},
+  {c:'3101', n:'Capital Social', g:'Patrimonio', est:'BG'},
+  {c:'3203', n:'Utilidad del Ejercicio', g:'Patrimonio', est:'BG'},
+  {c:'3900', n:'Resumen de Rentas y Gastos', g:'Cuenta Puente', est:'X'},
+  {c:'4101', n:'Ventas', g:'Ingresos', est:'ER'},
+  {c:'5101', n:'Costo de Ventas', g:'Gastos', est:'ER'},
+  {c:'5102', n:'Sueldos y Salarios', g:'Gastos', est:'ER'},
+  {c:'5103', n:'Servicios Básicos', g:'Gastos', est:'ER'},
+  {c:'5104', n:'Gasto Arriendo', g:'Gastos', est:'ER'},
+  {c:'5105', n:'Gasto Suministros', g:'Gastos', est:'ER'},
+  {c:'5106', n:'Gasto Depreciación', g:'Gastos', est:'ER'},
+  {c:'5107', n:'Gasto Provisión Cuentas Incobrables', g:'Gastos', est:'ER'},
+  {c:'5108', n:'Gastos Financieros', g:'Gastos', est:'ER'},
+];
+
+const SEED_ENTRIES = [
+  {id:'s0', fase:'apertura', fecha:'2026-01-01', num:'Apertura', glosa:'Estado de Situación Inicial del ejercicio, saldos con los que la empresa inicia sus operaciones en enero 2026.', lines:[
+    {c:'1101',d:2000,h:0},{c:'1103',d:15000,h:0},{c:'1105',d:20000,h:0},{c:'1107',d:5000,h:0},
+    {c:'120103',d:8000,h:0},{c:'1202',d:0,h:1600},{c:'2101',d:0,h:6000},{c:'2108',d:0,h:10000},{c:'3101',d:0,h:32400},
+  ]},
+  {id:'s1', fase:'operacion', fecha:'2026-01-03', num:1, glosa:'Compra de mercadería a crédito a proveedores, factura N.º 001, IVA 15%.', lines:[
+    {c:'1105',d:8000,h:0},{c:'1110',d:1200,h:0},{c:'2101',d:0,h:9200},
+  ]},
+  {id:'s2', fase:'operacion', fecha:'2026-01-05', num:2, glosa:'Venta de mercadería al contado, valor depositado en banco; se registra a la vez el costo de venta (inventario permanente).', lines:[
+    {c:'1103',d:6900,h:0},{c:'4101',d:0,h:6000},{c:'2107',d:0,h:900},
+    {c:'5101',d:3600,h:0},{c:'1105',d:0,h:3600},
+  ]},
+  {id:'s3', fase:'operacion', fecha:'2026-01-08', num:3, glosa:'Venta de mercadería a crédito, 30 días.', lines:[
+    {c:'1107',d:11500,h:0},{c:'4101',d:0,h:10000},{c:'2107',d:0,h:1500},
+    {c:'5101',d:6000,h:0},{c:'1105',d:0,h:6000},
+  ]},
+  {id:'s4', fase:'operacion', fecha:'2026-01-10', num:4, glosa:'Pago total a proveedores por la compra del 03/01.', lines:[
+    {c:'2101',d:9200,h:0},{c:'1103',d:0,h:9200},
+  ]},
+  {id:'s5', fase:'operacion', fecha:'2026-01-12', num:5, glosa:'Cobro de cartera; el cliente cancela la factura del 08/01.', lines:[
+    {c:'1103',d:11500,h:0},{c:'1107',d:0,h:11500},
+  ]},
+  {id:'s6', fase:'operacion', fecha:'2026-01-15', num:6, glosa:'Pago anticipado de arriendo del local comercial; cubre los meses de enero a marzo.', lines:[
+    {c:'1114',d:1800,h:0},{c:'1103',d:0,h:1800},
+  ]},
+  {id:'s7', fase:'operacion', fecha:'2026-01-16', num:7, glosa:'Pago de sueldos, primera quincena de enero, en efectivo.', lines:[
+    {c:'5102',d:2400,h:0},{c:'1101',d:0,h:2400},
+  ]},
+  {id:'s8', fase:'operacion', fecha:'2026-01-18', num:8, glosa:'Compra de suministros de oficina al contado.', lines:[
+    {c:'1115',d:500,h:0},{c:'1101',d:0,h:500},
+  ]},
+  {id:'s9', fase:'operacion', fecha:'2026-01-20', num:9, glosa:'Adquisición de un equipo de computación a crédito, 60 días.', lines:[
+    {c:'120103',d:2000,h:0},{c:'1110',d:300,h:0},{c:'2103',d:0,h:2300},
+  ]},
+  {id:'s10', fase:'operacion', fecha:'2026-01-22', num:10, glosa:'Pago de planillas de luz, agua e internet del mes.', lines:[
+    {c:'5103',d:350,h:0},{c:'1103',d:0,h:350},
+  ]},
+  {id:'s11', fase:'operacion', fecha:'2026-01-25', num:11, glosa:'Venta de mercadería al contado, cobrada en efectivo.', lines:[
+    {c:'1101',d:4600,h:0},{c:'4101',d:0,h:4000},{c:'2107',d:0,h:600},
+    {c:'5101',d:2400,h:0},{c:'1105',d:0,h:2400},
+  ]},
+  {id:'s12', fase:'operacion', fecha:'2026-01-28', num:12, glosa:'Depósito del excedente de caja en la cuenta bancaria.', lines:[
+    {c:'1103',d:3000,h:0},{c:'1101',d:0,h:3000},
+  ]},
+  {id:'s13', fase:'operacion', fecha:'2026-01-30', num:13, glosa:'Pago de sueldos, segunda quincena de enero, por transferencia.', lines:[
+    {c:'5102',d:2400,h:0},{c:'1103',d:0,h:2400},
+  ]},
+  {id:'s14', fase:'operacion', fecha:'2026-01-31', num:14, glosa:'Pago de cuota mensual de préstamo bancario: capital $500 e interés $100.', lines:[
+    {c:'2108',d:500,h:0},{c:'5108',d:100,h:0},{c:'1103',d:0,h:600},
+  ]},
+  {id:'s15', fase:'operacion', fecha:'2026-01-31', num:15, glosa:'Declaración y pago mensual del IVA (Formulario 104): débito fiscal $3,000 menos crédito tributario $1,500.', lines:[
+    {c:'2107',d:3000,h:0},{c:'1110',d:0,h:1500},{c:'1103',d:0,h:1500},
+  ]},
+  {id:'s16', fase:'ajuste', fecha:'2026-01-31', num:'A1', glosa:'Depreciación del mes del equipo de oficina (estimación del contador: $80 mensuales, vida útil aproximada de 10 años).', lines:[
+    {c:'5106',d:80,h:0},{c:'1202',d:0,h:80},
+  ]},
+  {id:'s17', fase:'ajuste', fecha:'2026-01-31', num:'A2', glosa:'Consumo de un mes de arriendo pagado por anticipado ($1,800 ÷ 3 meses).', lines:[
+    {c:'5104',d:600,h:0},{c:'1114',d:0,h:600},
+  ]},
+  {id:'s18', fase:'ajuste', fecha:'2026-01-31', num:'A3', glosa:'Suministros de oficina consumidos en el mes; el conteo físico al 31/01 arroja $150 en bodega.', lines:[
+    {c:'5105',d:350,h:0},{c:'1115',d:0,h:350},
+  ]},
+  {id:'s19', fase:'ajuste', fecha:'2026-01-31', num:'A4', glosa:'Sueldos devengados de los últimos días de enero, pendientes de pago.', lines:[
+    {c:'5102',d:600,h:0},{c:'2106',d:0,h:600},
+  ]},
+  {id:'s20', fase:'ajuste', fecha:'2026-01-31', num:'A5', glosa:'Provisión del 1% sobre cuentas por cobrar a clientes, según política de la empresa.', lines:[
+    {c:'5107',d:50,h:0},{c:'1116',d:0,h:50},
+  ]},
+  {id:'s21', fase:'cierre', fecha:'2026-01-31', num:'C1', glosa:'Cierre de la cuenta de ingresos contra Resumen de Rentas y Gastos.', lines:[
+    {c:'4101',d:20000,h:0},{c:'3900',d:0,h:20000},
+  ]},
+  {id:'s22', fase:'cierre', fecha:'2026-01-31', num:'C2', glosa:'Cierre de las cuentas de gastos contra Resumen de Rentas y Gastos.', lines:[
+    {c:'3900',d:18930,h:0},
+    {c:'5101',d:0,h:12000},{c:'5102',d:0,h:5400},{c:'5103',d:0,h:350},{c:'5104',d:0,h:600},
+    {c:'5105',d:0,h:350},{c:'5106',d:0,h:80},{c:'5107',d:0,h:50},{c:'5108',d:0,h:100},
+  ]},
+  {id:'s23', fase:'cierre', fecha:'2026-01-31', num:'C3', glosa:'Traslado de la utilidad del ejercicio al patrimonio.', lines:[
+    {c:'3900',d:1070,h:0},{c:'3203',d:0,h:1070},
+  ]},
+];
+/*SEED_END*/
+
+/* =========================================================
+   ESTADO ACTIVO — carga desde el slot de datos embebido,
+   con la semilla como respaldo.
+   ========================================================= */
+let ACCOUNTS, ENTRIES;
+(function loadInitialState(){
+  try{
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if(parsed && Array.isArray(parsed.accounts) && Array.isArray(parsed.entries) && parsed.accounts.length){
+      ACCOUNTS = parsed.accounts; ENTRIES = parsed.entries;
+    } else { throw new Error('empty'); }
+  }catch(e){
+    ACCOUNTS = JSON.parse(JSON.stringify(SEED_ACCOUNTS));
+    ENTRIES = JSON.parse(JSON.stringify(SEED_ENTRIES));
+  }
+})();
+let ACC = {};
+function rebuildIndex(){ ACC = Object.fromEntries(ACCOUNTS.map(a=>[a.c,a])); }
+rebuildIndex();
+
+const FASE_LABEL = {apertura:'Asiento de apertura', operacion:'Operaciones del periodo', ajuste:'Asientos de ajuste', cierre:'Asientos de cierre'};
+const BASE=['apertura','operacion'], ADJ=['apertura','operacion','ajuste'], ALL=['apertura','operacion','ajuste','cierre'];
+const GRUPOS = ['Activo Corriente','Activo No Corriente','Pasivo Corriente','Pasivo No Corriente','Patrimonio','Ingresos','Gastos','Cuenta Puente'];
+
+function fmt(n){
+  const sign = n<0?'-':'';
+  n=Math.abs(n)+1e-9;
+  const parts = n.toFixed(2).split('.');
+  parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return sign+'$'+parts[0]+'.'+parts[1];
+}
+function sums(code, fases){
+  let d=0,h=0;
+  ENTRIES.filter(e=>fases.includes(e.fase)).forEach(e=>{
+    e.lines.filter(l=>l.c===code).forEach(l=>{d+=l.d||0; h+=l.h||0;});
+  });
+  return {d,h};
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function grupoEst(g){ return g==='Ingresos'||g==='Gastos' ? 'ER' : (g==='Cuenta Puente' ? 'X' : 'BG'); }
+
+/* =========================================================
+   RENDER: Presentación
+   ========================================================= */
+function renderPresentacion(){
+  const totalActivos = ACCOUNTS.filter(a=>a.est==='BG' && a.g.startsWith('Activo')).reduce((s,a)=>{const {d,h}=sums(a.c,ADJ); return s + (a.contra?-(h-d):(d-h));},0);
+  const utilidad = ACCOUNTS.filter(a=>a.est==='ER').reduce((s,a)=>{const {d,h}=sums(a.c,ADJ); return s + (a.g==='Ingresos' ? (h-d) : -(d-h));},0);
+  return `
+  <div class="eyebrow">Paso 01 &middot; Elaborado por Ernesto Gregory Luna Mora</div>
+  <h2 class="title">Presentación del ejercicio</h2>
+  <p class="lede">Caso práctico integral del ciclo contable para Distribuidora Comercial El Roble S.A., una empresa comercializadora que compra y vende mercadería. Moneda: dólares de los Estados Unidos (USD). Sistema de inventario: permanente. Usa la pestaña <b>Mis Datos</b> para agregar tus propias cuentas y asientos: todo el resto de la aplicación se recalcula solo.</p>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="lbl">Total activos (ajustado)</div><div class="val">${fmt(totalActivos)}</div></div>
+    <div class="kpi"><div class="lbl">Ventas registradas</div><div class="val gold">${fmt(sums('4101',ADJ).h)}</div></div>
+    <div class="kpi"><div class="lbl">Utilidad del ejercicio</div><div class="val">${fmt(utilidad)}</div></div>
+    <div class="kpi"><div class="lbl">Asientos registrados</div><div class="val gold">${ENTRIES.length}</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Qué recorre este proyecto</h3>
+    <div class="chips">
+      <span class="chip">Estado de Situación Inicial</span>
+      <span class="chip">Libro Diario</span>
+      <span class="chip">Balance de Comprobación</span>
+      <span class="chip">Ajustes</span>
+      <span class="chip">Libro Mayor · Cuentas T</span>
+      <span class="chip">Balance Ajustado</span>
+      <span class="chip">Hoja de Trabajo</span>
+      <span class="chip">Estados Financieros</span>
+      <span class="chip">Asientos de Cierre</span>
+      <span class="chip" style="background:var(--gold); color:#fff; font-weight:600;">★ Examen: Indicadores Financieros</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card" style="border-left:4px solid var(--gold); background:linear-gradient(135deg, var(--surface), var(--surface-2));">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <span class="examen-badge" style="margin-left:0; margin-bottom:6px;">★ Puntos Adicionales para el Examen</span>
+          <h3 style="margin-top:4px; font-family:'Fraunces',serif; font-size:18px;">Evaluación Parcial: Ratios e Indicadores Financieros</h3>
+          <p style="font-size:13px; color:var(--ink-soft); margin:4px 0 0; max-width:65ch;">Caso <b>Distribuidora Industrial Andina S.A.</b>: los 8 indicadores requeridos para 2024 y 2025, fórmulas paso a paso, análisis comparativo de variaciones, respuestas a las 3 preguntas de análisis y calculadora interactiva.</p>
+        </div>
+        <button type="button" class="btn primary" id="btn-goto-examen" style="white-space:nowrap; padding:10px 18px;">Ir al Módulo de Examen →</button>
+      </div>
+    </div>
+
+    <h3>Catálogo de cuentas utilizado</h3>
+    <div class="hint">Se administra desde "Mis Datos → Nueva cuenta".</div>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Código</th><th>Cuenta</th><th>Clasificación</th></tr></thead>
+      <tbody>${ACCOUNTS.map(a=>`<tr><td class="code">${a.c}</td><td>${escHtml(a.n)}</td><td>${a.g}</td></tr>`).join('')}</tbody>
+    </table></div>
+  </div>`;
+}
+
+/* =========================================================
+   RENDER: Mis Datos — CRUD de cuentas y asientos
+   ========================================================= */
+function accountOptions(selected){
+  return ACCOUNTS.map(a=>`<option value="${a.c}" ${a.c===selected?'selected':''}>${a.c} — ${escHtml(a.n)}</option>`).join('');
+}
+function renderDatosPanel(){
+  const N_LINES = 10;
+  const lineRows = Array.from({length:N_LINES}).map((_,i)=>`
+    <div class="line-row">
+      <select data-role="c" data-i="${i}"><option value="">—</option>${accountOptions()}</select>
+      <input type="number" step="0.01" min="0" placeholder="0.00" data-role="d" data-i="${i}">
+      <input type="number" step="0.01" min="0" placeholder="0.00" data-role="h" data-i="${i}">
+    </div>`).join('');
+
+  const entryRows = ENTRIES.slice().reverse().map(e=>{
+    const total = e.lines.reduce((s,l)=>s+(l.d||0),0);
+    return `<tr>
+      <td class="code">${e.num}</td><td class="code">${e.fecha}</td>
+      <td>${FASE_LABEL[e.fase]}</td>
+      <td>${escHtml(e.glosa).slice(0,60)}${e.glosa.length>60?'…':''}</td>
+      <td class="num">${fmt(total)}</td>
+      <td style="text-align:right;">
+        <div class="row-actions">
+          <button type="button" class="act-btn edit" data-edit-entry="${e.id}" title="Editar este asiento">✏️ Editar</button>
+          <button type="button" class="act-btn del" data-del-entry="${e.id}" title="Eliminar asiento">🗑️ Eliminar</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const cuentaRows = ACCOUNTS.map(a=>`<tr>
+    <td class="code">${a.c}</td><td>${escHtml(a.n)}</td><td>${a.g}</td>
+    <td style="text-align:right;">
+      <div class="row-actions">
+        <button type="button" class="act-btn edit" data-edit-cuenta="${a.c}" title="Editar cuenta">✏️ Editar</button>
+        <button type="button" class="act-btn del" data-del-cuenta="${a.c}" title="Eliminar cuenta">🗑️ Eliminar</button>
+      </div>
+    </td>
+  </tr>`).join('');
+
+  return `
+  <div class="eyebrow">Paso 02 &middot; Tus datos</div>
+  <h2 class="title">Mis Datos</h2>
+  <p class="lede">Agrega cuentas y asientos propios; el diario, el mayor, los balances y los estados financieros se recalculan automáticamente. Los cambios se guardan solos en esta página.</p>
+
+  <div class="card">
+    <h3>Nuevo asiento contable</h3>
+    <div class="hint">Llena solo las líneas que necesites (mínimo dos) y que el Debe y el Haber cuadren.</div>
+    <form id="form-asiento">
+      <div class="form-grid">
+        <label class="field">Fecha<input type="date" name="fecha" required></label>
+        <label class="field">Fase<select name="fase">
+          <option value="operacion">Operación</option>
+          <option value="apertura">Apertura</option>
+          <option value="ajuste">Ajuste</option>
+          <option value="cierre">Cierre</option>
+        </select></label>
+      </div>
+      <label class="field" style="margin-top:12px;">Glosa / explicación<textarea name="glosa" rows="2" required placeholder="Ej: Pago de arriendo del mes de febrero"></textarea></label>
+      <div class="lines-editor" id="lines-editor">
+        <div class="lines-head"><span>Cuenta</span><span>Debe</span><span>Haber</span></div>
+        ${lineRows}
+      </div>
+      <div class="asiento-check" id="asiento-check">Debe $0.00 · Haber $0.00</div>
+      <div class="btn-row">
+        <button type="submit" class="btn primary" id="btn-guardar-asiento" disabled>Guardar asiento</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Nueva cuenta</h3>
+    <form id="form-cuenta" class="form-grid">
+      <label class="field">Código<input name="c" required placeholder="Ej. 1109"></label>
+      <label class="field">Nombre<input name="n" required placeholder="Ej. Anticipo de Impuestos"></label>
+      <label class="field">Clasificación<select name="g">${GRUPOS.map(g=>`<option value="${g}">${g}</option>`).join('')}</select></label>
+      <label class="field" style="flex-direction:row; align-items:center; gap:6px;"><input type="checkbox" name="contra" style="width:auto;"> Cuenta contra (resta)</label>
+      <button type="submit" class="btn primary">Agregar cuenta</button>
+    </form>
+    <div class="tblwrap" style="margin-top:16px;"><table>
+      <thead><tr><th>Código</th><th>Cuenta</th><th>Clasificación</th><th></th></tr></thead>
+      <tbody>${cuentaRows}</tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3>Asientos registrados</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>N.º</th><th>Fecha</th><th>Fase</th><th>Glosa</th><th class="num">Monto</th><th></th></tr></thead>
+      <tbody>${entryRows}</tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3>Respaldo de datos</h3>
+    <div class="hint">La app se guarda sola, pero puedes descargar una copia o cargar una anterior.</div>
+    <div class="btn-row">
+      <button type="button" class="btn" data-action="export">Descargar copia (JSON)</button>
+      <button type="button" class="btn" data-action="import-trigger">Cargar copia (JSON)</button>
+      <input type="file" id="import-file" class="file-input" accept="application/json">
+      <button type="button" class="btn" data-action="reset-seed">Restaurar ejemplo "El Roble"</button>
+      <button type="button" class="btn danger" data-action="clear-all">Borrar todos los datos</button>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   RENDER: Estado de Situación Inicial
+   ========================================================= */
+function renderInicial(){
+  const e = ENTRIES.find(e=>e.fase==='apertura');
+  if(!e) return `<div class="eyebrow">Paso 03</div><h2 class="title">Estado de Situación Inicial</h2><p class="lede">Todavía no registras un asiento de apertura. Agrégalo desde "Mis Datos" con la fase "Apertura".</p>`;
+  const rows = e.lines.map(l=>`<tr><td class="code">${l.c}</td><td${l.d?'':' class="indent"'}>${escHtml(ACC[l.c]?ACC[l.c].n:l.c)}</td><td class="num">${l.d?fmt(l.d):''}</td><td class="num">${l.h?fmt(l.h):''}</td></tr>`).join('');
+  const td=e.lines.reduce((s,l)=>s+l.d,0), th=e.lines.reduce((s,l)=>s+l.h,0);
+  return `
+  <div class="eyebrow">Paso 03</div>
+  <h2 class="title">Estado de Situación Inicial</h2>
+  <p class="lede">Saldos con los que Distribuidora El Roble S.A. abre su contabilidad. Este mismo estado se registra como el asiento de apertura del Libro Diario.</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Código</th><th>Cuenta</th><th class="num">Debe</th><th class="num">Haber</th></tr></thead>
+    <tbody>${rows}<tr class="total"><td></td><td>Totales</td><td class="num">${fmt(td)}</td><td class="num">${fmt(th)}</td></tr></tbody>
+  </table></div>
+  <div class="note"><b>Partida doble verificada:</b> Debe = Haber = ${fmt(td)}.</div>
+  <div style="margin-top:14px;">
+    <button type="button" class="act-btn edit" data-edit-entry="${e.id}" style="padding:7px 16px; font-size:13px;">✏️ Editar Asiento de Situación Inicial</button>
+  </div>`;
+}
+
+/* =========================================================
+   RENDER: Libro Diario
+   ========================================================= */
+function renderDiario(fasesToShow, allowActions = true){
+  let html=''; let lastFase=null;
+  ENTRIES.filter(e=>fasesToShow.includes(e.fase)).forEach(e=>{
+    if(e.fase!==lastFase){ html+=`<div class="faseband">${FASE_LABEL[e.fase]}</div>`; lastFase=e.fase; }
+    const lines = e.lines.map(l=>{
+      if(l.d) return `<div class="aline"><span class="code">${l.c}</span><span class="nombre">${escHtml(ACC[l.c]?ACC[l.c].n:l.c)}</span><span class="d">${fmt(l.d)}</span><span class="h"></span></div>`;
+      return `<div class="aline"><span class="code"></span><span class="nombre h">${escHtml(ACC[l.c]?ACC[l.c].n:l.c)}</span><span class="d"></span><span class="h">${fmt(l.h)}</span></div>`;
+    }).join('');
+    html+=`<div class="asiento">
+      <div class="ahead">
+        <div style="display:flex; align-items:baseline; gap:10px;">
+          <span class="num">Asiento N.º ${e.num}</span>
+          <span class="fecha">${e.fecha}</span>
+        </div>
+        ${allowActions ? `
+        <div class="row-actions">
+          <button type="button" class="act-btn edit" data-edit-entry="${e.id}" title="Editar este asiento">✏️ Editar</button>
+          <button type="button" class="act-btn del" data-del-entry="${e.id}" title="Eliminar asiento">🗑️ Eliminar</button>
+        </div>` : ''}
+      </div>
+      <div class="lines">${lines}</div>
+      <div class="glosa">${escHtml(e.glosa)}</div>
+    </div>`;
+  });
+  return html || `<div class="note">Aún no hay asientos en esta fase.</div>`;
+}
+function renderDiarioPanel(){
+  return `
+  <div class="eyebrow">Paso 04</div>
+  <h2 class="title">Libro Diario</h2>
+  <p class="lede">Registro cronológico de todos los asientos: apertura y las operaciones del periodo. Puedes editar o eliminar cualquier asiento directamente aquí o desde "Mis Datos".</p>
+  ${renderDiario(BASE, true)}`;
+}
+
+/* =========================================================
+   RENDER: Balance de comprobación (sumas y saldos)
+   ========================================================= */
+function renderBalance(fases, nota){
+  const rows = ACCOUNTS.filter(a=>a.est!=='X').map(a=>{
+    const {d,h}=sums(a.c,fases);
+    if(d===0 && h===0) return null;
+    const saldoD = d>h ? d-h : 0;
+    const saldoH = h>d ? h-d : 0;
+    return {a,d,h,saldoD,saldoH};
+  }).filter(Boolean);
+  if(!rows.length) return `<div class="note">Todavía no hay movimientos para mostrar aquí.</div>`;
+  const totD=rows.reduce((s,r)=>s+r.d,0), totH=rows.reduce((s,r)=>s+r.h,0);
+  const totSD=rows.reduce((s,r)=>s+r.saldoD,0), totSH=rows.reduce((s,r)=>s+r.saldoH,0);
+  const body = rows.map(r=>`<tr>
+    <td class="code">${r.a.c}</td><td>${escHtml(r.a.n)}</td>
+    <td class="num">${fmt(r.d)}</td><td class="num">${fmt(r.h)}</td>
+    <td class="num">${r.saldoD?fmt(r.saldoD):'—'}</td><td class="num">${r.saldoH?fmt(r.saldoH):'—'}</td>
+  </tr>`).join('');
+  return `
+  <div class="tblwrap"><table>
+    <thead><tr><th>Código</th><th>Cuenta</th><th class="num">Suma Debe</th><th class="num">Suma Haber</th><th class="num">Saldo Deudor</th><th class="num">Saldo Acreedor</th></tr></thead>
+    <tbody>${body}<tr class="total"><td></td><td>Totales</td><td class="num">${fmt(totD)}</td><td class="num">${fmt(totH)}</td><td class="num">${fmt(totSD)}</td><td class="num">${fmt(totSH)}</td></tr></tbody>
+  </table></div>
+  <div class="note ${Math.abs(totSD-totSH)>0.01?'warn':''}"><b>Comprobación:</b> ${nota} — Sumas ${fmt(totD)} = ${fmt(totH)} · Saldos ${fmt(totSD)} ${Math.abs(totSD-totSH)>0.01?'≠':'='} ${fmt(totSH)}.</div>`;
+}
+function renderBalancePanel(){
+  return `
+  <div class="eyebrow">Paso 05</div>
+  <h2 class="title">Balance de Comprobación</h2>
+  <p class="lede">Balance de sumas y saldos elaborado con los movimientos del periodo, antes de registrar los ajustes de fin de mes.</p>
+  ${renderBalance(BASE,'sin ajustar')}`;
+}
+
+/* =========================================================
+   RENDER: Ajustes
+   ========================================================= */
+const AJUSTE_TXT = {
+  A1:'La depreciación es el desgaste que sufren los activos fijos con el uso y el paso del tiempo. Aunque no representa una salida de efectivo, debe reconocerse como gasto del periodo.',
+  A2:'De los $1,800 pagados el 15/01 por tres meses de arriendo, solo el equivalente a un mes corresponde a enero. El resto sigue siendo un activo hasta consumirse.',
+  A3:'De los $500 en suministros comprados, el conteo físico de fin de mes muestra $150 sin usar. La diferencia ya se consumió y pasa de activo a gasto.',
+  A4:'Principio del devengado: los sueldos de los últimos días de enero ya se generaron aunque se paguen en febrero.',
+  A5:'Principio de prudencia: se estima que una parte de las cuentas por cobrar podría no recuperarse, sin esperar a que el incobrable ocurra realmente.',
+};
+function renderAjustesPanel(){
+  const ajustes = ENTRIES.filter(e=>e.fase==='ajuste');
+  if(!ajustes.length) return `<div class="eyebrow">Paso 06</div><h2 class="title">Asientos de Ajuste</h2><p class="lede">Aún no registras ajustes. Agrégalos desde "Mis Datos" con la fase "Ajuste".</p>`;
+  const cards = ajustes.map(e=>{
+    const lines = e.lines.map(l=>{
+      if(l.d) return `<div class="aline" style="grid-template-columns:56px 1fr 90px 90px;"><span class="code">${l.c}</span><span class="nombre">${escHtml(ACC[l.c]?ACC[l.c].n:l.c)}</span><span class="d">${fmt(l.d)}</span><span class="h"></span></div>`;
+      return `<div class="aline" style="grid-template-columns:56px 1fr 90px 90px;"><span class="code"></span><span class="nombre h">${escHtml(ACC[l.c]?ACC[l.c].n:l.c)}</span><span class="d"></span><span class="h">${fmt(l.h)}</span></div>`;
+    }).join('');
+    const why = AJUSTE_TXT[e.num] || e.glosa;
+    return `<div class="ajuste-card">
+      <div class="entry">
+        <div class="ahead" style="background:none;border:none;padding:0 0 8px;">
+          <div><span class="num">Ajuste ${e.num}</span> &middot; <span class="fecha">${e.fecha}</span></div>
+          <div class="row-actions">
+            <button type="button" class="act-btn edit" data-edit-entry="${e.id}" title="Editar este ajuste">✏️ Editar</button>
+            <button type="button" class="act-btn del" data-del-entry="${e.id}" title="Eliminar este ajuste">🗑️</button>
+          </div>
+        </div>
+        ${lines}
+      </div>
+      <div class="why"><div class="lbl">¿Por qué se ajusta?</div><p>${escHtml(why)}</p></div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="eyebrow">Paso 06</div>
+  <h2 class="title">Asientos de Ajuste</h2>
+  <p class="lede">Al cierre del mes se registran ajustes para que los estados financieros reflejen la realidad económica del periodo, siguiendo el principio del devengado.</p>
+  ${cards}`;
+}
+
+/* =========================================================
+   RENDER: Libro Mayor — Cuentas T
+   ========================================================= */
+function renderMayorPanel(){
+  const cards = ACCOUNTS.filter(a=>a.est!=='X').map(a=>{
+    const debeRows=[], haberRows=[];
+    ENTRIES.filter(e=>ADJ.includes(e.fase)).forEach(e=>{
+      e.lines.filter(l=>l.c===a.c).forEach(l=>{
+        const ref = e.fase==='apertura' ? 'Apert.' : (e.fase==='ajuste' ? 'Aj. '+e.num : 'N.º '+e.num);
+        if(l.d) debeRows.push({ref, amt:l.d});
+        if(l.h) haberRows.push({ref, amt:l.h});
+      });
+    });
+    if(debeRows.length===0 && haberRows.length===0) return '';
+    const sd=debeRows.reduce((s,r)=>s+r.amt,0), sh=haberRows.reduce((s,r)=>s+r.amt,0);
+    const saldo = sd-sh;
+    return `<div class="tacct">
+      <div class="thead"><div class="code">${a.c}</div><div class="name">${escHtml(a.n)}</div></div>
+      <div class="body">
+        <div class="side debe"><div class="collbl">Debe</div>${debeRows.map(r=>`<div class="row"><span class="ref">${r.ref}</span><span class="amt">${fmt(r.amt)}</span></div>`).join('')}</div>
+        <div class="side haber"><div class="collbl">Haber</div>${haberRows.map(r=>`<div class="row"><span class="ref">${r.ref}</span><span class="amt">${fmt(r.amt)}</span></div>`).join('')}</div>
+      </div>
+      <div class="foot"><div class="d">${fmt(sd)}</div><div class="h">${fmt(sh)}</div></div>
+      <div class="saldo">Saldo: <b>${fmt(Math.abs(saldo))} ${saldo>=0?'deudor':'acreedor'}</b></div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="eyebrow">Paso 07</div>
+  <h2 class="title">Libro Mayor — Cuentas T</h2>
+  <p class="lede">Cada cuenta del catálogo con movimiento, en formato de "Cuenta T", incluyendo apertura, operaciones y ajustes ya incorporados.</p>
+  <div class="mayor-grid">${cards || '<div class="note">Todavía no hay movimientos.</div>'}</div>`;
+}
+
+/* =========================================================
+   RENDER: Balance de comprobación ajustado
+   ========================================================= */
+function renderBalanceAjustadoPanel(){
+  return `
+  <div class="eyebrow">Paso 08</div>
+  <h2 class="title">Balance de Comprobación Ajustado</h2>
+  <p class="lede">El mismo balance de sumas y saldos, incorporando los asientos de ajuste. Es la base directa para elaborar los estados financieros.</p>
+  ${renderBalance(ADJ,'ajustado')}`;
+}
+
+/* =========================================================
+   RENDER: Hoja de trabajo (10 columnas)
+   ========================================================= */
+function renderHojaPanel(){
+  const rows = ACCOUNTS.filter(a=>a.est!=='X').map(a=>{
+    const base = sums(a.c, BASE);
+    const aj = sums(a.c, ['ajuste']);
+    const bcD = base.d>base.h ? base.d-base.h : 0, bcH = base.h>base.d ? base.h-base.d : 0;
+    const totD = base.d+aj.d, totH = base.h+aj.h;
+    const adjD = totD>totH ? totD-totH : 0, adjH = totH>totD ? totH-totD : 0;
+    if(bcD===0 && bcH===0 && adjD===0 && adjH===0 && aj.d===0 && aj.h===0) return null;
+    const erD = a.est==='ER' ? adjD : 0, erH = a.est==='ER' ? adjH : 0;
+    const bgD = a.est==='BG' ? adjD : 0, bgH = a.est==='BG' ? adjH : 0;
+    return {a, bcD, bcH, ajD:aj.d, ajH:aj.h, erD, erH, bgD, bgH};
+  }).filter(Boolean);
+  if(!rows.length) return `<div class="eyebrow">Paso 09</div><h2 class="title">Hoja de Trabajo (10 columnas)</h2><p class="lede">Todavía no hay movimientos suficientes.</p>`;
+  const sum = k => rows.reduce((s,r)=>s+r[k],0);
+  let erD=sum('erD'), erH=sum('erH'), bgD=sum('bgD'), bgH=sum('bgH');
+  const utilidad = erH-erD;
+  const body = rows.map(r=>`<tr>
+    <td class="code">${r.a.c}</td><td>${escHtml(r.a.n)}</td>
+    <td class="num">${r.ajD?fmt(r.ajD):'—'}</td><td class="num">${r.ajH?fmt(r.ajH):'—'}</td>
+    <td class="num">${r.erD?fmt(r.erD):'—'}</td><td class="num">${r.erH?fmt(r.erH):'—'}</td>
+    <td class="num">${r.bgD?fmt(r.bgD):'—'}</td><td class="num">${r.bgH?fmt(r.bgH):'—'}</td>
+  </tr>`).join('');
+  return `
+  <div class="eyebrow">Paso 09</div>
+  <h2 class="title">Hoja de Trabajo (10 columnas)</h2>
+  <p class="lede">Puente entre el balance ajustado y los estados financieros: separa cada cuenta hacia el Estado de Resultados o el Estado de Situación Financiera y comprueba que la utilidad coincide en ambos.</p>
+  <div class="tblwrap"><table style="min-width:880px;">
+    <thead><tr>
+      <th>Cuenta</th><th></th>
+      <th colspan="2" style="text-align:center;">Ajustes</th>
+      <th colspan="2" style="text-align:center;">Estado Resultados</th>
+      <th colspan="2" style="text-align:center;">Situación Financiera</th>
+    </tr></thead>
+    <tbody>${body}
+      <tr class="total"><td></td><td>Subtotales</td><td></td><td></td>
+        <td class="num">${fmt(erD)}</td><td class="num">${fmt(erH)}</td>
+        <td class="num">${fmt(bgD)}</td><td class="num">${fmt(bgH)}</td></tr>
+      <tr><td></td><td>Utilidad del ejercicio</td><td></td><td></td>
+        <td class="num">${fmt(Math.max(utilidad,0))}</td><td class="num">${fmt(Math.max(-utilidad,0))}</td>
+        <td class="num">${fmt(Math.max(-utilidad,0))}</td><td class="num">${fmt(Math.max(utilidad,0))}</td></tr>
+      <tr class="total"><td></td><td>Totales</td><td></td><td></td>
+        <td class="num">${fmt(erD+Math.max(utilidad,0))}</td><td class="num">${fmt(erH+Math.max(-utilidad,0))}</td>
+        <td class="num">${fmt(bgD+Math.max(-utilidad,0))}</td><td class="num">${fmt(bgH+Math.max(utilidad,0))}</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b>Comprobación cruzada:</b> la utilidad calculada por diferencia en el Estado de Resultados (${fmt(utilidad)}) es la misma cifra que hace cuadrar el Estado de Situación Financiera.</div>`;
+}
+
+/* =========================================================
+   RENDER: Estados financieros
+   ========================================================= */
+function renderEstadosPanel(){
+  const b=(c)=>{const {d,h}=sums(c,ADJ); return d-h;};
+  const ingresos = ACCOUNTS.filter(a=>a.g==='Ingresos');
+  const gastos = ACCOUNTS.filter(a=>a.g==='Gastos');
+  const ventas = ingresos.reduce((s,a)=>s-b(a.c),0);
+  const costoVentas = b('5101');
+  const utilidadBruta = ventas-costoVentas;
+  const gastosOp = gastos.filter(a=>a.c!=='5101' && a.c!=='5108');
+  const totalGastosOp = gastosOp.reduce((s,a)=>s+b(a.c),0);
+  const utilOperacional = utilidadBruta-totalGastosOp;
+  const gastosFin = b('5108');
+  const utilNeta = utilOperacional-gastosFin;
+
+  const activos = ACCOUNTS.filter(a=>a.g.startsWith('Activo'));
+  const activoCorriente = activos.filter(a=>a.g==='Activo Corriente' && !a.contra);
+  const activoCorrienteContra = activos.filter(a=>a.g==='Activo Corriente' && a.contra);
+  const activoNoCorriente = activos.filter(a=>a.g==='Activo No Corriente' && !a.contra);
+  const activoNoCorrienteContra = activos.filter(a=>a.g==='Activo No Corriente' && a.contra);
+  const totActCorr = activoCorriente.reduce((s,a)=>s+b(a.c),0) + activoCorrienteContra.reduce((s,a)=>s+b(a.c),0);
+  const totActNoCorr = activoNoCorriente.reduce((s,a)=>s+b(a.c),0) + activoNoCorrienteContra.reduce((s,a)=>s+b(a.c),0);
+  const totActivos = totActCorr+totActNoCorr;
+
+  const pasivoCorriente = ACCOUNTS.filter(a=>a.g==='Pasivo Corriente');
+  const pasivoNoCorriente = ACCOUNTS.filter(a=>a.g==='Pasivo No Corriente');
+  const totPasCorr = pasivoCorriente.reduce((s,a)=>s-b(a.c),0);
+  const totPasNoCorr = pasivoNoCorriente.reduce((s,a)=>s-b(a.c),0);
+  const totPasivos = totPasCorr+totPasNoCorr;
+  const capital = ACCOUNTS.filter(a=>a.g==='Patrimonio' && a.c!=='3203').reduce((s,a)=>s-b(a.c),0);
+  const totPatrimonio = capital+utilNeta;
+
+  return `
+  <div class="eyebrow">Paso 10</div>
+  <h2 class="title">Estados Financieros</h2>
+  <p class="lede">Resultado final del ciclo contable: el Estado de Resultados mide el desempeño del periodo y el Estado de Situación Financiera muestra la posición de la empresa a la fecha.</p>
+  <div class="two-col">
+    <div class="statement">
+      <h3>Estado de Resultados</h3>
+      <div class="sub">Periodo registrado</div>
+      <div class="sline"><span>Ventas</span><span class="amt">${fmt(ventas)}</span></div>
+      <div class="sline indent"><span>(–) Costo de Ventas</span><span class="amt">(${fmt(costoVentas)})</span></div>
+      <div class="sline sub-total"><span>Utilidad Bruta en Ventas</span><span class="amt">${fmt(utilidadBruta)}</span></div>
+      <div class="sline section-lbl">Gastos operacionales</div>
+      ${gastosOp.map(a=>`<div class="sline indent"><span>${escHtml(a.n)}</span><span class="amt">${fmt(b(a.c))}</span></div>`).join('')}
+      <div class="sline sub-total"><span>Total Gastos Operacionales</span><span class="amt">${fmt(totalGastosOp)}</span></div>
+      <div class="sline sub-total"><span>Utilidad Operacional</span><span class="amt">${fmt(utilOperacional)}</span></div>
+      <div class="sline indent"><span>(–) Gastos Financieros</span><span class="amt">(${fmt(gastosFin)})</span></div>
+      <div class="sline grand"><span>Utilidad Neta del Ejercicio</span><span class="amt">${fmt(utilNeta)}</span></div>
+    </div>
+    <div class="statement">
+      <h3>Estado de Situación Financiera</h3>
+      <div class="sub">A la fecha de corte</div>
+      <div class="sline section-lbl">Activo corriente</div>
+      ${activoCorriente.map(a=>`<div class="sline indent"><span>${escHtml(a.n)}</span><span class="amt">${fmt(b(a.c)+activoCorrienteContra.filter(x=>relatedTo(x,a)).reduce((s,x)=>s+b(x.c),0))}</span></div>`).join('')}
+      <div class="sline sub-total"><span>Total Activo Corriente</span><span class="amt">${fmt(totActCorr)}</span></div>
+      <div class="sline section-lbl">Activo no corriente</div>
+      ${activoNoCorriente.map(a=>`<div class="sline indent"><span>${escHtml(a.n)} (neto)</span><span class="amt">${fmt(b(a.c)+activoNoCorrienteContra.reduce((s,x)=>s+b(x.c),0))}</span></div>`).join('')}
+      <div class="sline sub-total"><span>Total Activo No Corriente</span><span class="amt">${fmt(totActNoCorr)}</span></div>
+      <div class="sline grand"><span>Total Activos</span><span class="amt">${fmt(totActivos)}</span></div>
+      <div class="sline section-lbl">Pasivo corriente</div>
+      ${pasivoCorriente.map(a=>`<div class="sline indent"><span>${escHtml(a.n)}</span><span class="amt">${fmt(-b(a.c))}</span></div>`).join('')}
+      <div class="sline sub-total"><span>Total Pasivo Corriente</span><span class="amt">${fmt(totPasCorr)}</span></div>
+      <div class="sline section-lbl">Pasivo no corriente</div>
+      ${pasivoNoCorriente.map(a=>`<div class="sline indent"><span>${escHtml(a.n)}</span><span class="amt">${fmt(-b(a.c))}</span></div>`).join('')}
+      <div class="sline sub-total"><span>Total Pasivos</span><span class="amt">${fmt(totPasivos)}</span></div>
+      <div class="sline section-lbl">Patrimonio</div>
+      ${ACCOUNTS.filter(a=>a.g==='Patrimonio' && a.c!=='3203').map(a=>`<div class="sline indent"><span>${escHtml(a.n)}</span><span class="amt">${fmt(-b(a.c))}</span></div>`).join('')}
+      <div class="sline indent"><span>Utilidad del Ejercicio</span><span class="amt">${fmt(utilNeta)}</span></div>
+      <div class="sline sub-total"><span>Total Patrimonio</span><span class="amt">${fmt(totPatrimonio)}</span></div>
+      <div class="sline grand"><span>Total Pasivo + Patrimonio</span><span class="amt">${fmt(totPasivos+totPatrimonio)}</span></div>
+    </div>
+  </div>
+  <div class="note ${Math.abs(totActivos-(totPasivos+totPatrimonio))>0.01?'warn':''}"><b>${Math.abs(totActivos-(totPasivos+totPatrimonio))>0.01?'Atención, no cuadra:':'El balance cuadra:'}</b> Total Activos (${fmt(totActivos)}) ${Math.abs(totActivos-(totPasivos+totPatrimonio))>0.01?'≠':'='} Total Pasivo + Patrimonio (${fmt(totPasivos+totPatrimonio)}).</div>`;
+}
+function relatedTo(contraAcc, acc){
+  if(contraAcc.c==='1116') return acc.c==='1107';
+  if(contraAcc.c==='1202') return acc.g==='Activo No Corriente';
+  return false;
+}
+
+/* =========================================================
+   RENDER: Gráficos
+   ========================================================= */
+function renderHBars(items){
+  if(!items.length) return `<div class="chart-hint">Sin datos todavía.</div>`;
+  const max = Math.max(...items.map(i=>Math.abs(i.value)), 1);
+  return items.map(i=>{
+    const pct = Math.max((Math.abs(i.value)/max)*100, 2);
+    return `<div class="bar-row">
+      <div class="lbl" title="${escHtml(i.label)}">${escHtml(i.label)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${i.color};" title="${escHtml(i.label)}: ${fmt(i.value)}"></div></div>
+      <div class="bar-val">${fmt(i.value)}</div>
+    </div>`;
+  }).join('');
+}
+function renderGraficosPanel(){
+  const b=(c)=>{const {d,h}=sums(c,ADJ); return d-h;};
+  const ingresos = ACCOUNTS.filter(a=>a.g==='Ingresos').reduce((s,a)=>s-b(a.c),0);
+  const gastos = ACCOUNTS.filter(a=>a.g==='Gastos').reduce((s,a)=>s+b(a.c),0);
+  const utilidad = ingresos-gastos;
+  const maxPl = Math.max(ingresos, gastos, Math.abs(utilidad), 1);
+
+  const activos = ACCOUNTS.filter(a=>a.g.startsWith('Activo') && !a.contra)
+    .map(a=>{
+      const contra = ACCOUNTS.filter(x=>x.contra && relatedTo(x,a)).reduce((s,x)=>s+b(x.c),0);
+      return {label:a.n, value:b(a.c)+contra};
+    })
+    .filter(i=>Math.abs(i.value)>0.004)
+    .sort((x,y)=>y.value-x.value);
+
+  const gastosPorCuenta = ACCOUNTS.filter(a=>a.g==='Gastos')
+    .map(a=>({label:a.n, value:b(a.c)}))
+    .filter(i=>Math.abs(i.value)>0.004)
+    .sort((x,y)=>y.value-x.value);
+
+  if(ingresos===0 && gastos===0 && !activos.length){
+    return `<div class="eyebrow">Paso 11 &middot; Resumen visual</div><h2 class="title">Gráficos</h2><p class="lede">Todavía no hay movimientos para graficar. Agrega asientos desde "Mis Datos".</p>`;
+  }
+
+  return `
+  <div class="eyebrow">Paso 11 &middot; Resumen visual</div>
+  <h2 class="title">Gráficos</h2>
+  <p class="lede">Los mismos números del Estado de Resultados y del Estado de Situación Financiera, en forma de gráfico. Se actualizan solos con tus datos.</p>
+
+  <div class="viz-root">
+    <div class="chart-card">
+      <h3>Resultado del periodo</h3>
+      <div class="chart-hint">Ingresos, gastos totales y la utilidad (o pérdida) que dejan.</div>
+      <div class="pl-bars">
+        <div class="pl-bar-col">
+          <div class="pl-bar-track"><div class="pl-bar-fill" style="height:${Math.max(ingresos/maxPl*100,2)}%; background:var(--series-1);" title="Ingresos: ${fmt(ingresos)}"></div></div>
+          <div class="pl-bar-amt" style="color:var(--series-1);">${fmt(ingresos)}</div>
+          <div class="pl-bar-lbl">Ingresos</div>
+        </div>
+        <div class="pl-bar-col">
+          <div class="pl-bar-track"><div class="pl-bar-fill" style="height:${Math.max(gastos/maxPl*100,2)}%; background:var(--series-2);" title="Gastos totales: ${fmt(gastos)}"></div></div>
+          <div class="pl-bar-amt" style="color:var(--series-2);">${fmt(gastos)}</div>
+          <div class="pl-bar-lbl">Gastos Totales</div>
+        </div>
+        <div class="pl-bar-col">
+          <div class="pl-bar-track"><div class="pl-bar-fill" style="height:${Math.max(Math.abs(utilidad)/maxPl*100,2)}%; background:${utilidad>=0?'var(--status-good)':'var(--status-critical)'};" title="Utilidad neta: ${fmt(utilidad)}"></div></div>
+          <div class="pl-bar-amt" style="color:${utilidad>=0?'var(--status-good)':'var(--status-critical)'};">${fmt(utilidad)}</div>
+          <div class="pl-bar-lbl">${utilidad>=0?'Utilidad Neta':'Pérdida Neta'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3>Activos por cuenta</h3>
+      <div class="chart-hint">Saldo ajustado de cada cuenta de activo, de mayor a menor.</div>
+      ${renderHBars(activos.map(i=>({...i, color:'var(--series-1)'})))}
+    </div>
+
+    <div class="chart-card">
+      <h3>Gastos por cuenta</h3>
+      <div class="chart-hint">Composición de los gastos del periodo, de mayor a menor.</div>
+      ${renderHBars(gastosPorCuenta.map(i=>({...i, color:'var(--series-2)'})))}
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   RENDER: Cierre
+   ========================================================= */
+function renderCierrePanel(){
+  const cierres = ENTRIES.filter(e=>e.fase==='cierre');
+  const nominal = ACCOUNTS.filter(a=>a.est==='ER' || a.c==='3900');
+  const rows = nominal.map(a=>{const {d,h}=sums(a.c,ALL); return {a, saldo:d-h};}).filter(r=>ENTRIES.some(e=>e.lines.some(l=>l.c===r.a.c)));
+  return `
+  <div class="eyebrow">Paso 13 &middot; Cierre del Periodo Contable</div>
+  <h2 class="title">Asientos de Cierre</h2>
+  <p class="lede">Al finalizar el periodo se cierran las cuentas nominales (ingresos y gastos) contra "Resumen de Rentas y Gastos", y el resultado se traslada al patrimonio.</p>
+  ${cierres.length ? renderDiario(['cierre'], true) : '<div class="note">Aún no registras asientos de cierre. Agrégalos desde "Mis Datos" con la fase "Cierre".</div>'}
+  ${rows.length ? `<div class="card"><h3>Cuentas nominales después del cierre</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Código</th><th>Cuenta</th><th class="num">Saldo final</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr><td class="code">${r.a.c}</td><td>${escHtml(r.a.n)}</td><td class="num">${fmt(Math.abs(r.saldo))}</td></tr>`).join('')}</tbody>
+    </table></div></div>` : ''}`;
+}
+
+/* =========================================================
+   CRUD — cuentas y asientos
+   ========================================================= */
+function nextEntryId(){ return 'e'+Date.now()+Math.floor(Math.random()*1000); }
+function nextNum(){
+  const nums = ENTRIES.map(e=>e.num).filter(n=>typeof n==='number');
+  return nums.length ? Math.max(...nums)+1 : 1;
+}
+function addAccount(data){
+  if(ACC[data.c]){
+    showModalAlert({
+      title: 'Código Duplicado',
+      message: `El código de cuenta <b>${data.c}</b> ya existe en el catálogo. Por favor ingresa un código único.`,
+      type: 'warning'
+    });
+    return false;
+  }
+  ACCOUNTS.push(data); rebuildIndex(); return true;
+}
+function deleteAccount(code){
+  const used = ENTRIES.some(e=>e.lines.some(l=>l.c===code));
+  if(used){
+    showModalAlert({
+      title: 'No se puede eliminar la cuenta',
+      message: `La cuenta <b>${code}</b> tiene movimientos registrados en el Libro Diario. Debes eliminar o editar primero esos asientos.`,
+      type: 'warning'
+    });
+    return false;
+  }
+  ACCOUNTS = ACCOUNTS.filter(a=>a.c!==code); rebuildIndex(); return true;
+}
+function addEntry(entry){ entry.id=nextEntryId(); ENTRIES.push(entry); return true; }
+function deleteEntry(id){ ENTRIES = ENTRIES.filter(e=>e.id!==id); return true; }
+function resetToSeed(){ ACCOUNTS=JSON.parse(JSON.stringify(SEED_ACCOUNTS)); ENTRIES=JSON.parse(JSON.stringify(SEED_ENTRIES)); rebuildIndex(); }
+function clearAll(){ ACCOUNTS=[]; ENTRIES=[]; rebuildIndex(); }
+
+/* =========================================================
+   PERSISTENCIA — localStorage de este navegador
+   ========================================================= */
+function setSyncPill(state, label){
+  const pill=document.getElementById('sync-pill'), lbl=document.getElementById('sync-label');
+  if(!pill) return;
+  pill.className='sync-pill '+state; lbl.textContent=label;
+}
+function initPersistence(){
+  try{
+    localStorage.setItem('__test__','1'); localStorage.removeItem('__test__');
+    setSyncPill('ok','Guardado en este navegador');
+  }catch(e){
+    setSyncPill('off','Guardado no disponible (usa "Descargar copia")');
+  }
+}
+function persist(){
+  try{
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({accounts:ACCOUNTS, entries:ENTRIES}));
+    setSyncPill('ok','Guardado en este navegador');
+  }catch(err){
+    setSyncPill('off','No se pudo guardar (usa "Descargar copia")');
+  }
+}
+
+/* =========================================================
+   Navegación y render de paneles
+   ========================================================= */
+
+/* =========================================================
+   RENDER: Examen — Indicadores y Ratios Financieros
+   Caso: Distribuidora Industrial Andina S.A. (2024 vs 2025)
+   ========================================================= */
+const EXAMEN_DATA = {
+  // Estado de Resultados
+  ventas: { 2024: 250000, 2025: 300000 },
+  costoVentas: { 2024: 160000, 2025: 210000 },
+  utilidadBruta: { 2024: 90000, 2025: 90000 },
+  gastosOperativos: { 2024: 57000, 2025: 69000 },
+  utilidadNeta: { 2024: 33000, 2025: 21000 },
+
+  // Gastos operativos detallados
+  gastosDetalle: [
+    { n:'Sueldos administrativos', v24:20000, v25:24000 },
+    { n:'Servicios básicos', v24:6000, v25:7000 },
+    { n:'Arriendos', v24:10000, v25:12000 },
+    { n:'Publicidad', v24:9000, v25:11000 },
+    { n:'Transporte y distribución', v24:7000, v25:9000 },
+    { n:'Servicios profesionales', v24:5000, v25:6000 }
+  ],
+
+  // Balance General - Activos
+  caja: { 2024: 6000, 2025: 9000 },
+  bancos: { 2024: 15000, 2025: 20000 },
+  clientes: { 2024: 30000, 2025: 38000 },
+  docCobrar: { 2024: 12000, 2025: 15000 },
+  inventarios: { 2024: 40000, 2025: 50000 },
+  activoCorriente: { 2024: 103000, 2025: 132000 },
+
+  terrenos: { 2024: 6000, 2025: 60000 },
+  edificios: { 2024: 120000, 2025: 120000 },
+  equiposComputo: { 2024: 35000, 2025: 40000 },
+  vehiculos: { 2024: 30000, 2025: 30000 },
+  activoNoCorriente: { 2024: 245000, 2025: 250000 },
+  activoTotal: { 2024: 348000, 2025: 382000 },
+
+  // Pasivos y Patrimonio
+  proveedores: { 2024: 28000, 2025: 35000 },
+  cuentasPagar: { 2024: 15000, 2025: 18000 },
+  docPagar: { 2024: 10000, 2025: 12000 },
+  prestamoCorto: { 2024: 18000, 2025: 22000 },
+  pasivoCorriente: { 2024: 71000, 2025: 87000 },
+
+  prestamoLargo: { 2024: 70000, 2025: 70000 },
+  otrosPasivos: { 2024: 29000, 2025: 49000 },
+  pasivoNoCorriente: { 2024: 99000, 2025: 119000 },
+  pasivoTotal: { 2024: 170000, 2025: 206000 },
+
+  capitalSocial: { 2024: 120000, 2025: 120000 },
+  reservas: { 2024: 15000, 2025: 20000 },
+  resultadosAcumulados: { 2024: 10000, 2025: 15000 },
+  patrimonio: { 2024: 178000, 2025: 176000 }
+};
+
+let activeExamenSubtab = 'all';
+
+function renderExamenPanel(){
+  const d = EXAMEN_DATA;
+
+  // 1. Cálculos de los 8 Ratios
+  // 1) Razón Corriente = AC / PC
+  const rc24 = d.activoCorriente[2024] / d.pasivoCorriente[2024];
+  const rc25 = d.activoCorriente[2025] / d.pasivoCorriente[2025];
+  const rcDiff = rc25 - rc24;
+
+  // 2) Prueba Ácida = (AC - Inventario) / PC
+  const pa24 = (d.activoCorriente[2024] - d.inventarios[2024]) / d.pasivoCorriente[2024];
+  const pa25 = (d.activoCorriente[2025] - d.inventarios[2025]) / d.pasivoCorriente[2025];
+  const paDiff = pa25 - pa24;
+
+  // 3) Nivel de Endeudamiento = Pasivo Total / Activo Total
+  const end24 = (d.pasivoTotal[2024] / d.activoTotal[2024]) * 100;
+  const end25 = (d.pasivoTotal[2025] / d.activoTotal[2025]) * 100;
+  const endDiff = end25 - end24;
+
+  // 4) Deuda / Patrimonio = Pasivo Total / Patrimonio
+  const dp24 = d.pasivoTotal[2024] / d.patrimonio[2024];
+  const dp25 = d.pasivoTotal[2025] / d.patrimonio[2025];
+  const dpDiff = dp25 - dp24;
+
+  // 5) ROA = Utilidad Neta / Activo Total
+  const roa24 = (d.utilidadNeta[2024] / d.activoTotal[2024]) * 100;
+  const roa25 = (d.utilidadNeta[2025] / d.activoTotal[2025]) * 100;
+  const roaDiff = roa25 - roa24;
+
+  // 6) ROE = Utilidad Neta / Patrimonio
+  const roe24 = (d.utilidadNeta[2024] / d.patrimonio[2024]) * 100;
+  const roe25 = (d.utilidadNeta[2025] / d.patrimonio[2025]) * 100;
+  const roeDiff = roe25 - roe24;
+
+  // 7) Margen Neto = Utilidad Neta / Ventas Netas
+  const mn24 = (d.utilidadNeta[2024] / d.ventas[2024]) * 100;
+  const mn25 = (d.utilidadNeta[2025] / d.ventas[2025]) * 100;
+  const mnDiff = mn25 - mn24;
+
+  // 8) Rotación de Inventarios (50% de INV.)
+  // Base 50% del inventario anual
+  const rot50_24 = d.costoVentas[2024] / (d.inventarios[2024] * 0.5);
+  const rot50_25 = d.costoVentas[2025] / (d.inventarios[2025] * 0.5);
+  const rot50Diff = rot50_25 - rot50_24;
+  const dias50_24 = 360 / rot50_24;
+  const dias50_25 = 360 / rot50_25;
+
+  // Opciones complementarias de rotación:
+  // Rotación tradicional 100% inventario
+  const rot100_24 = d.costoVentas[2024] / d.inventarios[2024];
+  const rot100_25 = d.costoVentas[2025] / d.inventarios[2025];
+  // Rotación con Inventario Promedio = 50% de la suma de ambos años
+  const invPromedio = (d.inventarios[2024] + d.inventarios[2025]) * 0.5;
+  const rotProm25 = d.costoVentas[2025] / invPromedio;
+
+  return `
+  <div class="eyebrow">Paso 12 &middot; Indicadores Financieros &middot; Caso Examen UTEQ</div>
+  <h2 class="title">Indicadores Financieros — Examen Parcial</h2>
+  <p class="lede">Resolución completa del examen con base en el caso de <b>Distribuidora Industrial Andina S.A.</b> (2024 vs 2025). Incluye los 8 indicadores requeridos, fórmulas detalladas, análisis comparativo entre ambos períodos, respuestas a las preguntas de análisis, estados financieros completos y calculadora interactiva.</p>
+
+  <!-- Banner Universitario -->
+  <div class="uni-banner">
+    <div class="uni-logo-box">U</div>
+    <div>
+      <div class="uni-title">Universidad Técnica Estatal de Quevedo &middot; Facultad de Ciencias de la Computación</div>
+      <div class="uni-meta">
+        <b>Asignatura:</b> Fundamentos de Contabilidad y Finanzas &middot; <b>Curso:</b> 4to Software "B"<br>
+        <b>Docente:</b> Ing. Jessica Moncayo Lomas &middot; <b>Estudiante:</b> Ernesto Gregory Luna Mora<br>
+        <b>Caso Práctico:</b> Distribuidora Industrial Andina S.A. &middot; <b>Evaluación:</b> Análisis e Indicadores Financieros
+      </div>
+    </div>
+  </div>
+
+  <!-- Subnavegación del Módulo -->
+  <div class="subnav-tabs">
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='all'?'active':''}" data-subtab="all">📋 Ver Todo el Informe</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='ratios'?'active':''}" data-subtab="ratios">📊 1. Los 8 Indicadores (Detallado)</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='tabla'?'active':''}" data-subtab="tabla">📑 2. Tabla Comparativa Maestra</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='preguntas'?'active':''}" data-subtab="preguntas">✍️ 3. Preguntas de Análisis Resueltas</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='estados'?'active':''}" data-subtab="estados">📈 4. Estados Financieros 2024-2025</button>
+    <button type="button" class="subnav-btn ${activeExamenSubtab==='calc'?'active':''}" data-subtab="calc">🧮 5. Calculadora de Ratios en Vivo</button>
+  </div>
+
+  <!-- Resumen KPI Rápido -->
+  <div class="kpi-row" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+    <div class="kpi"><div class="lbl">Razón Corriente</div><div class="val">${rc25.toFixed(2)}</div><div style="font-size:11px;color:var(--accent);">2024: ${rc24.toFixed(2)} (${rcDiff>=0?'+':''}${rcDiff.toFixed(2)})</div></div>
+    <div class="kpi"><div class="lbl">Prueba Ácida</div><div class="val">${pa25.toFixed(2)}</div><div style="font-size:11px;color:var(--accent);">2024: ${pa24.toFixed(2)} (${paDiff>=0?'+':''}${paDiff.toFixed(2)})</div></div>
+    <div class="kpi"><div class="lbl">Endeudamiento</div><div class="val" style="color:var(--danger);">${end25.toFixed(2)}%</div><div style="font-size:11px;color:var(--danger);">2024: ${end24.toFixed(2)}% (+${endDiff.toFixed(2)} pp)</div></div>
+    <div class="kpi"><div class="lbl">Deuda / Patrimonio</div><div class="val" style="color:var(--danger);">${dp25.toFixed(2)}</div><div style="font-size:11px;color:var(--danger);">2024: ${dp24.toFixed(2)} (+${dpDiff.toFixed(2)})</div></div>
+    <div class="kpi"><div class="lbl">ROA</div><div class="val" style="color:var(--danger);">${roa25.toFixed(2)}%</div><div style="font-size:11px;color:var(--danger);">2024: ${roa24.toFixed(2)}% (${roaDiff.toFixed(2)} pp)</div></div>
+    <div class="kpi"><div class="lbl">ROE</div><div class="val" style="color:var(--danger);">${roe25.toFixed(2)}%</div><div style="font-size:11px;color:var(--danger);">2024: ${roe24.toFixed(2)}% (${roeDiff.toFixed(2)} pp)</div></div>
+    <div class="kpi"><div class="lbl">Margen Neto</div><div class="val" style="color:var(--danger);">${mn25.toFixed(2)}%</div><div style="font-size:11px;color:var(--danger);">2024: ${mn24.toFixed(2)}% (${mnDiff.toFixed(2)} pp)</div></div>
+    <div class="kpi"><div class="lbl">Rotación Inv. (50%)</div><div class="val gold">${rot50_25.toFixed(2)}x</div><div style="font-size:11px;color:var(--gold);">2024: ${rot50_24.toFixed(2)}x (${dias50_25.toFixed(1)} días)</div></div>
+  </div>
+
+  <!-- SECCIÓN 1: LOS 8 INDICADORES DETALLADOS -->
+  <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='ratios'?'':'is-hidden'}" id="sec-ratios">
+    <div class="card" style="margin-top:20px;">
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">1. Los 8 Indicadores Financieros Requeridos</h3>
+      <p class="hint">Cálculo paso a paso con fórmulas matemáticas, sustitución de valores 2024 y 2025, variación y análisis comparativo de resultados.</p>
+
+      <div class="ratio-grid">
+        <!-- 1. Razón Corriente -->
+        <div class="ratio-card status-good">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Liquidez Corriente</span>
+              <h4 class="ratio-title">1. Razón Corriente</h4>
+            </div>
+            <span class="ratio-badge good">✓ Favorable (+4.6%)</span>
+          </div>
+          <div class="formula-box">
+            <span>Razón Corriente =</span>
+            <div class="formula-fraction"><span class="formula-num">Activo Corriente</span><span class="formula-den">Pasivo Corriente</span></div>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large">${rc24.toFixed(2)} <small style="font-size:12px;font-weight:400;">veces</small></span>
+              <span class="calc-line">${fmt(d.activoCorriente[2024])} ÷ ${fmt(d.pasivoCorriente[2024])}</span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large">${rc25.toFixed(2)} <small style="font-size:12px;font-weight:400;">veces</small></span>
+              <span class="calc-line">${fmt(d.activoCorriente[2025])} ÷ ${fmt(d.pasivoCorriente[2025])}</span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val good">+${rcDiff.toFixed(2)} veces</b></span>
+            <span>Variación relativa: <b class="delta-val good">+4.58%</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> En 2024, la empresa disponía de $1.45 de activo corriente por cada $1.00 de deuda a corto plazo; en 2025, esta cobertura se elevó a <b>$1.52</b>. El ratio aumentó favorablemente (+0.07 veces) debido a que el activo corriente creció un +28.16% (+$29,000), superando el incremento del pasivo corriente de +22.54% (+$16,000). La empresa se mantiene en un rango de liquidez saludable (> 1.0), con holgura para afrontar sus compromisos a corto plazo.</p>
+        </div>
+
+        <!-- 2. Prueba Ácida -->
+        <div class="ratio-card status-good">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Liquidez Inmediata / Severa</span>
+              <h4 class="ratio-title">2. Prueba Ácida</h4>
+            </div>
+            <span class="ratio-badge good">✓ En Mejora (+6.2%)</span>
+          </div>
+          <div class="formula-box">
+            <span>Prueba Ácida =</span>
+            <div class="formula-fraction"><span class="formula-num">Activo Corriente − Inventarios</span><span class="formula-den">Pasivo Corriente</span></div>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large">${pa24.toFixed(2)} <small style="font-size:12px;font-weight:400;">veces</small></span>
+              <span class="calc-line">(${fmt(d.activoCorriente[2024])} − ${fmt(d.inventarios[2024])}) ÷ ${fmt(d.pasivoCorriente[2024])} = ${fmt(d.activoCorriente[2024]-d.inventarios[2024])} ÷ ${fmt(d.pasivoCorriente[2024])}</span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large">${pa25.toFixed(2)} <small style="font-size:12px;font-weight:400;">veces</small></span>
+              <span class="calc-line">(${fmt(d.activoCorriente[2025])} − ${fmt(d.inventarios[2025])}) ÷ ${fmt(d.pasivoCorriente[2025])} = ${fmt(d.activoCorriente[2025]-d.inventarios[2025])} ÷ ${fmt(d.pasivoCorriente[2025])}</span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val good">+${paDiff.toFixed(2)} veces</b></span>
+            <span>Variación relativa: <b class="delta-val good">+6.22%</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> Al excluir los inventarios (el activo corriente menos líquido), la empresa pasó de cubrir $0.89 en 2024 a <b>$0.94</b> en 2025 por cada dólar de deuda corriente. Aunque aún se sitúa ligeramente por debajo del valor ideal de 1.0, el incremento de +0.05 puntos refleja una menor dependencia de la venta obligatoria de inventario para honrar deudas de corto plazo, apoyada por el aumento en Caja (+50%) y Bancos (+33.3%).</p>
+        </div>
+
+        <!-- 3. Nivel de Endeudamiento -->
+        <div class="ratio-card status-warn">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Solvencia / Endeudamiento Total</span>
+              <h4 class="ratio-title">3. Nivel de Endeudamiento</h4>
+            </div>
+            <span class="ratio-badge warn">⚠ Mayor Riesgo (+5.08 pp)</span>
+          </div>
+          <div class="formula-box">
+            <span>Nivel de Endeudamiento =</span>
+            <div class="formula-fraction"><span class="formula-num">Pasivo Total</span><span class="formula-den">Activo Total</span></div>
+            <span>× 100</span>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large" style="color:var(--danger);">${end24.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.pasivoTotal[2024])} ÷ ${fmt(d.activoTotal[2024])}</span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large" style="color:var(--danger);">${end25.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.pasivoTotal[2025])} ÷ ${fmt(d.activoTotal[2025])}</span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val warn">+${endDiff.toFixed(2)} puntos %</b></span>
+            <span>Variación relativa: <b class="delta-val warn">+10.40%</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> En 2024, el 48.85% de los activos estaba financiado con acreedores. En 2025, el ratio sube a <b>53.93%</b>, superando la barrera del 50%. Esto significa que ahora más de la mitad de la empresa está financiada con deuda ajena. El pasivo total creció en +$36,000 (+21.18%), muy por encima del activo (+9.77%), impulsado principalmente por Otros Pasivos (+$20,000) y Proveedores (+$7,000), elevando la exposición al riesgo financiero.</p>
+        </div>
+
+        <!-- 4. Deuda / Patrimonio -->
+        <div class="ratio-card status-warn">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Apalancamiento Patrimonial (Leverage)</span>
+              <h4 class="ratio-title">4. Deuda / Patrimonio</h4>
+            </div>
+            <span class="ratio-badge warn">⚠ Deuda Supera Capital</span>
+          </div>
+          <div class="formula-box">
+            <span>Deuda / Patrimonio =</span>
+            <div class="formula-fraction"><span class="formula-num">Pasivo Total</span><span class="formula-den">Total Patrimonio</span></div>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large">${dp24.toFixed(2)} <small style="font-size:12px;font-weight:400;">(${ (dp24*100).toFixed(1) }%)</small></span>
+              <span class="calc-line">${fmt(d.pasivoTotal[2024])} ÷ ${fmt(d.patrimonio[2024])}</span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large" style="color:var(--danger);">${dp25.toFixed(2)} <small style="font-size:12px;font-weight:400;">(${ (dp25*100).toFixed(1) }%)</small></span>
+              <span class="calc-line">${fmt(d.pasivoTotal[2025])} ÷ ${fmt(d.patrimonio[2025])}</span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val warn">+${dpDiff.toFixed(2)} veces</b></span>
+            <span>Variación relativa: <b class="delta-val warn">+22.55%</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> En 2024, por cada $1.00 aportado por los dueños existían $0.96 de deuda (relación equilibrada < 1.0). En 2025, la relación se deteriora a <b>$1.17 de deuda por cada dólar de patrimonio</b>. Esto indica que los acreedores tienen un mayor compromiso financiero en la empresa que los propios socios, disminuyendo el margen de protección de los inversionistas y encareciendo futuras solicitudes de crédito.</p>
+        </div>
+
+        <!-- 5. ROA -->
+        <div class="ratio-card status-warn">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Rentabilidad Económica</span>
+              <h4 class="ratio-title">5. ROA (Return on Assets)</h4>
+            </div>
+            <span class="ratio-badge warn">📉 Fuerte Contracción (-42.0%)</span>
+          </div>
+          <div class="formula-box">
+            <span>ROA =</span>
+            <div class="formula-fraction"><span class="formula-num">Utilidad Neta</span><span class="formula-den">Activo Total</span></div>
+            <span>× 100</span>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large">${roa24.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.utilidadNeta[2024])} ÷ ${fmt(d.activoTotal[2024])}</span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large" style="color:var(--danger);">${roa25.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.utilidadNeta[2025])} ÷ ${fmt(d.activoTotal[2025])}</span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val warn">${roaDiff.toFixed(2)} puntos %</b></span>
+            <span>Variación relativa: <b class="delta-val warn">-42.03%</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> La eficiencia de los activos para generar ganancias netas cayó casi a la mitad, pasando de 9.48% a <b>5.50%</b> (-3.99 puntos porcentuales). A pesar de que los activos totales crecieron en $34,000 (+9.77%), la utilidad neta se desplomó un -36.36% (de $33,000 a $21,000), demostrando que la expansión en activos e inventarios no generó productividad operativa sino que fue absorbida por mayores costos y gastos.</p>
+        </div>
+
+        <!-- 6. ROE -->
+        <div class="ratio-card status-warn">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Rentabilidad Financiera</span>
+              <h4 class="ratio-title">6. ROE (Return on Equity)</h4>
+            </div>
+            <span class="ratio-badge warn">📉 Descenso (-35.6%)</span>
+          </div>
+          <div class="formula-box">
+            <span>ROE =</span>
+            <div class="formula-fraction"><span class="formula-num">Utilidad Neta</span><span class="formula-den">Total Patrimonio</span></div>
+            <span>× 100</span>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large">${roe24.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.utilidadNeta[2024])} ÷ ${fmt(d.patrimonio[2024])}</span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large" style="color:var(--danger);">${roe25.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.utilidadNeta[2025])} ÷ ${fmt(d.patrimonio[2025])}</span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val warn">${roeDiff.toFixed(2)} puntos %</b></span>
+            <span>Variación relativa: <b class="delta-val warn">-35.64%</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> El rendimiento sobre el capital invertido por los socios se redujo de un excelente 18.54% en 2024 a un <b>11.93%</b> en 2025 (-6.61 pp). Los accionistas percibieron menor remuneración económica por su inversión debido a la pérdida de $12,000 en el resultado neto anual, señalando que el crecimiento comercial en ventas no compensó la pérdida de rentabilidad neta.</p>
+        </div>
+
+        <!-- 7. Margen Neto -->
+        <div class="ratio-card status-warn">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Margen de Ganancia Neta</span>
+              <h4 class="ratio-title">7. Margen Neto</h4>
+            </div>
+            <span class="ratio-badge warn">📉 Contracción Crítica (-47.0%)</span>
+          </div>
+          <div class="formula-box">
+            <span>Margen Neto =</span>
+            <div class="formula-fraction"><span class="formula-num">Utilidad Neta</span><span class="formula-den">Ventas Netas</span></div>
+            <span>× 100</span>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large">${mn24.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.utilidadNeta[2024])} ÷ ${fmt(d.ventas[2024])}</span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large" style="color:var(--danger);">${mn25.toFixed(2)}%</span>
+              <span class="calc-line">${fmt(d.utilidadNeta[2025])} ÷ ${fmt(d.ventas[2025])}</span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val warn">${mnDiff.toFixed(2)} puntos %</b></span>
+            <span>Variación relativa: <b class="delta-val warn">-46.97%</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> Es el indicador central que explica el retroceso de la compañía: en 2024, de cada $100 vendidos quedaban $13.20 de ganancia neta; en 2025, sólo quedan <b>$7.00</b> (caída de 6.20 puntos porcentuales). A pesar de vender $50,000 más (+20%), el costo de ventas subió un +31.25% y los gastos operativos un +21.05%, anulando por completo la ganancia del crecimiento en ventas.</p>
+        </div>
+
+        <!-- 8. Rotación de Inventarios (50% de INV.) -->
+        <div class="ratio-card status-neutral">
+          <div class="ratio-card-head">
+            <div class="ratio-title-wrap">
+              <span class="ratio-cat">Gestión / Actividad Operativa</span>
+              <h4 class="ratio-title">8. Rotación de Inventarios (50% INV.)</h4>
+            </div>
+            <span class="ratio-badge neutral">⚡ Más Rápida (43 días)</span>
+          </div>
+          <div class="formula-box">
+            <span>Rotación =</span>
+            <div class="formula-fraction"><span class="formula-num">Costo de Ventas</span><span class="formula-den">50% de Inventarios</span></div>
+          </div>
+          <div class="ratio-compare-grid">
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2024</span>
+              <span class="val-large">${rot50_24.toFixed(2)} <small style="font-size:12px;font-weight:400;">veces/año</small></span>
+              <span class="calc-line">${fmt(d.costoVentas[2024])} ÷ (50% de ${fmt(d.inventarios[2024])}) = ${fmt(d.costoVentas[2024])} ÷ ${fmt(d.inventarios[2024]*0.5)} &middot; <b>${dias50_24.toFixed(1)} días</b></span>
+            </div>
+            <div class="ratio-col">
+              <span class="year-lbl">Año 2025</span>
+              <span class="val-large gold">${rot50_25.toFixed(2)} <small style="font-size:12px;font-weight:400;">veces/año</small></span>
+              <span class="calc-line">${fmt(d.costoVentas[2025])} ÷ (50% de ${fmt(d.inventarios[2025])}) = ${fmt(d.costoVentas[2025])} ÷ ${fmt(d.inventarios[2025]*0.5)} &middot; <b>${dias50_25.toFixed(1)} días</b></span>
+            </div>
+          </div>
+          <div class="ratio-diff">
+            <span>Variación absoluta: <b class="delta-val neutral">+${rot50Diff.toFixed(2)} veces/año</b></span>
+            <span>Variación en días: <b class="delta-val neutral">Rota 2.1 días más rápido</b></span>
+          </div>
+          <p class="ratio-expl"><b>Explicación e interpretación comparativa:</b> Tomando la base del 50% de inventario requerida en el examen, la mercadería rotó <b>8.40 veces al año</b> en 2025 (renovándose cada 42.9 días), frente a 8.00 veces en 2024 (cada 45 días). Hubo una aceleración en el ciclo comercial. Sin embargo, dado que el stock de inventario aumentó un 25% (de $40,000 a $50,000) y el costo de ventas creció 31.25%, la mayor rotación estuvo acompañada de sobrecostos o menores márgenes unitarios de comercialización.<br><br>
+          <small style="color:var(--ink-faint);"><b>Variantes académicas complementarias:</b><br>
+          &bull; <i>Con inventario promedio 50%*(Inv2024+Inv2025) = $45,000:</i> Rotación 2025 = $210,000 ÷ $45,000 = <b>4.67 veces</b> (cada 77.1 días).<br>
+          &bull; <i>Con inventario total 100%:</i> 2024 = 4.00 veces (90 días) | 2025 = 4.20 veces (85.7 días).</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: TABLA COMPARATIVA MAESTRA -->
+  <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='tabla'?'':'is-hidden'}" id="sec-tabla">
+    <div class="card">
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">2. Tabla Comparativa Maestra de Indicadores Financieros</h3>
+      <p class="hint">Cuadro sinóptico oficial con fórmulas aplicadas, valores para ambos períodos, variaciones y diagnóstico resumido.</p>
+      <div class="tblwrap">
+        <table>
+          <thead>
+            <tr>
+              <th>N.º</th>
+              <th>Indicador</th>
+              <th>Fórmula Aplicada</th>
+              <th class="num">2024</th>
+              <th class="num">2025</th>
+              <th class="num">Var. Absoluta</th>
+              <th class="num">Var. Relativa</th>
+              <th>Tendencia</th>
+              <th>Diagnóstico Breve</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="code">1</td>
+              <td><b>Razón Corriente</b></td>
+              <td class="code">AC ÷ PC</td>
+              <td class="num">1.45 veces</td>
+              <td class="num"><b>1.52 veces</b></td>
+              <td class="num" style="color:var(--accent);">+0.07 veces</td>
+              <td class="num" style="color:var(--accent);">+4.58%</td>
+              <td><span class="ratio-badge good">Mejoró</span></td>
+              <td>Mayor respaldo de liquidez para cubrir pasivos corrientes.</td>
+            </tr>
+            <tr>
+              <td class="code">2</td>
+              <td><b>Prueba Ácida</b></td>
+              <td class="code">(AC − Inv) ÷ PC</td>
+              <td class="num">0.89 veces</td>
+              <td class="num"><b>0.94 veces</b></td>
+              <td class="num" style="color:var(--accent);">+0.05 veces</td>
+              <td class="num" style="color:var(--accent);">+6.22%</td>
+              <td><span class="ratio-badge good">Mejoró</span></td>
+              <td>Se acerca al 1.0 óptimo; menor dependencia de vender stock.</td>
+            </tr>
+            <tr>
+              <td class="code">3</td>
+              <td><b>Nivel de Endeudamiento</b></td>
+              <td class="code">(Pasivo Total ÷ Activo Total) × 100</td>
+              <td class="num">48.85%</td>
+              <td class="num" style="color:var(--danger);"><b>53.93%</b></td>
+              <td class="num" style="color:var(--danger);">+5.08 pp</td>
+              <td class="num" style="color:var(--danger);">+10.40%</td>
+              <td><span class="ratio-badge warn">Empeoró</span></td>
+              <td>Los acreedores ahora financian más del 50% de los activos.</td>
+            </tr>
+            <tr>
+              <td class="code">4</td>
+              <td><b>Deuda / Patrimonio</b></td>
+              <td class="code">Pasivo Total ÷ Patrimonio</td>
+              <td class="num">0.96 veces</td>
+              <td class="num" style="color:var(--danger);"><b>1.17 veces</b></td>
+              <td class="num" style="color:var(--danger);">+0.21 veces</td>
+              <td class="num" style="color:var(--danger);">+22.55%</td>
+              <td><span class="ratio-badge warn">Empeoró</span></td>
+              <td>Apalancamiento agresivo: la deuda superó a los fondos propios.</td>
+            </tr>
+            <tr>
+              <td class="code">5</td>
+              <td><b>ROA</b></td>
+              <td class="code">(Utilidad Neta ÷ Activo Total) × 100</td>
+              <td class="num">9.48%</td>
+              <td class="num" style="color:var(--danger);"><b>5.50%</b></td>
+              <td class="num" style="color:var(--danger);">-3.99 pp</td>
+              <td class="num" style="color:var(--danger);">-42.03%</td>
+              <td><span class="ratio-badge warn">Empeoró</span></td>
+              <td>Contracción severa en el rendimiento generado por los activos.</td>
+            </tr>
+            <tr>
+              <td class="code">6</td>
+              <td><b>ROE</b></td>
+              <td class="code">(Utilidad Neta ÷ Patrimonio) × 100</td>
+              <td class="num">18.54%</td>
+              <td class="num" style="color:var(--danger);"><b>11.93%</b></td>
+              <td class="num" style="color:var(--danger);">-6.61 pp</td>
+              <td class="num" style="color:var(--danger);">-35.64%</td>
+              <td><span class="ratio-badge warn">Empeoró</span></td>
+              <td>Caída de rentabilidad directa para los socios accionistas.</td>
+            </tr>
+            <tr>
+              <td class="code">7</td>
+              <td><b>Margen Neto</b></td>
+              <td class="code">(Utilidad Neta ÷ Ventas Netas) × 100</td>
+              <td class="num">13.20%</td>
+              <td class="num" style="color:var(--danger);"><b>7.00%</b></td>
+              <td class="num" style="color:var(--danger);">-6.20 pp</td>
+              <td class="num" style="color:var(--danger);">-46.97%</td>
+              <td><span class="ratio-badge warn">Empeoró</span></td>
+              <td>Alerta crítica: la rentabilidad por dólar vendido cayó a la mitad.</td>
+            </tr>
+            <tr>
+              <td class="code">8</td>
+              <td><b>Rotación Inventarios (50%)</b></td>
+              <td class="code">Costo Ventas ÷ (50% × Inv)</td>
+              <td class="num">8.00 veces</td>
+              <td class="num gold"><b>8.40 veces</b></td>
+              <td class="num" style="color:var(--gold);">+0.40 veces</td>
+              <td class="num" style="color:var(--gold);">+5.00%</td>
+              <td><span class="ratio-badge neutral">Estable+</span></td>
+              <td>El inventario rota cada ~43 días (frente a 45 días en 2024).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><b>Síntesis Ejecutiva del Diagnóstico:</b> Mientras la <i>liquidez</i> operativa de corto plazo se mantuvo estable y con leve mejora (Razón Corriente 1.52 y Prueba Ácida 0.94), la <i>solvencia estructural y rentabilidad</i> sufrieron un fuerte deterioro. El endeudamiento subió al 53.93%, la deuda superó al patrimonio (1.17), y los márgenes de rentabilidad (ROA 5.50%, ROE 11.93% y Margen Neto 7.00%) se contrajeron severamente debido al descontrol en el Costo de Ventas (+31.25%) y Gastos Operativos (+21.05%).</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3: PREGUNTAS DE ANÁLISIS DEL EXAMEN -->
+  <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='preguntas'?'':'is-hidden'}" id="sec-preguntas">
+    <div class="card">
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">3. Respuestas Oficiales a las Preguntas de Análisis del Examen</h3>
+      <p class="hint">Respuestas rigurosamente fundamentadas con datos cuantitativos del análisis horizontal y cualitativos para defender en el examen.</p>
+
+      <!-- Pregunta 1 -->
+      <div class="question-card">
+        <h4>Pregunta 1 &middot; Activo Corriente y Liquidez</h4>
+        <div class="q-statement">
+          <b>Enunciado:</b> "¿Qué cuenta del Activo Corriente presentó la mayor variación porcentual entre 2024 y 2025? ¿Qué implica este resultado para la liquidez de la empresa?"
+        </div>
+        <div class="answer-content">
+          <p><b>1. Identificación de la cuenta con mayor variación porcentual:</b></p>
+          <p>Al analizar horizontalmente el Activo Corriente, la cuenta que experimentó el mayor crecimiento porcentual fue <b>Caja</b>, con un incremento relativo del <b>+50.00%</b> (pasó de $6,000 en 2024 a $9,000 en 2025, una variación absoluta de +$3,000). Le sigue en segundo lugar la cuenta <b>Bancos</b> con un <b>+33.33%</b> (de $15,000 a $20,000, +$5,000).</p>
+          
+          <p><b>2. Implicaciones directas para la liquidez de la empresa:</b></p>
+          <ul>
+            <li><b>Fortalecimiento de la liquidez inmediata (disponible):</b> El aumento conjunto de Caja (+50%) y Bancos (+33.33%) elevó el efectivo disponible total de $21,000 a $29,000 (+38.10%). Esto le otorga a la empresa capacidad de respuesta inmediata para cancelar pasivos corrientes urgentes, cubrir nóminas y pagar a proveedores al contado.</li>
+            <li><b>Impacto positivo en ratios de liquidez:</b> Este fortalecimiento del disponible explica directamente por qué la <i>Prueba Ácida</i> mejoró de 0.89 a 0.94 y la <i>Razón Corriente</i> se consolidó en 1.52, reduciendo el riesgo de cesación de pagos a corto plazo.</li>
+            <li><b>Observación de gestión financiera:</b> Aunque tener más efectivo en caja es favorable para la solvencia inmediata, mantener saldos ociosos en efectivo físico no genera rendimiento financiero. La gerencia debe asegurarse de que este saldo cubra el flujo de caja operativo sin incurrir en costos de oportunidad.</li>
+          </ul>
+          <div class="key-takeaway">
+            <b>Conclusión clave para responder:</b> La cuenta con mayor variación porcentual es <b>Caja (+50.00%)</b>. Implica una <b>mejora sustancial en la liquidez disponible inmediata</b>, aumentando el margen de maniobra ante contingencias de corto plazo sin depender exclusivamente del cobro de cartera ni de la venta de existencias.
+          </div>
+        </div>
+      </div>
+
+      <!-- Pregunta 2 -->
+      <div class="question-card">
+        <h4>Pregunta 2 &middot; Pasivo, Patrimonio y Riesgo Financiero</h4>
+        <div class="q-statement">
+          <b>Enunciado:</b> "¿Qué partida del Pasivo o del Patrimonio registró la mayor variación absoluta? ¿Este cambio representa un mayor riesgo financiero o una fuente de financiamiento razonable para la empresa?"
+        </div>
+        <div class="answer-content">
+          <p><b>1. Identificación de la partida con mayor variación absoluta:</b></p>
+          <p>Al contrastar todas las partidas de Pasivo y Patrimonio, la cuenta con el mayor incremento en dólares fue <b>Otros Pasivos</b> dentro del <b>Pasivo No Corriente</b>, la cual creció en <b>+$20,000</b> en términos absolutos (pasó de $29,000 en 2024 a $49,000 en 2025, lo que representa además un incremento porcentual del <b>+68.97%</b>).</p>
+          
+          <p><b>2. Análisis: ¿Mayor riesgo financiero o fuente de financiamiento razonable?</b></p>
+          <ul>
+            <li><b>Perspectiva de plazo (Fuente de financiamiento razonable):</b> Al estar clasificada en el <i>Pasivo No Corriente (largo plazo)</i>, no ejerce presión exigible en el corto plazo ni amenaza la liquidez del ciclo operativo diario (a diferencia de un sobregiro bancario o deuda con proveedores de pago inmediato). En este sentido, financió la compra de Equipos de Computación (+$5,000) y parte del capital de trabajo.</li>
+            <li><b>Perspectiva estructural (Mayor riesgo financiero global):</b> <b>Definitivamente representa un MAYOR RIESGO FINANCIERO estructural</b>. Este aumento de $20,000 fue el factor determinante que disparó el <i>Nivel de Endeudamiento</i> del 48.85% al <b>53.93%</b> y el ratio <i>Deuda/Patrimonio</i> de 0.96 a <b>1.17</b>. Como resultado, por primera vez la deuda total supera al patrimonio de los accionistas, incrementando la vulnerabilidad de la empresa ante exigencias de acreedores y potenciales cargas de intereses futuros.</li>
+          </ul>
+          <div class="key-takeaway">
+            <b>Conclusión clave para responder:</b> La partida es <b>Otros Pasivos (+$20,000 / +68.97%)</b>. Aunque otorga holgura por ser a largo plazo, en balance general <b>representa un MAYOR RIESGO FINANCIERO</b>, ya que quebró el equilibrio patrimonial al hacer que la deuda total supere los fondos propios ($1.17 de deuda por cada $1.00 de patrimonio) y elevó el endeudamiento sobre activos por encima del 50%.
+          </div>
+        </div>
+      </div>
+
+      <!-- Pregunta 3 -->
+      <div class="question-card">
+        <h4>Pregunta 3 &middot; Crecimiento de Ventas vs Gastos Operativos y Eficiencia</h4>
+        <div class="q-statement">
+          <b>Enunciado:</b> "Compare el crecimiento porcentual de las Ventas con el crecimiento porcentual de los Gastos Operativos. ¿Qué indica esta relación sobre la eficiencia operativa de la empresa?"
+        </div>
+        <div class="answer-content">
+          <p><b>1. Comparación cuantitativa directa:</b></p>
+          <ul>
+            <li><b>Crecimiento porcentual de las Ventas:</b> Pasaron de $250,000 a $300,000 &rarr; <b>+20.00%</b> (+$50,000).</li>
+            <li><b>Crecimiento porcentual de los Gastos Operativos:</b> Pasaron de $57,000 a $69,000 &rarr; <b>+21.05%</b> (+$12,000).</li>
+            <li><b>Factor agravante adicional (Costo de Ventas):</b> El Costo de Ventas subió de $160,000 a $210,000 &rarr; <b>+31.25%</b> (+$50,000).</li>
+          </ul>
+
+          <p><b>2. ¿Qué indica esta relación sobre la eficiencia operativa de la empresa?</b></p>
+          <ul>
+            <li><b>Ineficiencia operativa y descontrol de costos:</b> La relación indica una <b>clara pérdida de eficiencia operativa</b>. Los gastos operativos crecieron a un ritmo más acelerado (+21.05%) que los ingresos por ventas (+20.00%). En una empresa eficiente se espera <i>apalancamiento operativo positivo</i> (donde los gastos crecen a menor ritmo que las ventas para generar economías de escala).</li>
+            <li><b>Absorción total de los nuevos ingresos:</b> Los $50,000 adicionales que se facturaron en ventas fueron absorbidos en su totalidad por el Costo de Ventas (que creció exactamente en $50,000), dejando la Utilidad Bruta congelada en $90,000. Al sumarse los $12,000 adicionales de gastos operativos (transporte +28.57%, publicidad +22.22%, sueldos +20.00%), la <b>Utilidad Neta se desplomó un -36.36%</b> (de $33,000 a $21,000).</li>
+            <li><b>Destrucción de margen:</b> La empresa trabajó y vendió más volumen, pero ganó significativamente menos dinero, recortando el margen neto del 13.20% al 7.00%.</li>
+          </ul>
+          <div class="key-takeaway">
+            <b>Conclusión clave para responder:</b> Las Ventas crecieron <b>+20.00%</b> mientras que los Gastos Operativos crecieron <b>+21.05%</b> (y el Costo de Ventas <b>+31.25%</b>). Esto indica una <b>grave ineficiencia operativa</b>, falta de control en costos variables y gastos fijos, lo cual destruyó el beneficio del crecimiento comercial y provocó la caída del -36.36% en la utilidad neta.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4: ESTADOS FINANCIEROS DEL EXAMEN -->
+  <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='estados'?'':'is-hidden'}" id="sec-estados">
+    <div class="card">
+      <h3 style="font-size:18px; font-family:'Fraunces',serif;">4. Estados Financieros Comparativos con Análisis Horizontal</h3>
+      <p class="hint">Base oficial de datos del examen para Distribuidora Industrial Andina S.A. con cálculo de Variación Absoluta ($) y Variación Porcentual (%).</p>
+
+      <div class="two-col">
+        <!-- Estado de Resultados -->
+        <div>
+          <h4 style="font-family:'Fraunces',serif; font-size:16px; margin-bottom:8px;">Estado de Resultados Comparativo</h4>
+          <div class="tblwrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th class="num">2024 ($)</th>
+                  <th class="num">2025 ($)</th>
+                  <th class="num">Absoluta ($)</th>
+                  <th class="num">Porcentual (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Ventas</b></td>
+                  <td class="num">${fmt(d.ventas[2024])}</td>
+                  <td class="num">${fmt(d.ventas[2025])}</td>
+                  <td class="num">+50,000.00</td>
+                  <td class="num" style="color:var(--accent);">+20.00%</td>
+                </tr>
+                <tr>
+                  <td class="indent">(–) Costo de ventas</td>
+                  <td class="num">${fmt(d.costoVentas[2024])}</td>
+                  <td class="num">${fmt(d.costoVentas[2025])}</td>
+                  <td class="num">+50,000.00</td>
+                  <td class="num" style="color:var(--danger);">+31.25%</td>
+                </tr>
+                <tr class="total">
+                  <td>UTILIDAD BRUTA</td>
+                  <td class="num">${fmt(d.utilidadBruta[2024])}</td>
+                  <td class="num">${fmt(d.utilidadBruta[2025])}</td>
+                  <td class="num">0.00</td>
+                  <td class="num">0.00%</td>
+                </tr>
+                <tr class="group-row"><td colspan="5">GASTOS OPERATIVOS</td></tr>
+                ${d.gastosDetalle.map(g=>{
+                  const abs = g.v25 - g.v24;
+                  const pct = (abs/g.v24)*100;
+                  return `<tr>
+                    <td class="indent">${g.n}</td>
+                    <td class="num">${fmt(g.v24)}</td>
+                    <td class="num">${fmt(g.v25)}</td>
+                    <td class="num">+${fmt(abs).replace('$','')}</td>
+                    <td class="num">+${pct.toFixed(2)}%</td>
+                  </tr>`;
+                }).join('')}
+                <tr class="total">
+                  <td>TOTAL GASTOS OPERATIVOS</td>
+                  <td class="num">${fmt(d.gastosOperativos[2024])}</td>
+                  <td class="num">${fmt(d.gastosOperativos[2025])}</td>
+                  <td class="num">+12,000.00</td>
+                  <td class="num" style="color:var(--danger);">+21.05%</td>
+                </tr>
+                <tr class="total" style="background:var(--accent-soft);">
+                  <td><b>UTILIDAD NETA DEL EJERCICIO</b></td>
+                  <td class="num"><b>${fmt(d.utilidadNeta[2024])}</b></td>
+                  <td class="num"><b style="color:var(--danger);">${fmt(d.utilidadNeta[2025])}</b></td>
+                  <td class="num" style="color:var(--danger);">-12,000.00</td>
+                  <td class="num" style="color:var(--danger); font-weight:700;">-36.36%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Estado de Situación Financiera -->
+        <div>
+          <h4 style="font-family:'Fraunces',serif; font-size:16px; margin-bottom:8px;">Estado de Situación Financiera Comparativo</h4>
+          <div class="tblwrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rubro / Cuenta</th>
+                  <th class="num">2024 ($)</th>
+                  <th class="num">2025 ($)</th>
+                  <th class="num">Absoluta ($)</th>
+                  <th class="num">Porcentual (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="5">ACTIVO CORRIENTE</td></tr>
+                <tr><td>Caja</td><td class="num">6,000.00</td><td class="num">9,000.00</td><td class="num">+3,000.00</td><td class="num" style="color:var(--accent);font-weight:600;">+50.00%</td></tr>
+                <tr><td>Bancos</td><td class="num">15,000.00</td><td class="num">20,000.00</td><td class="num">+5,000.00</td><td class="num">+33.33%</td></tr>
+                <tr><td>Clientes</td><td class="num">30,000.00</td><td class="num">38,000.00</td><td class="num">+8,000.00</td><td class="num">+26.67%</td></tr>
+                <tr><td>Documentos por cobrar</td><td class="num">12,000.00</td><td class="num">15,000.00</td><td class="num">+3,000.00</td><td class="num">+25.00%</td></tr>
+                <tr><td>Inventarios</td><td class="num">40,000.00</td><td class="num">50,000.00</td><td class="num">+10,000.00</td><td class="num">+25.00%</td></tr>
+                <tr class="total"><td>TOTAL ACTIVO CORRIENTE</td><td class="num">103,000.00</td><td class="num">132,000.00</td><td class="num">+29,000.00</td><td class="num">+28.16%</td></tr>
+
+                <tr class="group-row"><td colspan="5">ACTIVO NO CORRIENTE</td></tr>
+                <tr><td>Terrenos</td><td class="num">60,000.00</td><td class="num">60,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Edificios</td><td class="num">120,000.00</td><td class="num">120,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Equipos de computación</td><td class="num">35,000.00</td><td class="num">40,000.00</td><td class="num">+5,000.00</td><td class="num">+14.29%</td></tr>
+                <tr><td>Vehículos</td><td class="num">30,000.00</td><td class="num">30,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr class="total"><td>TOTAL ACTIVO NO CORRIENTE</td><td class="num">245,000.00</td><td class="num">250,000.00</td><td class="num">+5,000.00</td><td class="num">+2.04%</td></tr>
+                <tr class="total" style="background:var(--surface-2);"><td><b>TOTAL ACTIVO</b></td><td class="num"><b>348,000.00</b></td><td class="num"><b>382,000.00</b></td><td class="num"><b>+34,000.00</b></td><td class="num"><b>+9.77%</b></td></tr>
+
+                <tr class="group-row"><td colspan="5">PASIVO CORRIENTE</td></tr>
+                <tr><td>Proveedores</td><td class="num">28,000.00</td><td class="num">35,000.00</td><td class="num">+7,000.00</td><td class="num">+25.00%</td></tr>
+                <tr><td>Cuentas por pagar</td><td class="num">15,000.00</td><td class="num">18,000.00</td><td class="num">+3,000.00</td><td class="num">+20.00%</td></tr>
+                <tr><td>Documentos por pagar</td><td class="num">10,000.00</td><td class="num">12,000.00</td><td class="num">+2,000.00</td><td class="num">+20.00%</td></tr>
+                <tr><td>Préstamo bancario corto plazo</td><td class="num">18,000.00</td><td class="num">22,000.00</td><td class="num">+4,000.00</td><td class="num">+22.22%</td></tr>
+                <tr class="total"><td>TOTAL PASIVO CORRIENTE</td><td class="num">71,000.00</td><td class="num">87,000.00</td><td class="num">+16,000.00</td><td class="num">+22.54%</td></tr>
+
+                <tr class="group-row"><td colspan="5">PASIVO NO CORRIENTE</td></tr>
+                <tr><td>Préstamo bancario largo plazo</td><td class="num">70,000.00</td><td class="num">70,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Otros pasivos</td><td class="num">29,000.00</td><td class="num">49,000.00</td><td class="num" style="color:var(--danger); font-weight:600;">+20,000.00</td><td class="num" style="color:var(--danger); font-weight:600;">+68.97%</td></tr>
+                <tr class="total"><td>TOTAL PASIVO NO CORRIENTE</td><td class="num">99,000.00</td><td class="num">119,000.00</td><td class="num">+20,000.00</td><td class="num">+20.20%</td></tr>
+                <tr class="total"><td>TOTAL PASIVO</td><td class="num">170,000.00</td><td class="num">206,000.00</td><td class="num">+36,000.00</td><td class="num">+21.18%</td></tr>
+
+                <tr class="group-row"><td colspan="5">PATRIMONIO</td></tr>
+                <tr><td>Capital social</td><td class="num">120,000.00</td><td class="num">120,000.00</td><td class="num">0.00</td><td class="num">0.00%</td></tr>
+                <tr><td>Reservas</td><td class="num">15,000.00</td><td class="num">20,000.00</td><td class="num">+5,000.00</td><td class="num">+33.33%</td></tr>
+                <tr><td>Resultados acumulados</td><td class="num">10,000.00</td><td class="num">15,000.00</td><td class="num">+5,000.00</td><td class="num">+50.00%</td></tr>
+                <tr><td>Utilidad del ejercicio</td><td class="num">33,000.00</td><td class="num">21,000.00</td><td class="num">-12,000.00</td><td class="num">-36.36%</td></tr>
+                <tr class="total"><td>TOTAL PATRIMONIO</td><td class="num">178,000.00</td><td class="num">176,000.00</td><td class="num">-2,000.00</td><td class="num">-1.12%</td></tr>
+                <tr class="total" style="background:var(--accent-soft);"><td><b>TOTAL PASIVO + PATRIMONIO</b></td><td class="num"><b>348,000.00</b></td><td class="num"><b>382,000.00</b></td><td class="num"><b>+34,000.00</b></td><td class="num"><b>+9.77%</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5: CALCULADORA INTERACTIVA DE RATIOS -->
+  <div class="examen-section ${activeExamenSubtab==='all'||activeExamenSubtab==='calc'?'':'is-hidden'}" id="sec-calc">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <h3 style="font-size:18px; font-family:'Fraunces',serif;">5. Calculadora Interactiva de Ratios Financieros</h3>
+          <p class="hint" style="margin-bottom:0;">Modifica cualquier valor para simular escenarios o recalcular los 8 indicadores en tiempo real.</p>
+        </div>
+        <div class="btn-row" style="margin-top:0;">
+          <button type="button" class="btn" id="btn-calc-load-elroble">Cargar datos de El Roble (actuales)</button>
+          <button type="button" class="btn" id="btn-calc-reset-andina">Restablecer Caso Examen (Andina S.A.)</button>
+        </div>
+      </div>
+
+      <form id="form-ratio-calc" style="margin-top:16px;">
+        <div class="calc-inputs-grid">
+          <!-- Activos -->
+          <div class="calc-field-group">
+            <span class="group-title">Activos</span>
+            <label class="field">Activo Corriente 2024<input type="number" step="100" id="calc-ac24" value="${d.activoCorriente[2024]}"></label>
+            <label class="field">Activo Corriente 2025<input type="number" step="100" id="calc-ac25" value="${d.activoCorriente[2025]}"></label>
+            <label class="field">Inventarios 2024<input type="number" step="100" id="calc-inv24" value="${d.inventarios[2024]}"></label>
+            <label class="field">Inventarios 2025<input type="number" step="100" id="calc-inv25" value="${d.inventarios[2025]}"></label>
+            <label class="field">Activo Total 2024<input type="number" step="100" id="calc-at24" value="${d.activoTotal[2024]}"></label>
+            <label class="field">Activo Total 2025<input type="number" step="100" id="calc-at25" value="${d.activoTotal[2025]}"></label>
+          </div>
+
+          <!-- Pasivos y Patrimonio -->
+          <div class="calc-field-group">
+            <span class="group-title">Pasivos y Patrimonio</span>
+            <label class="field">Pasivo Corriente 2024<input type="number" step="100" id="calc-pc24" value="${d.pasivoCorriente[2024]}"></label>
+            <label class="field">Pasivo Corriente 2025<input type="number" step="100" id="calc-pc25" value="${d.pasivoCorriente[2025]}"></label>
+            <label class="field">Pasivo Total 2024<input type="number" step="100" id="calc-pt24" value="${d.pasivoTotal[2024]}"></label>
+            <label class="field">Pasivo Total 2025<input type="number" step="100" id="calc-pt25" value="${d.pasivoTotal[2025]}"></label>
+            <label class="field">Patrimonio Total 2024<input type="number" step="100" id="calc-pat24" value="${d.patrimonio[2024]}"></label>
+            <label class="field">Patrimonio Total 2025<input type="number" step="100" id="calc-pat25" value="${d.patrimonio[2025]}"></label>
+          </div>
+
+          <!-- Resultados -->
+          <div class="calc-field-group">
+            <span class="group-title">Estado de Resultados</span>
+            <label class="field">Ventas Netas 2024<input type="number" step="100" id="calc-v24" value="${d.ventas[2024]}"></label>
+            <label class="field">Ventas Netas 2025<input type="number" step="100" id="calc-v25" value="${d.ventas[2025]}"></label>
+            <label class="field">Costo de Ventas 2024<input type="number" step="100" id="calc-cv24" value="${d.costoVentas[2024]}"></label>
+            <label class="field">Costo de Ventas 2025<input type="number" step="100" id="calc-cv25" value="${d.costoVentas[2025]}"></label>
+            <label class="field">Utilidad Neta 2024<input type="number" step="100" id="calc-un24" value="${d.utilidadNeta[2024]}"></label>
+            <label class="field">Utilidad Neta 2025<input type="number" step="100" id="calc-un25" value="${d.utilidadNeta[2025]}"></label>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn primary" id="btn-calc-recompute">Calcular Ratios en Vivo</button>
+        </div>
+      </form>
+
+      <div id="calc-results-output" style="margin-top:20px;"></div>
+    </div>
+  </div>
+  `;
+}
+
+const PANELS = [
+  {id:'presentacion', label:'Presentación', render:renderPresentacion},
+  {id:'datos', label:'Mis Datos', render:renderDatosPanel, datos:true},
+  {id:'inicial', label:'Situación Inicial', render:renderInicial},
+  {id:'diario', label:'Libro Diario', render:renderDiarioPanel},
+  {id:'balance', label:'Balance de Comprobación', render:renderBalancePanel},
+  {id:'ajustes', label:'Ajustes', render:renderAjustesPanel},
+  {id:'mayor', label:'Libro Mayor · Cuentas T', render:renderMayorPanel},
+  {id:'balanceAj', label:'Balance Ajustado', render:renderBalanceAjustadoPanel},
+  {id:'hoja', label:'Hoja de Trabajo', render:renderHojaPanel},
+  {id:'estados', label:'Estados Financieros', render:renderEstadosPanel},
+  {id:'graficos', label:'Gráficos', render:renderGraficosPanel},
+  {id:'examen', label:'Indicadores Financieros', render:renderExamenPanel, highlight:true},
+  {id:'cierre', label:'Cierre Contable', render:renderCierrePanel},
+];
+
+const stepsEl = document.getElementById('steps');
+const contentEl = document.getElementById('content');
+
+function buildShell(){
+  stepsEl.innerHTML='';
+  contentEl.innerHTML='';
+  PANELS.forEach((p,i)=>{
+    const btn=document.createElement('button');
+    btn.className='step'+(p.datos?' datos':'')+(p.highlight?' step-highlight':'');
+    btn.dataset.id=p.id;
+    btn.innerHTML=`<span class="n">${String(i+1).padStart(2,'0')}</span><span>${p.label}</span>${p.highlight?'<span class="examen-badge">Examen</span>':''}`;
+    btn.addEventListener('click',()=>selectPanel(p.id));
+    stepsEl.appendChild(btn);
+
+    const sec=document.createElement('section');
+    sec.className='panel';
+    sec.id='panel-'+p.id;
+    contentEl.appendChild(sec);
+  });
+}
+function rerenderAllPanels(){
+  PANELS.forEach(p=>{
+    const el=document.getElementById('panel-'+p.id);
+    if(el) el.innerHTML=p.render();
+  });
+}
+let activePanelId = PANELS[0].id;
+function selectPanel(id){
+  activePanelId=id;
+  document.querySelectorAll('.steps .step').forEach(b=>b.classList.toggle('active', b.dataset.id===id));
+  document.querySelectorAll('section.panel').forEach(s=>s.classList.toggle('active', s.id==='panel-'+id));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function runLiveRatioCalculator(){
+  const getVal = (id) => parseFloat(document.getElementById(id)?.value) || 0;
+  const ac24 = getVal('calc-ac24'), ac25 = getVal('calc-ac25');
+  const inv24 = getVal('calc-inv24'), inv25 = getVal('calc-inv25');
+  const at24 = getVal('calc-at24'), at25 = getVal('calc-at25');
+  const pc24 = getVal('calc-pc24'), pc25 = getVal('calc-pc25');
+  const pt24 = getVal('calc-pt24'), pt25 = getVal('calc-pt25');
+  const pat24 = getVal('calc-pat24'), pat25 = getVal('calc-pat25');
+  const v24 = getVal('calc-v24'), v25 = getVal('calc-v25');
+  const cv24 = getVal('calc-cv24'), cv25 = getVal('calc-cv25');
+  const un24 = getVal('calc-un24'), un25 = getVal('calc-un25');
+
+  const rc1 = pc24 ? ac24/pc24 : 0, rc2 = pc25 ? ac25/pc25 : 0;
+  const pa1 = pc24 ? (ac24-inv24)/pc24 : 0, pa2 = pc25 ? (ac25-inv25)/pc25 : 0;
+  const end1 = at24 ? (pt24/at24)*100 : 0, end2 = at25 ? (pt25/at25)*100 : 0;
+  const dp1 = pat24 ? pt24/pat24 : 0, dp2 = pat25 ? pt25/pat25 : 0;
+  const roa1 = at24 ? (un24/at24)*100 : 0, roa2 = at25 ? (un25/at25)*100 : 0;
+  const roe1 = pat24 ? (un24/pat24)*100 : 0, roe2 = pat25 ? (un25/pat25)*100 : 0;
+  const mn1 = v24 ? (un24/v24)*100 : 0, mn2 = v25 ? (un25/v25)*100 : 0;
+  const rot1 = (inv24*0.5) ? cv24/(inv24*0.5) : 0, rot2 = (inv25*0.5) ? cv25/(inv25*0.5) : 0;
+
+  const outEl = document.getElementById('calc-results-output');
+  if(!outEl) return;
+  outEl.innerHTML = `
+    <h4 style="font-family:'Fraunces',serif; font-size:16px; margin:16px 0 8px;">Resultados Calculados en Tiempo Real:</h4>
+    <div class="tblwrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th class="num">Periodo 1</th>
+            <th class="num">Periodo 2</th>
+            <th class="num">Variación</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><b>1. Razón Corriente</b></td><td class="num">${rc1.toFixed(2)}</td><td class="num"><b>${rc2.toFixed(2)}</b></td><td class="num">${(rc2-rc1)>=0?'+':''}${(rc2-rc1).toFixed(2)}</td><td><span class="ratio-badge ${rc2>=1?'good':'warn'}">${rc2>=1?'Adecuado':'Riesgo'}</span></td></tr>
+          <tr><td><b>2. Prueba Ácida</b></td><td class="num">${pa1.toFixed(2)}</td><td class="num"><b>${pa2.toFixed(2)}</b></td><td class="num">${(pa2-pa1)>=0?'+':''}${(pa2-pa1).toFixed(2)}</td><td><span class="ratio-badge ${pa2>=0.9?'good':'warn'}">${pa2>=0.9?'Suficiente':'Alerta'}</span></td></tr>
+          <tr><td><b>3. Nivel de Endeudamiento</b></td><td class="num">${end1.toFixed(2)}%</td><td class="num"><b>${end2.toFixed(2)}%</b></td><td class="num">${(end2-end1)>=0?'+':''}${(end2-end1).toFixed(2)} pp</td><td><span class="ratio-badge ${end2<=50?'good':'warn'}">${end2<=50?'Moderado':'Alto'}</span></td></tr>
+          <tr><td><b>4. Deuda / Patrimonio</b></td><td class="num">${dp1.toFixed(2)}</td><td class="num"><b>${dp2.toFixed(2)}</b></td><td class="num">${(dp2-dp1)>=0?'+':''}${(dp2-dp1).toFixed(2)}</td><td><span class="ratio-badge ${dp2<=1?'good':'warn'}">${dp2<=1?'Equilibrado':'Apalancado'}</span></td></tr>
+          <tr><td><b>5. ROA</b></td><td class="num">${roa1.toFixed(2)}%</td><td class="num"><b>${roa2.toFixed(2)}%</b></td><td class="num">${(roa2-roa1)>=0?'+':''}${(roa2-roa1).toFixed(2)} pp</td><td><span class="ratio-badge ${roa2>=roa1?'good':'warn'}">${roa2>=roa1?'Favorable':'Contracción'}</span></td></tr>
+          <tr><td><b>6. ROE</b></td><td class="num">${roe1.toFixed(2)}%</td><td class="num"><b>${roe2.toFixed(2)}%</b></td><td class="num">${(roe2-roe1)>=0?'+':''}${(roe2-roe1).toFixed(2)} pp</td><td><span class="ratio-badge ${roe2>=roe1?'good':'warn'}">${roe2>=roe1?'Favorable':'Contracción'}</span></td></tr>
+          <tr><td><b>7. Margen Neto</b></td><td class="num">${mn1.toFixed(2)}%</td><td class="num"><b>${mn2.toFixed(2)}%</b></td><td class="num">${(mn2-mn1)>=0?'+':''}${(mn2-mn1).toFixed(2)} pp</td><td><span class="ratio-badge ${mn2>=mn1?'good':'warn'}">${mn2>=mn1?'Favorable':'Contracción'}</span></td></tr>
+          <tr><td><b>8. Rotación de Inventarios (50%)</b></td><td class="num">${rot1.toFixed(2)}x</td><td class="num"><b>${rot2.toFixed(2)}x</b></td><td class="num">${(rot2-rot1)>=0?'+':''}${(rot2-rot1).toFixed(2)}</td><td><span class="ratio-badge neutral">${rot2 ? (360/rot2).toFixed(1)+' días' : '—'}</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function afterMutation(){
+  rerenderAllPanels();
+  document.querySelectorAll('.steps .step').forEach(b=>b.classList.toggle('active', b.dataset.id===activePanelId));
+  document.querySelectorAll('section.panel').forEach(s=>s.classList.toggle('active', s.id==='panel-'+activePanelId));
+  persist();
+}
+
+buildShell();
+rerenderAllPanels();
+selectPanel(activePanelId);
+initPersistence();
+
+const btnExportPdf = document.getElementById('btn-export-pdf');
+if(btnExportPdf) btnExportPdf.addEventListener('click', ()=>window.print());
+
+/* =========================================================
+   Animación de arranque — se omite con prefers-reduced-motion,
+   un clic o cualquier tecla.
+   ========================================================= */
+(function intro(){
+  const el = document.getElementById('intro');
+  if(!el) return;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){ el.remove(); return; }
+  const logEl = document.getElementById('intro-log');
+  const barEl = document.getElementById('intro-bar-fill');
+  const steps = [
+    'Cargando catálogo de cuentas…',
+    'Verificando partida doble…',
+    'Construyendo libro mayor…',
+    'Preparando estados financieros…',
+    'Autor: Ernesto Gregory Luna Mora',
+    'Sistema listo.',
+  ];
+  let i=0, done=false;
+  function finish(){
+    if(done) return; done=true;
+    el.classList.add('hide');
+    setTimeout(()=>el.remove(), 650);
+  }
+  function nextLine(){
+    if(done) return;
+    if(i>=steps.length){ setTimeout(finish, 750); return; }
+    const line=document.createElement('div');
+    line.className='line'+(i===steps.length-1?' done':'');
+    line.textContent='> '+steps[i];
+    logEl.appendChild(line);
+    barEl.style.width = Math.round(((i+1)/steps.length)*100)+'%';
+    i++;
+    setTimeout(nextLine, 700);
+  }
+  el.addEventListener('click', finish, {once:true});
+  document.addEventListener('keydown', finish, {once:true});
+  nextLine();
+})();
+
+/* =========================================================
+   Formularios y eventos (delegados en #content, sobreviven
+   a los re-render porque el contenedor nunca se reemplaza)
+   ========================================================= */
+function readAsientoLines(form){
+  const lines=[];
+  form.querySelectorAll('.line-row').forEach(row=>{
+    const c=row.querySelector('[data-role="c"]').value;
+    const d=parseFloat(row.querySelector('[data-role="d"]').value)||0;
+    const h=parseFloat(row.querySelector('[data-role="h"]').value)||0;
+    if(c && (d>0.0001 || h>0.0001)) lines.push({c,d,h});
+  });
+  return lines;
+}
+function updateAsientoCheck(form){
+  const lines=readAsientoLines(form);
+  const sd=lines.reduce((s,l)=>s+l.d,0), sh=lines.reduce((s,l)=>s+l.h,0);
+  const el=document.getElementById('asiento-check');
+  const btn=document.getElementById('btn-guardar-asiento');
+  if(!el) return;
+  const balanced = lines.length>=2 && Math.abs(sd-sh)<0.01 && sd>0;
+  el.className='asiento-check '+(balanced?'ok':'bad');
+  el.textContent = `Debe ${fmt(sd)} · Haber ${fmt(sh)}` + (balanced?' ✓ cuadra':' — falta cuadrar (mínimo 2 líneas)');
+  if(btn) btn.disabled=!balanced;
+}
+
+contentEl.addEventListener('input', e=>{
+  const form=e.target.closest('#form-asiento');
+  if(form) updateAsientoCheck(form);
+});
+
+contentEl.addEventListener('submit', e=>{
+  if(e.target.id==='form-cuenta'){
+    e.preventDefault();
+    const f=e.target;
+    const data={
+      c:f.querySelector('[name="c"]').value.trim(),
+      n:f.querySelector('[name="n"]').value.trim(),
+      g:f.querySelector('[name="g"]').value,
+      contra:f.querySelector('[name="contra"]').checked,
+    };
+    data.est = grupoEst(data.g);
+    if(!data.c || !data.n) return;
+    if(addAccount(data)){ afterMutation(); showToast(`Cuenta ${data.c} agregada al catálogo`, 'success'); f.reset(); }
+  }
+  if(e.target.id==='form-asiento'){
+    e.preventDefault();
+    const f=e.target;
+    const lines=readAsientoLines(f);
+    const sd=lines.reduce((s,l)=>s+l.d,0), sh=lines.reduce((s,l)=>s+l.h,0);
+    if(lines.length<2 || Math.abs(sd-sh)>0.01){
+      showModalAlert({
+        title: 'Asiento Descuadrado',
+        message: 'El asiento debe tener al menos 2 líneas válidas y el total del Debe debe ser exactamente igual al total del Haber.',
+        type: 'warning'
+      });
+      return;
+    }
+    const entry = {
+      fase: f.querySelector('[name="fase"]').value,
+      fecha: f.querySelector('[name="fecha"]').value,
+      num: nextNum(),
+      glosa: f.querySelector('[name="glosa"]').value.trim(),
+      lines,
+    };
+    if(addEntry(entry)){ afterMutation(); showToast(`Asiento N.º ${entry.num} registrado correctamente`, 'success'); f.reset(); updateAsientoCheck(f); }
+  }
+});
+
+
+/* =========================================================
+   SISTEMA UNIVERSAL DE MODALES Y NOTIFICACIONES (RESILIENTE)
+   ========================================================= */
+function getModalOverlay(){
+  let el = document.getElementById('modal-overlay');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'modal-overlay';
+    el.className = 'modal-overlay';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<div class="modal-window" id="modal-window"></div>';
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+function getModalWindow(){
+  let win = document.getElementById('modal-window');
+  if(!win){
+    const overlay = getModalOverlay();
+    win = overlay.querySelector('.modal-window');
+    if(!win){
+      win = document.createElement('div');
+      win.id = 'modal-window';
+      win.className = 'modal-window';
+      overlay.appendChild(win);
+    }
+  }
+  return win;
+}
+
+function getToastContainer(){
+  let el = document.getElementById('toast-container');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'toast-container';
+    el.className = 'toast-container';
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+function openModal(htmlContent, isWide){
+  const overlay = getModalOverlay();
+  const win = getModalWindow();
+  if(!overlay || !win) return;
+  win.className = 'modal-window' + (isWide ? ' wide' : '');
+  win.innerHTML = htmlContent;
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    const focusable = win.querySelector('input:not([disabled]), select, textarea, button.primary, button');
+    if(focusable) focusable.focus();
+  }, 50);
+}
+
+function closeModal(){
+  const overlay = getModalOverlay();
+  const win = getModalWindow();
+  if(!overlay || !win) return;
+  overlay.classList.remove('active');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    if(!overlay.classList.contains('active')){
+      win.innerHTML = '';
+    }
+  }, 220);
+}
+
+function showToast(message, type='success'){
+  const container = getToastContainer();
+  if(!container) return;
+  const icons = { success: '✓', warn: '⚠️', danger: '✕', info: 'ℹ️' };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span style="font-weight:700;font-size:16px;">${icons[type]||'•'}</span><span>${escHtml(message)}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.classList.add('active'), 20);
+  setTimeout(() => {
+    toast.classList.remove('active');
+    setTimeout(() => toast.remove(), 260);
+  }, 3200);
+}
+
+function showModalAlert({ title, message, details, type='warning', btnText='Entendido' }){
+  const icons = { warning: '⚠️', danger: '✕', info: 'ℹ️', success: '✓' };
+  const html = `
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon-badge ${type}">${icons[type]||'ℹ️'}</div>
+        <h3 class="modal-title">${escHtml(title)}</h3>
+      </div>
+      <button type="button" class="modal-close-btn" data-modal-close title="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>${message}</p>
+      ${details ? `<div class="modal-info-box">${details}</div>` : ''}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn primary" data-modal-close>${escHtml(btnText)}</button>
+    </div>
+  `;
+  openModal(html, false);
+}
+
+function showModalConfirm({ title, message, details, confirmText='Confirmar', cancelText='Cancelar', type='danger', onConfirm }){
+  const icons = { danger: '🗑️', warning: '⚠️', info: 'ℹ️' };
+  const html = `
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon-badge ${type}">${icons[type]||'⚠️'}</div>
+        <h3 class="modal-title">${escHtml(title)}</h3>
+      </div>
+      <button type="button" class="modal-close-btn" data-modal-close title="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>${message}</p>
+      ${details ? `<div class="modal-info-box">${details}</div>` : ''}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn" data-modal-close>${escHtml(cancelText)}</button>
+      <button type="button" class="btn ${type==='danger'?'danger':'primary'}" id="btn-modal-confirm-action">${escHtml(confirmText)}</button>
+    </div>
+  `;
+  openModal(html, false);
+  const btnConfirm = document.getElementById('btn-modal-confirm-action');
+  if(btnConfirm){
+    btnConfirm.addEventListener('click', () => {
+      closeModal();
+      if(typeof onConfirm === 'function') onConfirm();
+    }, { once: true });
+  }
+}
+
+/* =========================================================
+   MODALES ESPECÍFICOS DE ACCIÓN (EDITAR Y ELIMINAR)
+   ========================================================= */
+function showDeleteAsientoModal(entryId){
+  const e = ENTRIES.find(x => x.id === entryId);
+  if(!e) return;
+  const tot = e.lines.reduce((s,l) => s + (l.d || 0), 0);
+  showModalConfirm({
+    title: `¿Eliminar Asiento N.º ${e.num}?`,
+    message: `¿Estás seguro de que deseas eliminar permanentemente este asiento contable?`,
+    details: `
+      <b>N.º de Asiento:</b> ${e.num} (${FASE_LABEL[e.fase] || e.fase})<br>
+      <b>Fecha:</b> ${e.fecha}<br>
+      <b>Glosa:</b> ${escHtml(e.glosa)}<br>
+      <b>Monto total:</b> ${fmt(tot)}<br>
+      <small style="color:var(--ink-faint); margin-top:6px; display:block;">Todos los balances, libro mayor y estados financieros se recalcularán automáticamente.</small>
+    `,
+    confirmText: 'Sí, eliminar asiento',
+    cancelText: 'Cancelar',
+    type: 'danger',
+    onConfirm: () => {
+      deleteEntry(e.id);
+      afterMutation();
+      showToast(`Asiento N.º ${e.num} eliminado correctamente`, 'warn');
+    }
+  });
+}
+
+function showDeleteCuentaModal(code){
+  const acc = ACCOUNTS.find(x => x.c === code);
+  if(!acc) return;
+  const used = ENTRIES.filter(e => e.lines.some(l => l.c === code));
+  if(used.length > 0){
+    showModalAlert({
+      title: 'No se puede eliminar la cuenta',
+      message: `La cuenta <b>${code} — ${escHtml(acc.n)}</b> no puede ser eliminada porque está siendo utilizada en <b>${used.length} asiento(s)</b> del Libro Diario.`,
+      details: `
+        Para mantener la integridad contable, primero debes editar o eliminar los asientos que registran movimientos en esta cuenta.<br><br>
+        <b>Asientos con movimiento:</b> ${used.map(x => 'N.º ' + x.num).slice(0, 6).join(', ')}${used.length > 6 ? '…' : ''}
+      `,
+      type: 'warning',
+      btnText: 'Entendido'
+    });
+  } else {
+    showModalConfirm({
+      title: '¿Eliminar Cuenta Contable?',
+      message: `¿Deseas eliminar la cuenta <b>${code} — ${escHtml(acc.n)}</b> (${acc.g}) del catálogo?`,
+      details: `Esta cuenta no tiene asientos contables registrados y puede eliminarse de forma segura sin afectar los libros.`,
+      confirmText: 'Sí, eliminar cuenta',
+      cancelText: 'Cancelar',
+      type: 'danger',
+      onConfirm: () => {
+        ACCOUNTS = ACCOUNTS.filter(a => a.c !== code);
+        rebuildIndex();
+        afterMutation();
+        showToast(`Cuenta ${code} eliminada correctamente`, 'warn');
+      }
+    });
+  }
+}
+
+function showResetSeedModal(){
+  showModalConfirm({
+    title: '¿Restaurar ejemplo "El Roble"?',
+    message: `Esta acción reemplazará todas tus cuentas y asientos actuales por el caso inicial de <b>Distribuidora El Roble S.A.</b> (enero 2026).`,
+    details: `💡 <b>Recomendación:</b> Si tienes información propia que no deseas perder, utiliza el botón <b>"Descargar copia (JSON)"</b> antes de restaurar.`,
+    confirmText: 'Restaurar Ejemplo',
+    cancelText: 'Cancelar',
+    type: 'warning',
+    onConfirm: () => {
+      resetToSeed();
+      afterMutation();
+      showToast('Caso "El Roble" restaurado con éxito', 'success');
+    }
+  });
+}
+
+function showClearAllModal(){
+  showModalConfirm({
+    title: '⚠️ ¿Borrar TODOS los datos?',
+    message: `<span style="color:var(--danger);font-weight:600;">Esta es una acción definitiva y no se puede deshacer.</span><br>Se eliminarán permanentemente todas las cuentas contables y todos los asientos del ejercicio.`,
+    details: `Los libros diario, mayor, balances y estados financieros quedarán totalmente en blanco.`,
+    confirmText: 'Sí, borrar todos los datos',
+    cancelText: 'Cancelar',
+    type: 'danger',
+    onConfirm: () => {
+      clearAll();
+      afterMutation();
+      showToast('Todos los datos han sido borrados', 'danger');
+    }
+  });
+}
+
+function showEditCuentaModal(code){
+  const acc = ACCOUNTS.find(x => x.c === code);
+  if(!acc) return;
+  const html = `
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon-badge edit">✏️</div>
+        <h3 class="modal-title">Editar Cuenta: ${acc.c}</h3>
+      </div>
+      <button type="button" class="modal-close-btn" data-modal-close title="Cerrar">✕</button>
+    </div>
+    <form id="modal-form-edit-cuenta">
+      <div class="modal-body">
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <label class="field">
+            Código contable
+            <input type="text" value="${acc.c}" disabled style="background:var(--surface-2); color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;">
+            <small style="color:var(--ink-faint); font-size:11.5px;">El código no se puede modificar para preservar la integridad de los asientos existentes.</small>
+          </label>
+          <label class="field">
+            Nombre de la cuenta
+            <input type="text" id="modal-edit-acc-name" value="${escHtml(acc.n)}" required placeholder="Ej. Inventario de Mercadería">
+          </label>
+          <label class="field">
+            Clasificación contable
+            <select id="modal-edit-acc-grupo">
+              ${GRUPOS.map(g => `<option value="${g}" ${g === acc.g ? 'selected' : ''}>${g}</option>`).join('')}
+            </select>
+          </label>
+          <label class="field" style="flex-direction:row; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="modal-edit-acc-contra" ${acc.contra ? 'checked' : ''} style="width:auto; cursor:pointer;">
+            <span>Cuenta contra (resta en los balances, ej. depreciación o provisión)</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-modal-close>Cancelar</button>
+        <button type="submit" class="btn primary">Guardar Cambios</button>
+      </div>
+    </form>
+  `;
+  openModal(html, false);
+
+  const form = document.getElementById('modal-form-edit-cuenta');
+  if(form){
+    form.addEventListener('submit', ev => {
+      ev.preventDefault();
+      const newName = document.getElementById('modal-edit-acc-name').value.trim();
+      const newGrupo = document.getElementById('modal-edit-acc-grupo').value;
+      const isContra = document.getElementById('modal-edit-acc-contra').checked;
+      if(!newName) return;
+      acc.n = newName;
+      acc.g = newGrupo;
+      acc.contra = isContra;
+      acc.est = grupoEst(newGrupo);
+      rebuildIndex();
+      afterMutation();
+      closeModal();
+      showToast(`Cuenta ${acc.c} actualizada correctamente`, 'success');
+    });
+  }
+}
+
+function showEditAsientoModal(entryId){
+  const e = ENTRIES.find(x => x.id === entryId);
+  if(!e) return;
+
+  function renderModalLines(lines){
+    return lines.map((l, i) => `
+      <div class="line-row modal-line-row" data-line-idx="${i}">
+        <select data-role="c"><option value="">— Seleccionar cuenta —</option>${accountOptions(l.c)}</select>
+        <input type="number" step="0.01" min="0" placeholder="0.00" data-role="d" value="${l.d ? l.d.toFixed(2) : ''}">
+        <input type="number" step="0.01" min="0" placeholder="0.00" data-role="h" value="${l.h ? l.h.toFixed(2) : ''}">
+        <button type="button" class="mini-del" data-modal-del-line title="Quitar línea" style="font-size:16px;">✕</button>
+      </div>
+    `).join('');
+  }
+
+  // Prepara al menos las líneas actuales más dos adicionales vacías si son pocas
+  const initialLines = e.lines.map(l => ({ ...l }));
+  while(initialLines.length < 4){ initialLines.push({ c:'', d:0, h:0 }); }
+
+  const html = `
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon-badge edit">✏️</div>
+        <h3 class="modal-title">Editar Asiento N.º ${e.num}</h3>
+      </div>
+      <button type="button" class="modal-close-btn" data-modal-close title="Cerrar">✕</button>
+    </div>
+    <form id="modal-form-edit-asiento">
+      <div class="modal-body">
+        <div class="form-grid">
+          <label class="field">Fecha<input type="date" id="modal-edit-entry-fecha" value="${e.fecha}" required></label>
+          <label class="field">Fase<select id="modal-edit-entry-fase">
+            <option value="operacion" ${e.fase === 'operacion' ? 'selected' : ''}>Operación</option>
+            <option value="apertura" ${e.fase === 'apertura' ? 'selected' : ''}>Apertura</option>
+            <option value="ajuste" ${e.fase === 'ajuste' ? 'selected' : ''}>Ajuste</option>
+            <option value="cierre" ${e.fase === 'cierre' ? 'selected' : ''}>Cierre</option>
+          </select></label>
+        </div>
+        <label class="field" style="margin-top:12px;">
+          Glosa / explicación
+          <textarea id="modal-edit-entry-glosa" rows="2" required placeholder="Explicación del asiento">${escHtml(e.glosa)}</textarea>
+        </label>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; margin-bottom:6px;">
+          <span style="font-size:12px; text-transform:uppercase; font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--ink-soft);">Detalle de Cuentas (Debe y Haber)</span>
+          <button type="button" class="btn" id="modal-btn-add-line" style="padding:4px 10px; font-size:12px;">+ Agregar línea</button>
+        </div>
+
+        <div class="lines-editor" id="modal-lines-container" style="max-height:280px; overflow-y:auto;">
+          <div class="lines-head" style="grid-template-columns:2.5fr 1.2fr 1.2fr 34px;"><span>Cuenta</span><span>Debe</span><span>Haber</span><span></span></div>
+          <div id="modal-lines-list">
+            ${initialLines.map((l, i) => `
+              <div class="line-row modal-line-row" style="grid-template-columns:2.5fr 1.2fr 1.2fr 34px;">
+                <select data-role="c"><option value="">— Seleccionar cuenta —</option>${accountOptions(l.c)}</select>
+                <input type="number" step="0.01" min="0" placeholder="0.00" data-role="d" value="${l.d ? l.d.toFixed(2) : ''}">
+                <input type="number" step="0.01" min="0" placeholder="0.00" data-role="h" value="${l.h ? l.h.toFixed(2) : ''}">
+                <button type="button" class="mini-del" data-modal-del-line title="Quitar línea">✕</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="asiento-check" id="modal-asiento-check" style="margin-top:12px;">Comprobando partida doble…</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-modal-close>Cancelar</button>
+        <button type="submit" class="btn primary" id="modal-btn-save-asiento">Guardar Asiento</button>
+      </div>
+    </form>
+  `;
+  openModal(html, true);
+
+  const form = document.getElementById('modal-form-edit-asiento');
+  const linesList = document.getElementById('modal-lines-list');
+  const checkEl = document.getElementById('modal-asiento-check');
+  const btnSave = document.getElementById('modal-btn-save-asiento');
+
+  function updateModalBalance(){
+    const rows = linesList.querySelectorAll('.modal-line-row');
+    let sd = 0, sh = 0, count = 0;
+    rows.forEach(r => {
+      const c = r.querySelector('[data-role="c"]').value;
+      const d = parseFloat(r.querySelector('[data-role="d"]').value) || 0;
+      const h = parseFloat(r.querySelector('[data-role="h"]').value) || 0;
+      if(c && (d > 0.0001 || h > 0.0001)){ count++; sd += d; sh += h; }
+    });
+    const diff = Math.abs(sd - sh);
+    const balanced = count >= 2 && diff < 0.01 && sd > 0;
+    checkEl.className = 'asiento-check ' + (balanced ? 'ok' : 'bad');
+    checkEl.textContent = `Debe ${fmt(sd)} · Haber ${fmt(sh)}` + (balanced ? ' ✓ Cuadra perfectamente' : ` — Falta cuadrar (diferencia: ${fmt(diff)})`);
+    btnSave.disabled = !balanced;
+  }
+
+  updateModalBalance();
+
+  form.addEventListener('input', updateModalBalance);
+
+  document.getElementById('modal-btn-add-line').addEventListener('click', () => {
+    const row = document.createElement('div');
+    row.className = 'line-row modal-line-row';
+    row.style.gridTemplateColumns = '2.5fr 1.2fr 1.2fr 34px';
+    row.innerHTML = `
+      <select data-role="c"><option value="">— Seleccionar cuenta —</option>${accountOptions()}</select>
+      <input type="number" step="0.01" min="0" placeholder="0.00" data-role="d">
+      <input type="number" step="0.01" min="0" placeholder="0.00" data-role="h">
+      <button type="button" class="mini-del" data-modal-del-line title="Quitar línea">✕</button>
+    `;
+    linesList.appendChild(row);
+    updateModalBalance();
+  });
+
+  linesList.addEventListener('click', ev => {
+    if(ev.target.closest('[data-modal-del-line]')){
+      const row = ev.target.closest('.modal-line-row');
+      if(linesList.querySelectorAll('.modal-line-row').length > 2){
+        row.remove();
+        updateModalBalance();
+      } else {
+        row.querySelector('[data-role="c"]').value = '';
+        row.querySelector('[data-role="d"]').value = '';
+        row.querySelector('[data-role="h"]').value = '';
+        updateModalBalance();
+      }
+    }
+  });
+
+  form.addEventListener('submit', ev => {
+    ev.preventDefault();
+    const rows = linesList.querySelectorAll('.modal-line-row');
+    const newLines = [];
+    let sd = 0, sh = 0;
+    rows.forEach(r => {
+      const c = r.querySelector('[data-role="c"]').value;
+      const d = parseFloat(r.querySelector('[data-role="d"]').value) || 0;
+      const h = parseFloat(r.querySelector('[data-role="h"]').value) || 0;
+      if(c && (d > 0.0001 || h > 0.0001)){
+        newLines.push({ c, d, h });
+        sd += d; sh += h;
+      }
+    });
+
+    if(newLines.length < 2 || Math.abs(sd - sh) > 0.01 || sd <= 0){
+      showModalAlert({
+        title: 'Asiento Descuadrado',
+        message: 'El asiento debe tener al menos 2 líneas válidas y el total del Debe debe ser igual al total del Haber.',
+        type: 'warning'
+      });
+      return;
+    }
+
+    e.fecha = document.getElementById('modal-edit-entry-fecha').value;
+    e.fase = document.getElementById('modal-edit-entry-fase').value;
+    e.glosa = document.getElementById('modal-edit-entry-glosa').value.trim();
+    e.lines = newLines;
+
+    afterMutation();
+    closeModal();
+    showToast(`Asiento N.º ${e.num} actualizado con éxito`, 'success');
+  });
+}
+
+// Global Click & Modal Delegation
+document.addEventListener('click', e => {
+  // Modal backdrop click or close button
+  const overlay = document.getElementById('modal-overlay');
+  if(e.target === overlay || e.target.closest('[data-modal-close]')){
+    closeModal();
+    return;
+  }
+  // 1. Acciones de Asientos: Editar
+  const editEntryBtn = e.target.closest('[data-edit-entry]');
+  if(editEntryBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    showEditAsientoModal(editEntryBtn.dataset.editEntry);
+    return;
+  }
+
+  // 2. Acciones de Asientos: Eliminar
+  const delEntryBtn = e.target.closest('[data-del-entry]');
+  if(delEntryBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    showDeleteAsientoModal(delEntryBtn.dataset.delEntry);
+    return;
+  }
+
+  // 3. Acciones de Cuentas: Editar
+  const editCuentaBtn = e.target.closest('[data-edit-cuenta]');
+  if(editCuentaBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    showEditCuentaModal(editCuentaBtn.dataset.editCuenta);
+    return;
+  }
+
+  // 4. Acciones de Cuentas: Eliminar
+  const delCuentaBtn = e.target.closest('[data-del-cuenta]');
+  if(delCuentaBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    showDeleteCuentaModal(delCuentaBtn.dataset.delCuenta);
+    return;
+  }
+
+  // 5. Restaurar ejemplo "El Roble"
+  if(e.target.closest('[data-action="reset-seed"]')){
+    e.preventDefault();
+    showResetSeedModal();
+    return;
+  }
+
+  // 6. Borrar todos los datos
+  if(e.target.closest('[data-action="clear-all"]')){
+    e.preventDefault();
+    showClearAllModal();
+    return;
+  }
+
+  // 7. Botón "Ir al Módulo de Examen" desde Presentación
+  if(e.target.closest('#btn-goto-examen')){
+    e.preventDefault();
+    selectPanel('examen');
+    return;
+  }
+
+  // 8. Subnavegación del Módulo de Examen
+  const subnavBtn = e.target.closest('[data-subtab]');
+  if(subnavBtn){
+    e.preventDefault();
+    activeExamenSubtab = subnavBtn.dataset.subtab;
+    document.querySelectorAll('.subnav-btn').forEach(b=>b.classList.toggle('active', b.dataset.subtab===activeExamenSubtab));
+    document.querySelectorAll('.examen-section').forEach(sec=>{
+      if(activeExamenSubtab==='all'){
+        sec.classList.remove('is-hidden');
+      } else {
+        const secId = sec.id.replace('sec-','');
+        sec.classList.toggle('is-hidden', secId!==activeExamenSubtab);
+      }
+    });
+    return;
+  }
+
+  // 9. Calculadora de Ratios: Restablecer Caso Andina S.A.
+  if(e.target.closest('#btn-calc-reset-andina')){
+    e.preventDefault();
+    const d = EXAMEN_DATA;
+    document.getElementById('calc-ac24').value = d.activoCorriente[2024];
+    document.getElementById('calc-ac25').value = d.activoCorriente[2025];
+    document.getElementById('calc-inv24').value = d.inventarios[2024];
+    document.getElementById('calc-inv25').value = d.inventarios[2025];
+    document.getElementById('calc-at24').value = d.activoTotal[2024];
+    document.getElementById('calc-at25').value = d.activoTotal[2025];
+    document.getElementById('calc-pc24').value = d.pasivoCorriente[2024];
+    document.getElementById('calc-pc25').value = d.pasivoCorriente[2025];
+    document.getElementById('calc-pt24').value = d.pasivoTotal[2024];
+    document.getElementById('calc-pt25').value = d.pasivoTotal[2025];
+    document.getElementById('calc-pat24').value = d.patrimonio[2024];
+    document.getElementById('calc-pat25').value = d.patrimonio[2025];
+    document.getElementById('calc-v24').value = d.ventas[2024];
+    document.getElementById('calc-v25').value = d.ventas[2025];
+    document.getElementById('calc-cv24').value = d.costoVentas[2024];
+    document.getElementById('calc-cv25').value = d.costoVentas[2025];
+    document.getElementById('calc-un24').value = d.utilidadNeta[2024];
+    document.getElementById('calc-un25').value = d.utilidadNeta[2025];
+    runLiveRatioCalculator();
+    showToast('Datos del examen (Andina S.A.) restaurados en la calculadora', 'info');
+    return;
+  }
+
+  // 10. Calculadora de Ratios: Cargar datos actuales de El Roble
+  if(e.target.closest('#btn-calc-load-elroble')){
+    e.preventDefault();
+    const b = (c) => { const {d,h} = sums(c, ADJ); return d-h; };
+    const acAccounts = ACCOUNTS.filter(a=>a.g==='Activo Corriente' && !a.contra);
+    const acContra = ACCOUNTS.filter(a=>a.g==='Activo Corriente' && a.contra);
+    const totAC = acAccounts.reduce((s,a)=>s+b(a.c),0) + acContra.reduce((s,a)=>s+b(a.c),0);
+    const invVal = b('1105');
+    const totAT = ACCOUNTS.filter(a=>a.g.startsWith('Activo') && !a.contra).reduce((s,a)=>s+b(a.c),0) + ACCOUNTS.filter(a=>a.g.startsWith('Activo') && a.contra).reduce((s,a)=>s+b(a.c),0);
+    const totPC = ACCOUNTS.filter(a=>a.g==='Pasivo Corriente').reduce((s,a)=>s-b(a.c),0);
+    const totPT = ACCOUNTS.filter(a=>a.g.startsWith('Pasivo')).reduce((s,a)=>s-b(a.c),0);
+    const ventasVal = ACCOUNTS.filter(a=>a.g==='Ingresos').reduce((s,a)=>s-b(a.c),0);
+    const cvVal = b('5101');
+    const gastosVal = ACCOUNTS.filter(a=>a.g==='Gastos').reduce((s,a)=>s+b(a.c),0);
+    const unVal = ventasVal - gastosVal;
+    const patVal = ACCOUNTS.filter(a=>a.g==='Patrimonio' && a.c!=='3203').reduce((s,a)=>s-b(a.c),0) + unVal;
+
+    document.getElementById('calc-ac25').value = totAC;
+    document.getElementById('calc-inv25').value = invVal;
+    document.getElementById('calc-at25').value = totAT;
+    document.getElementById('calc-pc25').value = totPC;
+    document.getElementById('calc-pt25').value = totPT;
+    document.getElementById('calc-pat25').value = patVal;
+    document.getElementById('calc-v25').value = ventasVal;
+    document.getElementById('calc-cv25').value = cvVal;
+    document.getElementById('calc-un25').value = unVal;
+    runLiveRatioCalculator();
+    showToast('Datos actuales de "Distribuidora El Roble" cargados en Periodo 2', 'success');
+    return;
+  }
+
+  // 11. Calculadora de Ratios: Recalcular
+  if(e.target.closest('#btn-calc-recompute')){
+    e.preventDefault();
+    runLiveRatioCalculator();
+    showToast('Ratios financieros calculados', 'info');
+    return;
+  }
+
+  // 12. Exportar copia JSON
+  if(e.target.closest('[data-action="export"]')){
+    e.preventDefault();
+    const payload = JSON.stringify({accounts:ACCOUNTS, entries:ENTRIES}, null, 2);
+    const blob = new Blob([payload], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'ciclo-contable-el-roble.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    showToast('Copia JSON descargada correctamente', 'success');
+    return;
+  }
+
+  // 13. Importar copia JSON trigger
+  if(e.target.closest('[data-action="import-trigger"]')){
+    e.preventDefault();
+    document.getElementById('import-file').click();
+    return;
+  }
+});
+
+contentEl.addEventListener('change', e=>{
+  if(e.target.id==='import-file'){
+    const file=e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload = () => {
+      try{
+        const parsed = JSON.parse(reader.result);
+        if(!Array.isArray(parsed.accounts) || !Array.isArray(parsed.entries)) throw new Error('formato inválido');
+        ACCOUNTS=parsed.accounts; ENTRIES=parsed.entries; rebuildIndex();
+        afterMutation();
+      }catch(err){
+        showModalAlert({
+          title: 'Archivo Inválido',
+          message: 'El archivo JSON seleccionado no tiene un formato contable válido de cuentas y asientos.',
+          type: 'danger'
+        });
+      }
+      e.target.value='';
+    };
+    reader.readAsText(file);
+  }
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    const overlay = document.getElementById('modal-overlay');
+    if(overlay && overlay.classList.contains('active')){
+      closeModal();
+    }
+  }
+});
+</script>
+
+
+
+</body>
+</html>
