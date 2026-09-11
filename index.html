@@ -1229,7 +1229,11 @@ function renderPresentacion(){
    RENDER: Mis Datos — CRUD de cuentas y asientos
    ========================================================= */
 function accountOptions(selected){
-  return ACCOUNTS.map(a=>`<option value="${a.c}" ${a.c===selected?'selected':''}>${a.c} — ${escHtml(a.n)}</option>`).join('');
+  return ACCOUNTS.map(a=>{
+    const isSub = a.c.length > 4;
+    const prefix = isSub ? '　↳ ' : '';
+    return `<option value="${a.c}" ${a.c===selected?'selected':''}>${prefix}${a.c} — ${escHtml(a.n)}</option>`;
+  }).join('');
 }
 function renderDatosPanel(){
   const N_LINES = 6;
@@ -1257,15 +1261,34 @@ function renderDatosPanel(){
     </tr>`;
   }).join('');
 
-  const cuentaRows = ACCOUNTS.map(a=>`<tr>
-    <td class="code">${a.c}</td><td>${escHtml(a.n)}</td><td>${a.g}</td>
-    <td style="text-align:right;">
-      <div class="row-actions">
-        <button type="button" class="act-btn edit" data-edit-cuenta="${a.c}" title="Editar cuenta">✏️ Editar</button>
-        <button type="button" class="act-btn del" data-del-cuenta="${a.c}" title="Eliminar cuenta">🗑️ Eliminar</button>
-      </div>
-    </td>
-  </tr>`).join('');
+  const parentAccounts = ACCOUNTS.filter(a => a.c.length <= 4);
+  const parentOptions = parentAccounts.map(p => 
+    `<option value="${p.c}" data-grupo="${p.g}">${p.c} — ${escHtml(p.n)} (${p.g})</option>`
+  ).join('');
+
+  const cuentaRows = ACCOUNTS.map(a=>{
+    const isSub = a.c.length > 4;
+    const parentCode = isSub ? a.c.slice(0, 4) : null;
+    const parentAcc = parentCode && ACC[parentCode] ? ACC[parentCode] : null;
+    return `<tr>
+      <td class="code">
+        ${a.c}
+        ${isSub ? `<span style="font-size:9.5px; background:var(--accent-soft); color:var(--accent); padding:2px 6px; border-radius:4px; font-weight:700; margin-left:6px; vertical-align:middle;">Hija</span>` : ''}
+      </td>
+      <td style="${isSub ? 'padding-left:26px; font-weight:500;' : 'font-weight:600;'}">
+        ${isSub ? `<span style="color:var(--ink-faint); margin-right:4px;">↳</span>` : ''}
+        ${escHtml(a.n)}
+        ${isSub && parentAcc ? `<span style="font-size:11px; color:var(--ink-faint); font-weight:normal; margin-left:6px;">(Padre: <b>${parentCode} - ${escHtml(parentAcc.n)}</b>)</span>` : ''}
+      </td>
+      <td><span style="font-size:12px;">${a.g}</span></td>
+      <td style="text-align:right;">
+        <div class="row-actions">
+          <button type="button" class="act-btn edit" data-edit-cuenta="${a.c}" title="Editar cuenta">✏️ Editar</button>
+          <button type="button" class="act-btn del" data-del-cuenta="${a.c}" title="Eliminar cuenta">🗑️ Eliminar</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 
   const isLimpio = (currentWorkspace === 'limpio');
   const bannerHtml = isLimpio ? `
@@ -1335,12 +1358,83 @@ function renderDatosPanel(){
         <input type="text" id="search-cuenta-input" placeholder="🔍 Buscar cuenta por código o nombre..." style="width:280px; padding:7px 12px; font-size:12.5px; border-radius:7px; border:1px solid var(--border-strong);">
       </div>
     </div>
-    <form id="form-cuenta" class="form-grid">
-      <label class="field">Código<input name="c" required placeholder="Ej. 1109"></label>
-      <label class="field">Nombre<input name="n" required placeholder="Ej. Anticipo de Impuestos"></label>
-      <label class="field">Clasificación<select name="g">${GRUPOS.map(g=>`<option value="${g}">${g}</option>`).join('')}</select></label>
-      <label class="field" style="flex-direction:row; align-items:center; gap:6px;"><input type="checkbox" name="contra" style="width:auto;"> Cuenta contra (resta)</label>
-      <button type="submit" class="btn primary">Agregar cuenta</button>
+    <form id="form-cuenta" style="background:var(--surface-2); border:1px solid var(--border-strong); border-radius:9px; padding:16px 18px; margin-bottom:18px;">
+      <!-- Selector de Tipo de Cuenta -->
+      <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+        <span style="font-size:12.5px; font-weight:700; color:var(--ink); text-transform:uppercase; letter-spacing:.04em;">Modo de registro:</span>
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13.5px;">
+          <input type="radio" name="cuenta_tipo" value="hija" checked style="width:auto; margin:0; cursor:pointer;">
+          <span style="font-weight:600; color:var(--accent);">🌿 Cuenta Hija / Subcuenta</span>
+          <span style="font-size:11.5px; color:var(--ink-soft);">(Depende de un código padre + subcódigo adicional)</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13.5px;">
+          <input type="radio" name="cuenta_tipo" value="padre" style="width:auto; margin:0; cursor:pointer;">
+          <span style="font-weight:600; color:var(--ink);">📁 Cuenta Principal (4 dígitos)</span>
+          <span style="font-size:11.5px; color:var(--ink-soft);">(Independiente)</span>
+        </label>
+      </div>
+
+      <!-- CAMPOS PARA CUENTA HIJA -->
+      <div id="cuenta-hija-fields">
+        <div style="display:grid; grid-template-columns:1.4fr 1.1fr 1.6fr auto; gap:14px; align-items:end;">
+          <label class="field">
+            Cuenta Padre (De la que depende) *
+            <select id="cuenta-padre-select" name="parent_c">
+              ${parentOptions}
+            </select>
+          </label>
+          <label class="field">
+            Subcódigo adicional a agregar *
+            <div style="display:flex; align-items:center; gap:4px;">
+              <span id="cuenta-padre-prefix-badge" style="font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--accent); background:var(--surface); border:1px solid var(--border-strong); padding:7px 10px; border-radius:7px; font-size:13px;">${parentAccounts[0]?parentAccounts[0].c:'1101'}</span>
+              <span style="font-weight:700; color:var(--ink-faint); font-size:14px;">+</span>
+              <input type="text" id="cuenta-subcodigo-input" name="subcodigo" placeholder="01" maxlength="6" style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13.5px;" value="01">
+            </div>
+          </label>
+          <label class="field">
+            Nombre de la Cuenta Hija *
+            <input type="text" id="cuenta-hija-nombre" name="hija_n" placeholder="Ej. Caja General Matriz o Banco Pichincha">
+          </label>
+          <div>
+            <button type="submit" class="btn primary" style="height:38px; white-space:nowrap; padding:0 18px;">+ Guardar Cuenta Hija</button>
+          </div>
+        </div>
+
+        <!-- Vista previa dinámica en vivo del código resultante -->
+        <div id="cuenta-hija-preview-box" style="margin-top:12px; font-size:12px; font-family:'IBM Plex Mono',monospace; color:var(--accent); background:var(--accent-soft); padding:8px 14px; border-radius:7px; border:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <div>
+            Código resultante que se guardará: <b id="preview-final-code" style="font-size:14px; color:var(--accent); letter-spacing:.03em;">${parentAccounts[0]?parentAccounts[0].c+'01':'110101'}</b>
+            <span id="preview-parent-info" style="font-size:11.5px; color:var(--ink-soft); margin-left:8px;">(Depende de: <b>${parentAccounts[0]?parentAccounts[0].c+' — '+escHtml(parentAccounts[0].n):'1101 — Caja'}</b>)</span>
+          </div>
+          <div style="font-size:11.5px; color:var(--ink-soft);">
+            Hereda clasificación: <b id="preview-hereda-grupo" style="color:var(--ink);">${parentAccounts[0]?parentAccounts[0].g:'Activo Corriente'}</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMPOS PARA CUENTA PRINCIPAL (Oculto por defecto) -->
+      <div id="cuenta-padre-fields" style="display:none;">
+        <div style="display:grid; grid-template-columns:1fr 1.5fr 1fr auto auto; gap:14px; align-items:end;">
+          <label class="field">
+            Código Contable (4 dígitos) *
+            <input type="text" name="padre_c" placeholder="Ej. 1117" maxlength="6" style="font-family:'IBM Plex Mono',monospace;">
+          </label>
+          <label class="field">
+            Nombre de la Cuenta *
+            <input type="text" name="padre_n" placeholder="Ej. Inversiones Fiduciarias">
+          </label>
+          <label class="field">
+            Clasificación *
+            <select name="padre_g">${GRUPOS.map(g=>`<option value="${g}">${g}</option>`).join('')}</select>
+          </label>
+          <label class="field" style="flex-direction:row; align-items:center; gap:6px; margin-bottom:8px;">
+            <input type="checkbox" name="padre_contra" style="width:auto; margin:0;"> Cuenta contra
+          </label>
+          <div>
+            <button type="submit" class="btn primary" style="height:38px; white-space:nowrap; padding:0 18px;">+ Guardar Cuenta Principal</button>
+          </div>
+        </div>
+      </div>
     </form>
     <div class="tblwrap" style="margin-top:16px; max-height:450px; overflow-y:auto;"><table>
       <thead><tr style="position:sticky; top:0; background:var(--surface-2); z-index:2;"><th>Código</th><th>Cuenta</th><th>Clasificación</th><th style="text-align:right;">Acciones</th></tr></thead>
@@ -1853,15 +1947,74 @@ function nextNum(){
   return nums.length ? Math.max(...nums)+1 : 1;
 }
 function addAccount(data){
-  if(ACC[data.c]){
+  if(!data || !data.c || !data.n){
     showModalAlert({
-      title: 'Código Duplicado',
-      message: `El código de cuenta <b>${data.c}</b> ya existe en el catálogo. Por favor ingresa un código único.`,
+      title: 'Datos Incompletos',
+      message: 'El código y el nombre de la cuenta son obligatorios.',
       type: 'warning'
     });
     return false;
   }
-  ACCOUNTS.push(data); rebuildIndex(); return true;
+
+  // Validación de duplicados
+  if(ACC[data.c]){
+    showModalAlert({
+      title: 'Código Duplicado',
+      message: `El código contable <b>${data.c}</b> ya existe en el catálogo asignado a: <b>${escHtml(ACC[data.c].n)}</b>. Por favor ingresa un código único.`,
+      type: 'warning'
+    });
+    return false;
+  }
+
+  // Validación de cuenta hija (código mayor a 4 dígitos o dependiente de un padre)
+  const isHija = data.isHija || data.parent || data.c.length > 4;
+  if(isHija){
+    const parentCode = data.parent || data.c.slice(0, 4);
+    const parentAcc = ACC[parentCode];
+
+    // Validación 1: Existencia de la cuenta padre en el catálogo
+    if(!parentAcc){
+      showModalAlert({
+        title: 'Cuenta Padre Inexistente',
+        message: `La cuenta hija <b>${data.c} - ${escHtml(data.n)}</b> debe depender de una cuenta padre existente.<br><br>El código padre <b>${parentCode}</b> no existe en el catálogo contable. Para registrar esta subcuenta, primero debe existir su cuenta padre en el plan de cuentas.`,
+        type: 'danger'
+      });
+      return false;
+    }
+
+    // Validación 2: El código debe iniciar estrictamente con el código del padre
+    if(!data.c.startsWith(parentCode)){
+      showModalAlert({
+        title: 'Inconsistencia de Código Jerárquico',
+        message: `El código de la cuenta hija (<b>${data.c}</b>) debe comenzar obligatoriamente con el código de su cuenta padre (<b>${parentCode}</b>).`,
+        type: 'warning'
+      });
+      return false;
+    }
+
+    // Validación 3: Subcódigo adicional no vacío
+    const subcode = data.c.slice(parentCode.length).replace(/^[._-]/, '');
+    if(!subcode){
+      showModalAlert({
+        title: 'Subcódigo Requerido',
+        message: `La cuenta hija debe tener un código adicional luego del código padre <b>${parentCode}</b> (por ejemplo: <b>${parentCode}01</b> o <b>${parentCode}02</b>).`,
+        type: 'warning'
+      });
+      return false;
+    }
+
+    // Herencia contable garantizada: Grupo y estado financiero se heredan del padre
+    data.g = parentAcc.g;
+    data.est = parentAcc.est || grupoEst(data.g);
+    if(parentAcc.contra) data.contra = true;
+    data.parent = parentCode;
+  }
+
+  ACCOUNTS.push(data);
+  // Ordenar catálogo por código jerárquico natural
+  ACCOUNTS.sort((a, b) => a.c.localeCompare(b.c, undefined, { numeric: true, sensitivity: 'base' }));
+  rebuildIndex();
+  return true;
 }
 function deleteAccount(code){
   const used = ENTRIES.some(e=>e.lines.some(l=>l.c===code));
@@ -1869,6 +2022,16 @@ function deleteAccount(code){
     showModalAlert({
       title: 'No se puede eliminar la cuenta',
       message: `La cuenta <b>${code}</b> tiene movimientos registrados en el Libro Diario. Debes eliminar o editar primero esos asientos.`,
+      type: 'warning'
+    });
+    return false;
+  }
+  // No permitir eliminar un padre si tiene cuentas hijas
+  const hijos = ACCOUNTS.filter(a => a.c !== code && a.c.startsWith(code) && a.c.length > code.length);
+  if(hijos.length > 0){
+    showModalAlert({
+      title: 'No se puede eliminar la cuenta padre',
+      message: `La cuenta <b>${code}</b> tiene <b>${hijos.length} subcuenta(s) hija(s)</b> que dependen de ella (${hijos.map(h=>h.c).slice(0,3).join(', ')}${hijos.length>3?'...':''}). Debes eliminar primero las cuentas hijas antes de eliminar su padre.`,
       type: 'warning'
     });
     return false;
@@ -3216,7 +3379,51 @@ function updateAsientoCheck(form){
   if(btn) btn.disabled = !balanced;
 }
 
+function updateCuentaPreview(){
+  const sel = document.getElementById('cuenta-padre-select');
+  const subInp = document.getElementById('cuenta-subcodigo-input');
+  const badge = document.getElementById('cuenta-padre-prefix-badge');
+  const finalCodeEl = document.getElementById('preview-final-code');
+  const parentInfoEl = document.getElementById('preview-parent-info');
+  const grupoEl = document.getElementById('preview-hereda-grupo');
+  if(!sel || !subInp || !badge || !finalCodeEl) return;
+
+  const parentCode = sel.value.trim();
+  const parentAcc = ACC[parentCode];
+  const sub = subInp.value.trim().replace(/^[._-]/, '');
+
+  badge.textContent = parentCode || '----';
+  const finalCode = (parentCode && sub) ? (parentCode + sub) : (parentCode ? parentCode + '??' : '----');
+  finalCodeEl.textContent = finalCode;
+
+  if(parentAcc){
+    if(parentInfoEl) parentInfoEl.innerHTML = `(Depende de: <b>${parentAcc.c} — ${escHtml(parentAcc.n)}</b>)`;
+    if(grupoEl) grupoEl.textContent = parentAcc.g;
+  }
+}
+
+function updateCuentaFormUI(){
+  const tipo = document.querySelector('input[name="cuenta_tipo"]:checked')?.value || 'hija';
+  const hijaFields = document.getElementById('cuenta-hija-fields');
+  const padreFields = document.getElementById('cuenta-padre-fields');
+  if(hijaFields && padreFields){
+    if(tipo === 'hija'){
+      hijaFields.style.display = 'block';
+      padreFields.style.display = 'none';
+      updateCuentaPreview();
+    } else {
+      hijaFields.style.display = 'none';
+      padreFields.style.display = 'block';
+    }
+  }
+}
+
 contentEl.addEventListener('input', e=>{
+  // Vista previa dinámica para subcódigo de cuenta hija
+  if(e.target.id === 'cuenta-subcodigo-input'){
+    updateCuentaPreview();
+  }
+
   // Filtro de búsqueda en catálogo de cuentas
   if(e.target.id === 'search-cuenta-input'){
     const q = e.target.value.toLowerCase().trim();
@@ -3238,6 +3445,15 @@ contentEl.addEventListener('input', e=>{
 
   const form=e.target.closest('#form-asiento');
   if(form) updateAsientoCheck(form);
+});
+
+contentEl.addEventListener('change', e=>{
+  if(e.target.name === 'cuenta_tipo'){
+    updateCuentaFormUI();
+  }
+  if(e.target.id === 'cuenta-padre-select'){
+    updateCuentaPreview();
+  }
 });
 
 // Eventos de clic para agregar o quitar líneas en el formulario principal
@@ -3274,15 +3490,92 @@ contentEl.addEventListener('submit', e=>{
   if(e.target.id==='form-cuenta'){
     e.preventDefault();
     const f=e.target;
-    const data={
-      c:f.querySelector('[name="c"]').value.trim(),
-      n:f.querySelector('[name="n"]').value.trim(),
-      g:f.querySelector('[name="g"]').value,
-      contra:f.querySelector('[name="contra"]').checked,
-    };
-    data.est = grupoEst(data.g);
-    if(!data.c || !data.n) return;
-    if(addAccount(data)){ afterMutation(); showToast(`Cuenta ${data.c} agregada al catálogo`, 'success'); f.reset(); }
+    const tipo = f.querySelector('input[name="cuenta_tipo"]:checked')?.value || 'hija';
+    let data = null;
+
+    if(tipo === 'hija'){
+      const parentCode = document.getElementById('cuenta-padre-select')?.value.trim();
+      const sub = document.getElementById('cuenta-subcodigo-input')?.value.trim();
+      const n = document.getElementById('cuenta-hija-nombre')?.value.trim();
+
+      if(!parentCode){
+        showModalAlert({
+          title: 'Cuenta Padre Requerida',
+          message: 'Debes seleccionar la cuenta padre de la que dependerá esta subcuenta.',
+          type: 'warning'
+        });
+        return;
+      }
+      const parentAcc = ACC[parentCode];
+      if(!parentAcc){
+        showModalAlert({
+          title: 'Cuenta Padre Inexistente',
+          message: `La cuenta padre con código <b>${parentCode}</b> no existe en el catálogo contable.`,
+          type: 'danger'
+        });
+        return;
+      }
+      if(!sub){
+        showModalAlert({
+          title: 'Subcódigo Requerido',
+          message: 'Debes ingresar el subcódigo o número adicional que se agregará al código padre (por ejemplo: <b>01</b> o <b>02</b>).',
+          type: 'warning'
+        });
+        return;
+      }
+      const cleanSub = sub.replace(/^[._-]/, '');
+      if(!cleanSub){
+        showModalAlert({
+          title: 'Subcódigo Inválido',
+          message: 'Ingresa un subcódigo numérico o alfanumérico válido (por ejemplo: <b>01</b>).',
+          type: 'warning'
+        });
+        return;
+      }
+      if(!n){
+        showModalAlert({
+          title: 'Nombre Requerido',
+          message: 'Por favor ingresa la denominación o nombre de la cuenta hija.',
+          type: 'warning'
+        });
+        return;
+      }
+
+      data = {
+        c: parentCode + cleanSub,
+        n: n,
+        g: parentAcc.g,
+        est: parentAcc.est || grupoEst(parentAcc.g),
+        contra: !!parentAcc.contra,
+        parent: parentCode,
+        isHija: true
+      };
+    } else {
+      const c = f.querySelector('[name="padre_c"]')?.value.trim();
+      const n = f.querySelector('[name="padre_n"]')?.value.trim();
+      const g = f.querySelector('[name="padre_g"]')?.value;
+      const contra = !!f.querySelector('[name="padre_contra"]')?.checked;
+      if(!c || !n){
+        showModalAlert({
+          title: 'Campos Incompletos',
+          message: 'Por favor completa el código y el nombre de la cuenta principal.',
+          type: 'warning'
+        });
+        return;
+      }
+      data = { c, n, g, est: grupoEst(g), contra, isHija: false };
+    }
+
+    if(addAccount(data)){
+      afterMutation();
+      showToast(`Cuenta ${tipo==='hija'?'hija ':''}${data.c} (${data.n}) agregada con éxito`, 'success');
+      f.reset();
+      const radioHija = f.querySelector('input[name="cuenta_tipo"][value="hija"]');
+      if(radioHija){
+        radioHija.checked = true;
+        updateCuentaFormUI();
+      }
+    }
   }
   if(e.target.id==='form-asiento'){
     e.preventDefault();
